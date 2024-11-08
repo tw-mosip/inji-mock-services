@@ -1,0 +1,189 @@
+<svg width="350" height="600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <radialGradient id="gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c1e0e6;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Filter for shadow -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feOffset result="offOut" in="SourceAlpha" dx="0" dy="0" />
+      <feGaussianBlur result="blurOut" in="offOut" stdDeviation="1.5" />
+      <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
+    </filter>
+    
+    <clipPath id="rounded-clip">
+     <rect x= "35%" y="0" width="90" height="120" rx="10" ry="10" />
+    </clipPath>
+
+    <clipPath id="bg-roundedClip">
+      <rect x="0" y="0" width="350" height="600" rx="30" ry="30" />
+    </clipPath>
+
+    <style type="text/css">
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;display=swap');
+      
+      .titleSemiBold16 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 16px;
+        text-anchor: middle;
+        fill: #000000;
+      }
+
+      .titleSemiBoldMedium {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        text-anchor: middle;
+        fill: #000000;
+      }
+
+      .titleRegular15 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 300;
+        font-size: 15px;
+        text-anchor: middle;
+      }
+
+      .fieldLabelRegular11 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 11px;
+        text-anchor: start;
+        fill: #767676;
+      }
+      .fieldValueFontRegular11 {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 11px;
+        text-anchor: start;
+        fill: #000000;
+      }
+      .fieldValueFontWrappable {
+        font-family: 'Inter', sans-serif;
+        font-weight: 400;
+        font-size: 11px;
+        text-anchor: start;
+        fill: #000000;
+        word-wrap: break-word;
+      }
+      .horizontalLine {
+        font-family: 'Inter', sans-serif;
+        font-weight: 600;
+        font-size: 11px;
+        text-anchor: start;
+        fill: #000000;
+        font-weight: bold;
+        word-wrap: break-word;
+      }
+    </style>
+  </defs>
+  <g filter="url(#shadow)">
+    
+    <!-- Background Image -->
+      <image preserveAspectRatio="xMidYMid slice"  
+        width="350" 
+        height="600" 
+        href="http://localhost:3000/assets/backdrop.png"
+        clip-path="url(#bg-roundedClip)"
+         /> 
+    
+    <!-- Logo and Title -->
+    <g transform="translate(0, -10)">
+      <image xlink:href="https://api.dev1.mosip.net/inji/veridonia-logo.png" 
+              width="70" height="70" 
+              x="50%" y="15" 
+              transform="translate(-35, 0)" 
+              preserveAspectRatio="xMidYMid meet"/>
+      <text x="50%" y="95" class="titleSemiBold16">Veridonia National ID
+      </text>
+      <text x="50%" y="120" class="titleSemiBold16">{{credentialSubject/VID}}
+      </text>
+    </g>
+          <g>
+
+    <!-- Profile Image and Full Name -->
+    <g transform="translate(0, 130)">
+      <image 
+        x="35%" y="0" 
+        width="90" height="120" 
+        
+        xlink:href="{{credentialSubject/face}}" 
+        clip-path="url(#rounded-clip)" 
+        preserveAspectRatio="xMidYMid slice"/>
+      <text x="50%" y="145" class="titleSemiBoldMedium">{{credentialSubject/fullName}}
+      </text>
+      
+      </g>
+    </g>
+ 
+    <!-- Gender, Date of Birth and Phone number -->
+    <g transform="translate(0, 290)">
+
+      <text x="4%" y="15" class="fieldLabelRegular11">Gender
+      </text>
+      <text x="4%" y="32" class="fieldValueFontRegular11">{{credentialSubject/gender}}
+      </text>
+
+      <text x="38%" y="15" class="fieldLabelRegular11">Date of Birth
+      </text>
+      <text x="38%" y="32" class="fieldValueFontRegular11">{{credentialSubject/dateOfBirth}}
+      </text>
+
+      <text x="70%" y="15" class="fieldLabelRegular11">Phone Number
+      </text>
+      <text x="70%" y="32" class="fieldValueFontRegular11">{{credentialSubject/phone}}
+      </text>
+    </g>
+
+
+    <!-- Email -->  
+    <g transform="translate(0, 330)">
+      <text x="4%" y="15" class="fieldLabelRegular11">Email
+      </text>
+    <path id="emailtextPath" d="M0,32 L335,32" fill="none"/>
+      <text x="4%" y="0" class="fieldValueFontRegular11">
+        <textPath href="#emailtextPath" startOffset="0%" text-anchor="start">{{credentialSubject/email}}
+          </textPath>
+      </text>
+    </g>
+
+    <!-- Address Section -->
+    <g transform="translate(0, 375)">
+      <line x1="5%" y1="0" x2="330" y2="0" stroke="#a9a9a9" stroke-width="0.5" />
+      <text x="5%" y="20" class="fieldLabelRegular11">Address
+      </text>
+      <path id="addresstextPath" d="M8,25 L335,25" fill="none"/>
+      <text x="5%" y="0" class="fieldValueFontRegular11">
+      <textPath href="#addresstextPath" startOffset="0%" text-anchor="start">
+        <tspan x="10" dy="1.3em">{{fullAddress1}}</tspan>
+        <tspan x="10" dy="1.5em">{{fullAddress2}}</tspan>
+      </textPath>
+      </text>
+    </g>
+
+    <!-- QR Code and Status  -->
+    <g transform="translate(0, 450)">
+      <!-- Horizontal Line -->
+      <line x1="5%" y1="0" x2="330" y2="0" stroke="#a9a9a9" stroke-width="0.5" />
+      
+      <!-- QR Code -->
+      <g transform="translate(0, 25)">
+        <rect x="7%" y="0" width="100" height="100" fill="#ffffff" stroke="#ffffff" stroke-width="20" rx="10" ry="10" filter="url(#shadow)" />
+        
+        <image xlink:href="{{qrCodeImage}}" width="100" height="100" x="7%" y="0" preserveAspectRatio="xMidYMin meet" />
+        
+        <!-- Status -->
+        <text x="70%" y="35" class="titleRegular15" fill="#767676">
+          Status
+        </text>
+        <text x="76%" y="55" class="titleSemiBold16" fill="#000000">
+          Valid
+        </text>
+        <path d="M12,2C6.48,2 2,6.48 2,12s4.48,10 10,10 10,-4.48 10,-10S17.52,2 12,2zM9.29,16.29L5.7,12.7c-0.39,-0.39 -0.39,-1.02 0,-1.41 0.39,-0.39 1.02,-0.39 1.41,0L10,14.17l6.88,-6.88c0.39,-0.39 1.02,-0.39 1.41,0 0.39,0.39 0.39,1.02 0,1.41l-7.59,7.59c-0.38,0.39 -1.02,0.39 -1.41,0z" fill="#239E00" transform="translate(220, 37)" />
+      </g>
+    </g>
+  </g>
+  <rect x="0" y="0" width="350" height="600" fill="none" filter="url(#shadow)" rx="30" ry="30" stroke="#a9a9a9" stroke-width="0.5" />
+</svg>
