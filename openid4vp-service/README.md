@@ -20,9 +20,11 @@ node app.js // execute this command in the openid4vp-service folder
   end-point where we would like to receive the response. Here Localhost won't be accessible from the
   physical device, recommended using ngrok [https://ngrok.com/docs/getting-started/] to generate a
   corresponding mapping url for the Localhost.
+- As part of the Authorization Request Verifier can send **presentation_definition_uri** instead of the full **presentation_definition** to reduce the amount of data embedded in the QR code and this uri returns the actual **presentation_definition** object when called and only one of **presentation_definition** & **presentation_definition_uri** should be present in the request.
 
 **Ex:**
 
+##### Send _presentation_definition_ in request:
 ```javascript
     const authorizationRequest =
     "https://client.example.org/universal-link?
@@ -32,6 +34,26 @@ node app.js // execute this command in the openid4vp-service folder
     &client_id_scheme=redirect_uri
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &presentation_definition=...
+    &nonce=n-0S6_WzA2Mj
+    &response_uri=ngrokUrl+"/verifier/vp-response"
+    &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp_json%22:%
+    7B%22alg%22:%5B%22EdDSA%22,%22ES256K%22%5D%7D,%22ldp
+    _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
+    8%22%5D%7D%7D%7D"
+```
+
+or
+
+##### Send _presentation_definition_uri_ in request:
+```javascript
+    const authorizationRequest =
+    "https://client.example.org/universal-link?
+    response_type=vp_token
+    &response_mode=direct_post
+    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
+    &client_id_scheme=redirect_uri
+    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
+    &presentation_definition_uri=ngrokUrl+"/verifier/presentation_definition_uri"
     &nonce=n-0S6_WzA2Mj
     &response_uri=ngrokUrl+"/verifier/vp-response"
     &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp_json%22:%
