@@ -61,8 +61,11 @@ or
     _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
     8%22%5D%7D%7D%7D"
 ```
+### 2. /verifier/presentation_definition_uri:
+- This end-point can be passed as part of the Verifier's Authorization Request QR code which gives the actual presentation_definition object when called.
+- Please refer to the above example to understand how to send presentation_definition_uri as part of the Authorization Request.
 
-### 2. /verifier/vp-response:
+### 3. /verifier/vp-response:
 
 - This is the response_uri end-point which is used to listen to the Verifiable Presentation response
   shared by the wallet and return the response back to the wallet to notify whether this server has
