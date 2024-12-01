@@ -19,7 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/verifier/generate-auth-request-qr', async (req, res) => {
   try {
     const presentation_definition = JSON.stringify(presentationDefinition);
-    const client_metadata = JSON.stringify({ 'name': 'Requester name' });
+    const client_metadata = JSON.stringify({ 'client_name': 'Requester name' });
     nonce = crypto.randomBytes(16).toString('base64');
     state = crypto.randomBytes(16).toString('base64');
 
