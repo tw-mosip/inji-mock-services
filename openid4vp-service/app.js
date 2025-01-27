@@ -29,8 +29,6 @@ app.get('/verifier/generate-auth-request-by-value-qr', async (req, res) => {
     const authorizationRequest = `client_id=https://injiverify.dev1.mosip.net&presentation_definition=${presentation_definition}&response_type=vp_token&response_mode=direct_post&nonce=${nonce}&state=${state}&response_uri=${responseUri}&client_metadata=${client_metadata}`;
     const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
 
-    console.log("auth request: ", authorizationRequest)
-
     res.render('index', { title: 'Home', qrCodeData });
   } catch (error) {
     console.error('Error generating QR code:', error);
@@ -53,7 +51,7 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
         const jwt = await createJWT()
-        res.send(btoa(JSON.stringify(jwt)))
+        res.send(jwt)
     } catch (error) {
         console.error('Error generating JWT :', error);
         res.status(500).send('Internal Server Error');
