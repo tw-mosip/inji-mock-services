@@ -1,5 +1,6 @@
 const ed = require('@noble/ed25519');
 const forge = require('node-forge');
+const presentationDefinition = require('./presentationDefinitionMock.json');
 
 const clientMetadata = require('./clientMetadataMock.json');
 const {baseUrl, state, nonce, ed25519PrivateKey, responseUri, didDocumentUrl, publicKeyId} = require("./constants");
@@ -8,7 +9,7 @@ const client_metadata = clientMetadata
 
 const jwtPayload = {
     "presentation_definition_uri": `${baseUrl}/verifier/presentation_definition_uri`,
-    "client_metadata": client_metadata,
+    "client_metadata": JSON.stringify(client_metadata),
     "state": state,
     "nonce": nonce,
     "client_id": didDocumentUrl,
@@ -20,7 +21,7 @@ const jwtPayload = {
 
 const jwtHeader =   {
     "typ": "oauth-authz-req+jwt",
-    "alg": "ED25519",
+    "alg": "EdDSA",
     "kid": publicKeyId
 }
 
