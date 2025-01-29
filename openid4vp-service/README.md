@@ -8,11 +8,12 @@
 node app.js // execute this command in the openid4vp-service folder
 ```
 
-### This exposes two end-points:
+### This exposes four end-points:
 
 - Refer to app.js file for the below end-points.
 
-### 1. /verifier/generate-auth-request-qr:
+### 1. /verifier/generate-auth-request-by-value-qr:
+
 
 - This end-point can be used to generate the QR code with the Verifier's Authorization Request to
   fetch the Verifiable Credentials from the Wallet.
@@ -61,14 +62,24 @@ or
     _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
     8%22%5D%7D%7D%7D"
 ```
+
+### 2. /verifier/generate-auth-request-by-value-qr:
+- This end-point can be used to generate the QR code with `request uri` field which is used to get the Verifier's Authorization Request to fetch the Verifiable Credentials from the Wallet.
+- Here configure the `request_uri` field with the actual end-point where we can fetch the Authorization Request. Here Localhost won't be accessible from the physical device, recommended using ngrok [https://ngrok.com/docs/getting-started/] to generate a corresponding mapping url for the Localhost. 
+- The response of the `request_uri` will either be a jwt or base64 encoded json string which contains the Authorization Request 
+
 ### 2. /verifier/presentation_definition_uri:
 - This end-point can be passed as part of the Verifier's Authorization Request QR code which gives the actual presentation_definition object when called.
 - Please refer to the above example to understand how to send presentation_definition_uri as part of the Authorization Request.
 
 ### 3. /verifier/vp-response:
-
 - This is the response_uri end-point which is used to listen to the Verifiable Presentation response
   shared by the wallet and return the response back to the wallet to notify whether this server has
   received the response or not.
 - It just receives the Verifiable Presentation response in the request body and returns
   the response but doesn't perform any validations on the received data.
+
+### 4. /verifier/get-auth-request-obj:
+- This is the request_uri endpoint which is used to generate and send the Authorisation Request object either as a JWT or base64 encoded string.
+
+
