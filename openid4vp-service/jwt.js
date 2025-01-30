@@ -46,11 +46,8 @@ async function createJWT() {
 
     const header64 = encodeB64(JSON.stringify(jwtHeader));
     const payLoad64 = encodeB64(JSON.stringify(jwtPayload));
-
     const preHash = header64 + '.' + payLoad64;
-
     const privateKey = Uint8Array.from(Buffer.from(ed25519PrivateKey, 'base64'));
-
     const signature64 = await createSignatureED(privateKey, preHash)
     return header64 + '.' + payLoad64 + '.' + signature64;
 
@@ -58,5 +55,6 @@ async function createJWT() {
 
 module.exports = {
     createJWT,
-    client_metadata
+    client_metadata,
+    jwtPayload
 };
