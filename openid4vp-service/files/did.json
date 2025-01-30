@@ -3,7 +3,7 @@
     "did:web:mosip.github.io:openid4vp:files#key-0"
   ],
   "service": [],
-  "id": "did:web:mosip.github.io.github.io:openid4vp:files",
+  "id": "did:web:mosip.github.io:openid4vp:files",
   "verificationMethod": [
     {
       "publicKey": "IKXhA7W1HD1sAl+OfG59VKAqciWrrOL1Rw5F+PGLhi4=",
