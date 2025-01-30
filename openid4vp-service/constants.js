@@ -6,8 +6,8 @@ const ed25519PrivateKey = "vlo/0lVUn4oCEFo/PiPi3FyqSBSdZ2JDSBJJcvbf6o0="
 const baseUrl = "https://46b2-45-112-68-190.ngrok-free.app"
 const requestUri = `${baseUrl}/verifier/get-auth-request-obj`
 const responseUri = `${baseUrl}/verifier/vp-response`
-const didDocumentUrl = "did:web:adityankannan-tw.github.io:openid4vp:files"
-const publicKeyId = "did:web:adityankannan-tw.github.io:openid4vp:files#key-0"
+const didDocumentUrl = "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs"
+const publicKeyId = "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs#key-0"
 const nonce = crypto.randomBytes(16).toString('base64');
 const state = crypto.randomBytes(16).toString('base64');
 

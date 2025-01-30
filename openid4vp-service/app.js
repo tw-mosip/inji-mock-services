@@ -39,7 +39,7 @@ app.get('/verifier/generate-auth-request-by-value-qr', async (req, res) => {
 
 app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
     try {
-        const authorizationRequest = `client_id=did:web:adityankannan-tw.github.io:openid4vp:files&client_id_scheme=did&request_uri=${requestUri}&request_uri_method=get HTTP/1.1`;
+        const authorizationRequest = `client_id=did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs&client_id_scheme=did&request_uri=${requestUri}&request_uri_method=get`;
         const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
         res.render('index', {title: 'Home', qrCodeData});
     } catch (error) {
