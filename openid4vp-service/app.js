@@ -44,6 +44,7 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+//openid4vp://authorize?client_id=https://injiverify.dev1.mosip.net&presentation_definition=
 
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
