@@ -46,6 +46,17 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
 });
 //openid4vp://authorize?client_id=https://injiverify.dev1.mosip.net&presentation_definition=
 
+app.get('/verifier/generate-auth-request-by-reference-qr-post', async (req, res) => {
+  try {
+      const authorizationRequest = `client_id=${didDocumentUrl}&client_id_scheme=did&request_uri=${requestUri}&request_uri_method=post`;
+      const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
+      res.render('index', {title: 'Home', qrCodeData});
+  } catch (error) {
+      console.error('Error generating QR code:', error);
+      res.status(500).send('Internal Server Error');
+  }
+});
+
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
         const jwt = await createJWT()
@@ -55,6 +66,17 @@ app.get('/verifier/get-auth-request-obj', async (req, res) => {
         console.error('Error generating JWT :', error);
         res.status(500).send('Internal Server Error');
     }
+});
+app.post('/verifier/get-auth-request-obj', async (req, res) => {
+  try {
+      const jwt = await createJWT()
+      console.log(express.response.body)
+      res.send(jwt)
+      //res.send(btoa(JSON.stringify(jwtPayload)))
+  } catch (error) {
+      console.error('Error generating JWT :', error);
+      res.status(500).send('Internal Server Error');
+  }
 });
 
 app.get('/verifier/presentation_definition_uri', async (req, res) => {
