@@ -23,7 +23,7 @@ app.get('/verifier/generate-auth-request-by-value-qr', async (req, res) => {
     const presentation_definition = JSON.stringify(presentationDefinition);
     const client_metadata = JSON.stringify(clientMetadata);
 
-    const authorizationRequest = `client_id=https://injiverify.dev1.mosip.net&presentation_definition=${presentation_definition}&response_type=vp_token&response_mode=direct_post&nonce=${nonce}&state=${state}&response_uri=${responseUri}&client_metadata=${client_metadata}&client_id_scheme=pre-registered`;
+    const authorizationRequest = `client_id=pre-registered:sample-client&presentation_definition=${presentation_definition}&response_type=vp_token&response_mode=direct_post&nonce=${nonce}&state=${state}&response_uri=${responseUri}&client_metadata=${client_metadata}`;
     const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
 
     res.render('index', { title: 'Home', qrCodeData });
@@ -36,7 +36,7 @@ app.get('/verifier/generate-auth-request-by-value-qr', async (req, res) => {
 
 app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
     try {
-        const authorizationRequest = `client_id=${didDocumentUrl}&client_id_scheme=did&request_uri=${requestUri}&request_uri_method=get`;
+        const authorizationRequest = `client_id=did:${didDocumentUrl}&request_uri=${requestUri}&request_uri_method=get`;
         const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
         res.render('index', {title: 'Home', qrCodeData});
     } catch (error) {

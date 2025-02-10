@@ -12,8 +12,7 @@ const jwtPayload = {
     "client_metadata": JSON.stringify(client_metadata),
     "state": state,
     "nonce": nonce,
-    "client_id": didDocumentUrl,
-    "client_id_scheme": "did",
+    "client_id": `did:${didDocumentUrl}`,
     "response_mode": "direct_post",
     "response_type": "vp_token",
     "response_uri": responseUri
