@@ -30,8 +30,7 @@ node app.js // execute this command in the openid4vp-service folder
     "https://client.example.org/universal-link?
     response_type=vp_token
     &response_mode=direct_post
-    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &client_id_scheme=redirect_uri
+    &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &presentation_definition=...
     &nonce=n-0S6_WzA2Mj
@@ -50,8 +49,7 @@ or
     "https://client.example.org/universal-link?
     response_type=vp_token
     &response_mode=direct_post
-    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &client_id_scheme=redirect_uri
+    &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &presentation_definition_uri=ngrokUrl+"/verifier/presentation_definition_uri"
     &nonce=n-0S6_WzA2Mj
@@ -70,8 +68,7 @@ or
 ```javascript
     const authorizationRequest =
     "https://client.example.org/universal-link?
-    &client_id=https%3A%2F%2Fclient.example.org%2Fcb
-    &client_id_scheme=redirect_uri
+    &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
     &request_uri_method=get
     &request_uri=ngrokUrl+"/verifier/get-auth-request-obj"
 
@@ -92,3 +89,6 @@ or
 - This is the request_uri endpoint which is used to generate and send the Authorisation Request object either as a JWT or base64 encoded string.
 
 
+### Specification followed
+
+The implementation follows OpenID4VP draft 23

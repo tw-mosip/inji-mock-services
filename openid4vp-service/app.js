@@ -36,11 +36,12 @@ app.get('/verifier/generate-auth-request-by-value-qr', async (req, res) => {
 
 app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
     try {
-        const authorizationRequest = `client_id=did:${didDocumentUrl}&request_uri=${requestUri}&request_uri_method=get`;
+        const authorizationRequest = `client_id=${didDocumentUrl}&request_uri=${requestUri}`;
         const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
+        console.log("qr data is ",'openid4vp://authorize?' + btoa(authorizationRequest))
         res.render('index', {title: 'Home', qrCodeData});
     } catch (error) {
-        console.error('Error generating QR code:', error);
+        console.error('Error generati`ng QR code:', error);
         res.status(500).send('Internal Server Error');
     }
 });
@@ -62,10 +63,11 @@ app.get('/verifier/presentation_definition_uri', async (req, res) => {
 });
 
 app.post('/verifier/vp-response', (req, res) => {
-  // console.log('vp_token:', req.body.vp_token);
+  console.log('response gieven :', req.body);
   // console.log('presentation_submission:', req.body.presentation_submission);
 
   /*Change this response for testing other flows*/
+
   res.status(200).json({
     message: `Verifiable presentation is received successfully.`,
   });

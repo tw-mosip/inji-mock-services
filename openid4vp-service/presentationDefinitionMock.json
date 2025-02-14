@@ -14,6 +14,7 @@
       "format": {
         "ldp_vc": {
           "proof_type": [
+            "RsaSignature2018",
             "Ed25519Signature2020"
           ]
         }

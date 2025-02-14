@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const ed25519PublicKey = "IKXhA7W1HD1sAl+OfG59VKAqciWrrOL1Rw5F+PGLhi4="
 const ed25519PrivateKey = "vlo/0lVUn4oCEFo/PiPi3FyqSBSdZ2JDSBJJcvbf6o0="
 //update this baseurl with the ngrok url
-const baseUrl = "https://8154-45-112-68-8.ngrok-free.app"
+const baseUrl = "https://5b55-27-57-80-57.ngrok-free.app"
 const requestUri = `${baseUrl}/verifier/get-auth-request-obj`
 const responseUri = `${baseUrl}/verifier/vp-response`
 const didDocumentUrl = "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs"
