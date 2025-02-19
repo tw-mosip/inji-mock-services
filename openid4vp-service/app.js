@@ -2,11 +2,13 @@ const express = require('express');
 const path = require('path');
 const QRCode = require('qrcode');
 const presentationDefinition = require('./presentationDefinitionMock.json');
-const clientMetadata = require('./clientMetadataMock.json');
 const bodyParser = require('body-parser');
-const {createJWT, jwtPayload} = require("./jwt");
+const {createJWT} = require("./jwt");
 const app = express();
-const {state, nonce,requestUri, responseUri, didDocumentUrl, publicKeyId} = require("./constants");
+const {requestUri,didDocumentUrl} = require("./constants");
+const {redirectAuthorizationRequest, preRegisteredAuthorizationRequest, didAuthorizationRequest,
+    authorizationRequestParams
+} = require("./inputData");
 const PORT = 3000;
 
 
@@ -18,13 +20,20 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/verifier/generate-auth-request-by-value-qr', async (req, res) => {
-  try {
-    const presentation_definition = JSON.stringify(presentationDefinition);
-    const client_metadata = JSON.stringify(clientMetadata);
+function createUrlWithParams( params) {
+    const baseUrl = "openid4vp://authorize";
+    const urlParams = new URLSearchParams();
 
-    const authorizationRequest = `client_id=https://injiverify.dev1.mosip.net&presentation_definition=${presentation_definition}&response_type=vp_token&response_mode=direct_post&nonce=${nonce}&state=${state}&response_uri=${responseUri}&client_metadata=${client_metadata}&client_id_scheme=pre-registered`;
-    const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
+    for (const [key, value] of Object.entries(params)) {
+        urlParams.append(key, value.toString());
+    }
+    return `${baseUrl}?${urlParams.toString()}`;
+}
+
+app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res) => {
+  try {
+     const qrData = createUrlWithParams(redirectAuthorizationRequest);
+     const qrCodeData = await QRCode.toDataURL(qrData);
 
     res.render('index', { title: 'Home', qrCodeData });
   } catch (error) {
@@ -33,24 +42,36 @@ app.get('/verifier/generate-auth-request-by-value-qr', async (req, res) => {
   }
 });
 
+app.get('/verifier/generate-auth-request-by-value-pre-registered-qr', async (req, res) => {
+  try {
+     const qrData = createUrlWithParams(preRegisteredAuthorizationRequest);
+     const qrCodeData = await QRCode.toDataURL(qrData);
+
+     res.render('index', { title: 'Home', qrCodeData });
+  } catch (error) {
+    console.error('Error generating QR code:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
 
 app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
     try {
-        const authorizationRequest = `client_id=${didDocumentUrl}&client_id_scheme=did&request_uri=${requestUri}&request_uri_method=get`;
-        const qrCodeData = await QRCode.toDataURL('openid4vp://authorize?' + btoa(authorizationRequest));
+        const qrData = createUrlWithParams(authorizationRequestParams);
+        const qrCodeData = await QRCode.toDataURL(qrData);
+
         res.render('index', {title: 'Home', qrCodeData});
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');
     }
 });
-//openid4vp://authorize?client_id=https://injiverify.dev1.mosip.net&presentation_definition=
 
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
-        const jwt = await createJWT()
+        const jwt = await createJWT(didAuthorizationRequest)
         res.send(jwt)
-        //res.send(btoa(JSON.stringify(jwtPayload)))
+        //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
+
     } catch (error) {
         console.error('Error generating JWT :', error);
         res.status(500).send('Internal Server Error');

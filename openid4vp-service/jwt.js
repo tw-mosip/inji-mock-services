@@ -2,22 +2,7 @@ const ed = require('@noble/ed25519');
 const forge = require('node-forge');
 const presentationDefinition = require('./presentationDefinitionMock.json');
 
-const clientMetadata = require('./clientMetadataMock.json');
-const {baseUrl, state, nonce, ed25519PrivateKey, responseUri, didDocumentUrl, publicKeyId} = require("./constants");
-
-const client_metadata = clientMetadata
-
-const jwtPayload = {
-    "presentation_definition_uri": `${baseUrl}/verifier/presentation_definition_uri`,
-    "client_metadata": JSON.stringify(client_metadata),
-    "state": state,
-    "nonce": nonce,
-    "client_id": didDocumentUrl,
-    "client_id_scheme": "did",
-    "response_mode": "direct_post",
-    "response_type": "vp_token",
-    "response_uri": responseUri
-}
+const {ed25519PrivateKey, publicKeyId} = require("./constants");
 
 const jwtHeader =   {
     "typ": "oauth-authz-req+jwt",
@@ -42,10 +27,10 @@ async function createSignatureED(privateKey, prehash) {
 }
 
 
-async function createJWT() {
+async function createJWT(payload) {
 
     const header64 = encodeB64(JSON.stringify(jwtHeader));
-    const payLoad64 = encodeB64(JSON.stringify(jwtPayload));
+    const payLoad64 = encodeB64(JSON.stringify(payload));
     const preHash = header64 + '.' + payLoad64;
     const privateKey = Uint8Array.from(Buffer.from(ed25519PrivateKey, 'base64'));
     const signature64 = await createSignatureED(privateKey, preHash)
@@ -54,7 +39,5 @@ async function createJWT() {
 }
 
 module.exports = {
-    createJWT,
-    client_metadata,
-    jwtPayload
+    createJWT
 };
