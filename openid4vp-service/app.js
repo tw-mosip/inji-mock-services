@@ -69,8 +69,10 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
         const jwt = await createJWT(didAuthorizationRequest)
+        res.setHeader('content-type', 'application/oauth-authz-req+jwt')
         res.send(jwt)
-        //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
+        //res.setHeader('content-type', 'application/json')
+        //res.send(preRegisteredAuthorizationRequest)
 
     } catch (error) {
         console.error('Error generating JWT :', error);
