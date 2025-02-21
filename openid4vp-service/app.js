@@ -5,10 +5,7 @@ const presentationDefinition = require('./presentationDefinitionMock.json');
 const bodyParser = require('body-parser');
 const {createJWT} = require("./jwt");
 const app = express();
-const {requestUri,didDocumentUrl} = require("./constants");
-const {redirectAuthorizationRequest, preRegisteredAuthorizationRequest, didAuthorizationRequest,
-    authorizationRequestParams
-} = require("./inputData");
+const {redirectAuthorizationRequest, preRegisteredAuthorizationRequest, didAuthorizationRequest, authorizationRequestParams} = require("./inputData");
 const PORT = 3000;
 
 
@@ -25,7 +22,10 @@ function createUrlWithParams( params) {
     const urlParams = new URLSearchParams();
 
     for (const [key, value] of Object.entries(params)) {
-        urlParams.append(key, value.toString());
+        if(typeof value == "string")
+            urlParams.append(key, value);
+        else
+            urlParams.append(key, JSON.stringify(value));
     }
     return `${baseUrl}?${urlParams.toString()}`;
 }
@@ -72,7 +72,7 @@ app.get('/verifier/get-auth-request-obj', async (req, res) => {
         res.setHeader('content-type', 'application/oauth-authz-req+jwt')
         res.send(jwt)
         //res.setHeader('content-type', 'application/json')
-        //res.send(preRegisteredAuthorizationRequest)
+        // res.send(redirectAuthorizationRequest)
 
     } catch (error) {
         console.error('Error generating JWT :', error);

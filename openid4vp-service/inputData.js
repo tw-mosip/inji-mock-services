@@ -1,7 +1,6 @@
 const {nonce, state, responseUri, baseUrl, didDocumentUrl, requestUri, clientId, presentationDefinitionUri} = require("./constants");
 const clientMetadata = require('./clientMetadataMock.json');
-
-const client_metadata = JSON.stringify(clientMetadata);
+const presentationDefinition = require('./presentationDefinitionMock.json');
 
 const preRegisteredAuthorizationRequest = {
     "client_id": "https://injiverify.dev1.mosip.net",
@@ -11,31 +10,31 @@ const preRegisteredAuthorizationRequest = {
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": client_metadata,
+    "client_metadata": clientMetadata,
     "client_id_scheme": "pre-registered"
 }
 
 const redirectAuthorizationRequest = {
     "client_id": responseUri,
-    "presentation_definition_uri": presentationDefinitionUri,
+    "presentation_definition": presentationDefinition,
     "response_type": "vp_token",
     "response_mode": "direct_post",
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": client_metadata,
-    "client_id_scheme": "pre-registered"
+    "client_metadata": clientMetadata,
+    "client_id_scheme": "redirect_uri"
 }
 
 const didAuthorizationRequest = {
     "client_id": didDocumentUrl,
-    "presentation_definition_uri": presentationDefinitionUri,
+    "presentation_definition": presentationDefinition,
     "response_type": "vp_token",
     "response_mode": "direct_post",
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": client_metadata,
+    "client_metadata": clientMetadata,
     "client_id_scheme": "did"
 }
 
@@ -46,12 +45,11 @@ const authorizationRequestParams = {
     "request_uri_method": "get"
 }
 
-
 module.exports = {
     preRegisteredAuthorizationRequest,
     didAuthorizationRequest,
     redirectAuthorizationRequest,
-    authorizationRequestParams
+    authorizationRequestParams,
 }
 
 
