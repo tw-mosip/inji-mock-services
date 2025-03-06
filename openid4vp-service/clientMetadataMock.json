@@ -3,6 +3,18 @@
   "logo_uri": "<logo_uri>",
   "authorization_encrypted_response_alg": "ECDH-ES",
   "authorization_encrypted_response_enc": "A256GCM",
+  "jwks": {
+    "keys": [
+      {
+        "kty": "OKP",
+        "crv": "X25519",
+        "use": "enc",
+        "x": "BVNVdqorpxCCnTOkkw8S2NAYXvfEvkC-8RDObhrAUA4",
+        "alg": "ECDH-ES",
+        "kid": "verifier-key-id"
+      }
+    ]
+  },
   "vp_formats": {
     "mso_mdoc": {
       "alg": [
