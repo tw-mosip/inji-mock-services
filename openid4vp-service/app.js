@@ -84,6 +84,8 @@ app.get('/verifier/presentation_definition_uri', async (req, res) => {
 });
 
 app.post('/verifier/vp-response', (req, res) => {
+    console.log("received vp response on ",Date.now());
+    console.log('data:', JSON.stringify(req.body));
   // console.log('vp_token:', req.body.vp_token);
   // console.log('presentation_submission:', req.body.presentation_submission);
 
