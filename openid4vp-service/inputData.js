@@ -29,7 +29,7 @@ const didAuthorizationRequest = {
     "client_id": didDocumentUrl,
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
-    "response_mode": "direct_post.jwt",
+    "response_mode": "direct_post",
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
@@ -39,7 +39,7 @@ const didAuthorizationRequest = {
 const authorizationRequestParams = {
     "client_id":didDocumentUrl,
     "request_uri": requestUri,
-    "request_uri_method": "get"
+    "request_uri_method": "post"
 }
 
 
