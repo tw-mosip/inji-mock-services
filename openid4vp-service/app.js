@@ -11,7 +11,7 @@ const {redirectAuthorizationRequest, preRegisteredAuthorizationRequest, didAutho
 } = require("./inputData");
 const PORT = 3000;
 
-
+let responseReceived = false;
 
 app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
 app.set('view engine', 'ejs');
@@ -99,11 +99,16 @@ app.post('/verifier/vp-response', (req, res) => {
     console.log('data:', JSON.stringify(req.body));
   // console.log('vp_token:', req.body.vp_token);
   // console.log('presentation_submission:', req.body.presentation_submission);
-
+    responseReceived = true;
   /*Change this response for testing other flows*/
   res.status(200).json({
     message: `Verifiable presentation is received successfully.`,
   });
+});
+
+app.get('/verifier/check-response', (req, res) => {
+  res.json({ responseReceived });
+  responseReceived = false;
 });
 
 app.listen(PORT, () => {
