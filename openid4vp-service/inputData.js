@@ -24,7 +24,7 @@ const redirectAuthorizationRequest = {
     "state": state,
     "response_uri": responseUri,
     "client_metadata": client_metadata,
-    "client_id_scheme": "pre-registered"
+    "client_id_scheme": "redirect_uri"
 }
 
 const didAuthorizationRequest = {
