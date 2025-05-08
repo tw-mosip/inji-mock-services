@@ -36,16 +36,16 @@
       "format": {
         "mso_mdoc": {
           "alg": ["ES256"]
-        },
-        "constraints": {
-          "fields" : [
-            {
-              "path": [
-                "$['docType']['claim']"
-              ]
-            }
-          ]
         }
+      },
+      "constraints": {
+        "fields" : [
+          {
+            "path": [
+              "$['docType']['claim']"
+            ]
+          }
+        ]
       }
     }
   ]
