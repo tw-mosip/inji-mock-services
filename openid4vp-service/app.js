@@ -5,22 +5,29 @@ const presentationDefinition = require('./presentationDefinitionMock.json');
 const bodyParser = require('body-parser');
 const {createJWT} = require("./jwt");
 const app = express();
-const {requestUri,didDocumentUrl} = require("./constants");
-const {redirectAuthorizationRequest, preRegisteredAuthorizationRequest, didAuthorizationRequest,
-    authorizationRequestParams
+const {requestUri, didDocumentUrl} = require("./constants");
+const {
+    preRegisteredAuthorizationRequestDraft23,
+    preRegisteredAuthorizationRequestDraft21,
+    redirectAuthorizationRequestDraft23,
+    redirectAuthorizationRequestDraft21,
+    didAuthorizationRequestDraft23,
+    didAuthorizationRequestDraft21,
+    authorizationRequestParamsDraft23,
+    authorizationRequestParamsDraft21
 } = require("./inputData");
 const PORT = 3000;
 
 let responseReceived = false;
 
-app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
+app.use(bodyParser.urlencoded({limit: '20mb', extended: true}));
 app.set('view engine', 'ejs');
 
 app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-function createUrlWithParams( params) {
+function createUrlWithParams(params) {
     const baseUrl = "openid4vp://authorize";
     const urlParams = new URLSearchParams();
 
@@ -31,31 +38,31 @@ function createUrlWithParams( params) {
 }
 
 app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res) => {
-  try {
-     const qrData = createUrlWithParams(redirectAuthorizationRequest);
-     const qrCodeData = await QRCode.toDataURL(qrData);
-    res.render('index', { title: 'Home', qrCodeData, qrData });
-  } catch (error) {
-    console.error('Error generating QR code:', error);
-    res.status(500).send('Internal Server Error');
-  }
+    try {
+        const qrData = createUrlWithParams(redirectAuthorizationRequestDraft23);
+        const qrCodeData = await QRCode.toDataURL(qrData);
+        res.render('index', {title: 'Home', qrCodeData, qrData});
+    } catch (error) {
+        console.error('Error generating QR code:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.get('/verifier/generate-auth-request-by-value-pre-registered-qr', async (req, res) => {
-  try {
-     const qrData = createUrlWithParams(preRegisteredAuthorizationRequest);
-     const qrCodeData = await QRCode.toDataURL(qrData);
+    try {
+        const qrData = createUrlWithParams(preRegisteredAuthorizationRequestDraft23);
+        const qrCodeData = await QRCode.toDataURL(qrData);
 
-     res.render('index', { title: 'Home', qrCodeData, qrData });
-  } catch (error) {
-    console.error('Error generating QR code:', error);
-    res.status(500).send('Internal Server Error');
-  }
+        res.render('index', {title: 'Home', qrCodeData, qrData});
+    } catch (error) {
+        console.error('Error generating QR code:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
     try {
-        const qrData = createUrlWithParams(authorizationRequestParams);
+        const qrData = createUrlWithParams(authorizationRequestParamsDraft23);
         const qrCodeData = await QRCode.toDataURL(qrData);
 
         res.render('index', {title: 'Home', qrCodeData, qrData});
@@ -67,7 +74,7 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
 
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
-        const jwt = await createJWT(didAuthorizationRequest)
+        const jwt = await createJWT(didAuthorizationRequestDraft23)
         res.contentType("application/oauth-authz-req+jwt")
         res.send(jwt)
         //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
@@ -80,7 +87,7 @@ app.get('/verifier/get-auth-request-obj', async (req, res) => {
 
 app.post('/verifier/get-auth-request-obj', async (req, res) => {
     try {
-        const jwt = await createJWT(didAuthorizationRequest)
+        const jwt = await createJWT(didAuthorizationRequestDraft23)
         res.contentType("application/oauth-authz-req+jwt")
         res.send(jwt)
         //res.send(btoa(JSON.stringify(jwtPayload)))
@@ -91,26 +98,26 @@ app.post('/verifier/get-auth-request-obj', async (req, res) => {
 });
 
 app.get('/verifier/presentation_definition_uri', async (req, res) => {
-  res.send(presentationDefinition);
+    res.send(presentationDefinition);
 });
 
 app.post('/verifier/vp-response', (req, res) => {
-    console.log("received vp response on ",Date.now());
+    console.log("received vp response on ", Date.now());
     console.log('data:', JSON.stringify(req.body));
-  // console.log('vp_token:', req.body.vp_token);
-  // console.log('presentation_submission:', req.body.presentation_submission);
+    // console.log('vp_token:', req.body.vp_token);
+    // console.log('presentation_submission:', req.body.presentation_submission);
     responseReceived = true;
-  /*Change this response for testing other flows*/
-  res.status(200).json({
-    message: `Verifiable presentation is received successfully.`,
-  });
+    /*Change this response for testing other flows*/
+    res.status(200).json({
+        message: `Verifiable presentation is received successfully.`,
+    });
 });
 
 app.get('/verifier/check-response', (req, res) => {
-  res.json({ responseReceived });
-  responseReceived = false;
+    res.json({responseReceived});
+    responseReceived = false;
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

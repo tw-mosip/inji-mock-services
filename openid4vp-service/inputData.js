@@ -4,7 +4,7 @@ const clientMetadata = require('./clientMetadataMock.json');
 const client_metadata = JSON.stringify(clientMetadata);
 
 const preRegisteredAuthorizationRequestDraft23 = {
-    "client_id": "pre-registered:mock-client",
+    "client_id": "mock-client",
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
     "response_mode": "direct_post",
