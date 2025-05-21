@@ -6,7 +6,7 @@ This is a mock service which mocks openid4vp backend to generate a QR code with 
 
 #### specification followed
 
-openID4VP specification draft 23 ([link](https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html))
+openID4VP [Specification-21](https://openid.net/specs/openid-4-verifiable-presentations-1_0-21.html) and  [Specification-23](https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html).
 
 ### Start the service
 
@@ -173,3 +173,8 @@ or
 3. `pre-registered` scheme (example: client_id: `mock-example client`)
 
 Reference: https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html#name-client-identifier-scheme-an
+
+## Version Supported
+
+- OpenId4VP library version: [0.3.0](https://github.com/mosip/inji-openid4vp/tree/release-0.3.x)
+- Inji Wallet version: [0.17.0](https://github.com/mosip/inji-wallet/tree/release-0.17.x)
