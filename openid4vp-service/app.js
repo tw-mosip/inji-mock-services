@@ -7,13 +7,13 @@ const {createJWT} = require("./jwt");
 const app = express();
 const {requestUri, didDocumentUrl} = require("./constants");
 const {
-    preRegisteredAuthorizationRequestDraft23,
+    preRegisteredAuthorizationRequest,
+    didAuthorizationRequest,
+    redirectAuthorizationRequest,
+    authorizationRequestParams,
     preRegisteredAuthorizationRequestDraft21,
-    redirectAuthorizationRequestDraft23,
-    redirectAuthorizationRequestDraft21,
-    didAuthorizationRequestDraft23,
     didAuthorizationRequestDraft21,
-    authorizationRequestParamsDraft23,
+    redirectAuthorizationRequestDraft21,
     authorizationRequestParamsDraft21
 } = require("./inputData");
 const PORT = 3000;
@@ -39,7 +39,7 @@ function createUrlWithParams(params) {
 
 app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res) => {
     try {
-        const qrData = createUrlWithParams(redirectAuthorizationRequestDraft23);
+        const qrData = createUrlWithParams(redirectAuthorizationRequest);
         const qrCodeData = await QRCode.toDataURL(qrData);
         res.render('index', {title: 'Home', qrCodeData, qrData});
     } catch (error) {
@@ -50,7 +50,7 @@ app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res)
 
 app.get('/verifier/generate-auth-request-by-value-pre-registered-qr', async (req, res) => {
     try {
-        const qrData = createUrlWithParams(preRegisteredAuthorizationRequestDraft23);
+        const qrData = createUrlWithParams(preRegisteredAuthorizationRequest);
         const qrCodeData = await QRCode.toDataURL(qrData);
 
         res.render('index', {title: 'Home', qrCodeData, qrData});
@@ -62,7 +62,7 @@ app.get('/verifier/generate-auth-request-by-value-pre-registered-qr', async (req
 
 app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
     try {
-        const qrData = createUrlWithParams(authorizationRequestParamsDraft23);
+        const qrData = createUrlWithParams(authorizationRequestParams);
         const qrCodeData = await QRCode.toDataURL(qrData);
 
         res.render('index', {title: 'Home', qrCodeData, qrData});
@@ -74,7 +74,7 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
 
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
-        const jwt = await createJWT(didAuthorizationRequestDraft23)
+        const jwt = await createJWT(didAuthorizationRequest)
         res.contentType("application/oauth-authz-req+jwt")
         res.send(jwt)
         //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
@@ -87,7 +87,7 @@ app.get('/verifier/get-auth-request-obj', async (req, res) => {
 
 app.post('/verifier/get-auth-request-obj', async (req, res) => {
     try {
-        const jwt = await createJWT(didAuthorizationRequestDraft23)
+        const jwt = await createJWT(didAuthorizationRequest)
         res.contentType("application/oauth-authz-req+jwt")
         res.send(jwt)
         //res.send(btoa(JSON.stringify(jwtPayload)))
