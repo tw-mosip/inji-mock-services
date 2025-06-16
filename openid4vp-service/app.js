@@ -4,6 +4,8 @@ const QRCode = require('qrcode');
 const presentationDefinition = require('./presentationDefinitionMock.json');
 const bodyParser = require('body-parser');
 const {createJWT} = require("./jwt");
+const cors = require('cors');
+
 const app = express();
 const {requestUri, didDocumentUrl} = require("./constants");
 const {
@@ -27,6 +29,8 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(cors());
+
 function createUrlWithParams(params) {
     const baseUrl = "openid4vp://authorize";
     const urlParams = new URLSearchParams();
@@ -41,7 +45,7 @@ app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res)
     try {
         const qrData = createUrlWithParams(redirectAuthorizationRequest);
         const qrCodeData = await QRCode.toDataURL(qrData);
-        res.render('index', {title: 'Home', qrCodeData, qrData});
+        res.json({ qrCodeData, qrData });
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');
@@ -53,7 +57,7 @@ app.get('/verifier/generate-auth-request-by-value-pre-registered-qr', async (req
         const qrData = createUrlWithParams(preRegisteredAuthorizationRequest);
         const qrCodeData = await QRCode.toDataURL(qrData);
 
-        res.render('index', {title: 'Home', qrCodeData, qrData});
+        res.json({ qrCodeData, qrData });
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');
@@ -65,7 +69,7 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
         const qrData = createUrlWithParams(authorizationRequestParams);
         const qrCodeData = await QRCode.toDataURL(qrData);
 
-        res.render('index', {title: 'Home', qrCodeData, qrData});
+        res.json({ qrCodeData, qrData });
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');
