@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+export const BACKEND_PORT = 3000;
 
 const Home = () => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.title = 'Home';
+    }, []);
 
     const endpoints = [
         { name: "By value - Redirect", path: "/verifier/generate-auth-request-by-value-redirect-qr" },
@@ -15,16 +21,17 @@ const Home = () => {
     };
 
     return (
-        <div style={{ paddingLeft: '40px', paddingTop: '20px' }}>
+        <div style={{paddingLeft: '40px', paddingTop: '20px'}}>
+            <h1 style={{marginBottom: '20px'}}>Home screen</h1>
             <h2>Select Auth Request Type</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px' }}>
+            <div style={{display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '10px'}}>
                 {endpoints.map(e => (
                     <button
                         key={e.name}
                         onClick={() => handleClick(e.path)}
                         style={{
-                            width: '250px',              // fixed width
-                            textAlign: 'left',           // optional: aligns text inside
+                            width: '250px',
+                            textAlign: 'left',
                             padding: '10px 20px',
                             fontSize: '16px',
                             borderRadius: '8px',
@@ -42,8 +49,6 @@ const Home = () => {
             </div>
         </div>
     );
-
-
 };
 
 export default Home;
