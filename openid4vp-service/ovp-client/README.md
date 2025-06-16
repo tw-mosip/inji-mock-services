@@ -12,7 +12,7 @@ This React client application is built to interact with the OpenID4VP mock verif
 
 - Run the mock services by running `npm start` in the `openid4vp-service` directory. It will be running in the port `3000`.
 - In other terminal, go inside the `ovp-client` directory and run `npm install` to install the required dependencies.
-- Then run `npm start` to start the client app. It will be running in the port `3001`.
+- Then run ``PORT=3001 npm start`` to start the client app. It will be running in the port `3001`.
 - Open your browser and navigate to `http://localhost:3001` to access the client app.
 - You can now interact with the OpenID4VP mock services through the client app.
 - User can select the Auth Request Type to generate respective QR Codes for the wallet to scan.
