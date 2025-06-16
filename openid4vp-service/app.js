@@ -46,7 +46,8 @@ app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res)
     try {
         const qrData = createUrlWithParams(redirectAuthorizationRequest);
         const qrCodeData = await QRCode.toDataURL(qrData);
-        res.json({ qrCodeData, qrData });
+        const inputData = redirectAuthorizationRequest
+        res.json({ qrCodeData, qrData, inputData });
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');
@@ -57,8 +58,8 @@ app.get('/verifier/generate-auth-request-by-value-pre-registered-qr', async (req
     try {
         const qrData = createUrlWithParams(preRegisteredAuthorizationRequest);
         const qrCodeData = await QRCode.toDataURL(qrData);
-
-        res.json({ qrCodeData, qrData });
+        const inputData = preRegisteredAuthorizationRequest
+        res.json({ qrCodeData, qrData, inputData });
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');
@@ -69,8 +70,8 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
     try {
         const qrData = createUrlWithParams(authorizationRequestParams);
         const qrCodeData = await QRCode.toDataURL(qrData);
-
-        res.json({ qrCodeData, qrData });
+        const inputData = authorizationRequestParams
+        res.json({ qrCodeData, qrData, inputData });
     } catch (error) {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');

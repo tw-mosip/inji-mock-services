@@ -16,8 +16,8 @@ const Home = () => {
         { name: "By Reference", path: "/verifier/generate-auth-request-by-reference-qr" },
     ];
 
-    const handleClick = (endpoint) => {
-        navigate('/qr', { state: { endpoint } });
+    const handleClick = (endpointObj) => {
+        navigate('/qr', { state: { endpoint: endpointObj.path, name: endpointObj.name } });
     };
 
     return (
@@ -28,7 +28,7 @@ const Home = () => {
                 {endpoints.map(e => (
                     <button
                         key={e.name}
-                        onClick={() => handleClick(e.path)}
+                        onClick={() => handleClick(e)}
                         style={{
                             width: '250px',
                             textAlign: 'left',
