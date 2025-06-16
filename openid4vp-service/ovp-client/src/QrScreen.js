@@ -84,18 +84,41 @@ const QrScreen = () => {
 
 
                     {qrCodeData && qrData ? (
-                        <a href={qrData} style={{display: 'inline-block'}}>
-                            <img
-                                src={qrCodeData}
-                                alt="QR Code"
+                        <div>
+                            <a href={qrData} target="_blank" rel="noopener noreferrer">
+                                <img
+                                    src={qrCodeData}
+                                    alt="QR Code"
+                                    style={{
+                                        width: '400px',
+                                        height: '400px',
+                                        marginBottom: '10px',
+                                        cursor: 'pointer',
+                                        display: 'block',
+                                    }}
+                                />
+                            </a>
+
+                            <a
+                                href={qrCodeData}
+                                download="qr-code.png"
                                 style={{
-                                    width: '400px',
-                                    height: '400px',
-                                    marginBottom: '20px',
+                                    display: 'inline-block',
+                                    padding: '8px 16px',
+                                    fontSize: '14px',
+                                    borderRadius: '4px',
+                                    border: '1px solid #ccc',
+                                    background: '#e0f7fa',
+                                    textDecoration: 'none',
+                                    color: '#000',
                                     cursor: 'pointer',
                                 }}
-                            />
-                        </a>
+                            >
+                                ⬇ Download QR
+                            </a>
+                        </div>
+
+
                     ) : (
                         <p>Loading...</p>
                     )}

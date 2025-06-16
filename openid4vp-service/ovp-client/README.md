@@ -16,5 +16,6 @@ This React client application is built to interact with the OpenID4VP mock verif
 - Open your browser and navigate to `http://localhost:3001` to access the client app.
 - You can now interact with the OpenID4VP mock services through the client app.
 - User can select the Auth Request Type to generate respective QR Codes for the wallet to scan.
+- User can download QR code by clicking on the download icon below to the QR code.
 - Once the wallet scans the QR code, it will send the Verifiable Presentation (VP) response back to the client app.
 - Error response also shown in Scan Result section.
