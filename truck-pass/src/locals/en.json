@@ -1,0 +1,65 @@
+{
+    "navbar": {
+        "home": "Home",
+        "help": "Help"
+    },
+    "footer": {
+        "footerText": "© 2025 TruckPass. All rights reserved."
+    },
+    "landingPage": {
+        "landingPageTitle": "Cross-Border Truck Pass Digital System",
+        "landingPageSubTitle": "Streamline cross-border transportation with our secure, efficient digital pass system. Reduce wait times, enhance security, and simplify documentation for all stakeholders",
+        "getStartedToday": "Get Started Today",
+        "driverRegistration": "Driver Registration",
+        "driverRegSubTitle": "Self registration for independent operators and drivers.",
+        "registerAsDriver": "Register As Driver",
+        "requestTruckPass": "Request Truck Pass",
+        "requestTruckPassSubTitle": "Lorem ipsum dolor sit amet consectetur.",
+        "login": "Log In",
+        "howItWorks": "How It Works",
+        "landingPageInfo": "Our streamlined process makes cross-border transportation simple and secure",
+        "subApplication": "Submit Application",
+        "subApplicationInfo": "Complete the digital application form with required documentation and vehicle information.",
+        "securityVerification": "Security Verification",
+        "securityVerificationInfo": "Our system conducts automated security checks and validation of submitted documents.",
+        "approvalAndIssuance": "Approval & Issuance",
+        "approvalAndIssuanceInfo": "Receive your digital pass with QR code and tracking number for border crossing.",
+        "crossBorder": "Cross Border",
+        "crossBorderInfo": "Present your digital pass at border checkpoints for quick and secure crossing."
+    },
+    "driverRegistrationProcess": {
+        "processMainTitle": "Cross-Border Transport Registration",
+        "respDescription": "Register as a Professional Truck Driver"
+    },
+    "stepper": {
+        "registrationProcess": "Registration Process",
+        "consentAndAgreement": "Consent & Agreement",
+        "selectCompany": "Select Company",
+        "uinVerification": "UIN Verification",
+        "registration": "Registration",
+        "submitApplication": "Submit Application",
+        "confirmation": "Confirmation"
+    },
+    "consentAndAgreementPage": {
+        "consentAndAgreementTitle": "Consent & Agreement",
+        "consentAndAgreementDesc": "Please read and agree to the following terms to continue with your registration",
+        "termsAndConditions": "Terms and Conditions",
+        "termsAndConditionsInfo": "Please review our terms and conditions for professional truck drivers",
+        "consentPara1": "I hereby consent to the collection and use of my personal information for the purpose of registering myself to receive a demo TruckPass. I understand that this data is being collected solely for demonstration purposes related to showcasing the Inji Stack product and to provide me with a self-service experience within the MOSIP Sandbox Environment.",
+        "consentPara2": "I acknowledge that my data will not be used for any other purpose, nor will it be shared with any third party beyond what is required for this demo. I also understand that this is a non-production environment and the data provided will be handled in accordance with applicable data protection practices.",
+        "getStarted": "Get Started"
+    },
+    "selectCompany": {
+        "selectRegisteredTransportCompany": "Select Registered Transport Company",
+        "chooseCompanyDesc": "Choose the transport company you wish to register with as a professional driver.",
+        "continue": "Continue"
+    },
+    "uinVerification": {
+        "uinVerification": "UIN Verification"
+
+    },
+    "commans": {
+        "inProgress": "In Progress",
+        "completed": "Completed"
+    }
+}
