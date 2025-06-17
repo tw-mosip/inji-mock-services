@@ -46,7 +46,7 @@ const LandingPage = () => {
                 <img src={driver_user_icon} className="h-10 border-0 p-2 rounded-md shadow-lg" />
                 <p className="font-[600]">{t('landingPage.driverRegistration')}</p>
                 <p className="text-[12px]">{t('landingPage.driverRegSubTitle')}</p>
-                <p onClick={moveToDriverRegistration} className="bg-[#006DE7] w-[90%] text-[10px] font-[200] py-[2%] text-center rounded-[5px] text-[#FFFFFF] cursor-pointer">
+                <p onClick={moveToDriverRegistration} className="bg-[#006DE7] w-[90%] text-[10px] font-[600] py-[2%] text-center rounded-[5px] text-[#FFFFFF] cursor-pointer">
                   {t('landingPage.registerAsDriver')}
                 </p>
               </div>
@@ -55,7 +55,7 @@ const LandingPage = () => {
                 <img src={request_truck_pass_icon} className="h-10 border-0 p-2 rounded-md shadow-lg" />
                 <p className="font-[600]">{t('landingPage.requestTruckPass')}</p>
                 <p className="text-[12px]">{t('landingPage.requestTruckPassSubTitle')}</p>
-                <p className="bg-[#006DE7] w-[90%] text-[10px] font-[200] py-[2%] text-center rounded-[5px] text-[#FFFFFF] cursor-pointer">
+                <p className="bg-[#006DE7] w-[90%] text-[10px] font-[600] py-[2%] text-center rounded-[5px] text-[#FFFFFF] cursor-pointer">
                   {t('landingPage.login')}
                 </p>
               </div>
