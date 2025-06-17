@@ -66,7 +66,7 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ setSelectionPageCo
         <div className={`flex flex-col bg-[#FFFFFF] pt-5 pb-9 w-full px-6 rounded-br-2xl rounded-tr-2xl justify-between font-inter`}>
             <div className="space-y-4">
                 <h1 className="font-semibold text-[22px]">{t('selectCompany.selectRegisteredTransportCompany')}</h1>
-                <p className="text-[15px] font-thin">{t('selectCompany.chooseCompanyDesc')}</p>
+                <p className="text-[15px]">{t('selectCompany.chooseCompanyDesc')}</p>
 
                 <div className="relative mb-6">
                     <label htmlFor="company-search" className="flex items-center text-[13px] font-medium text-gray-700 mb-2">
@@ -128,7 +128,7 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ setSelectionPageCo
             </div>
             <button disabled={!selectedCompany} onClick={() => setSelectionPageContinueBtn(true)}
                 className={`${selectedCompany ? "bg-[#006DE7] cursor-pointer": "bg-[#B0B0B0] focus:shadow-md cursor-pointer"}} w-[21%] text-xs font-[600] place-self-end align-bottom py-2.5 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
-                {t('selectCompany.continue')}
+                {t('commans.continue')}
             </button>
         </div>
     )

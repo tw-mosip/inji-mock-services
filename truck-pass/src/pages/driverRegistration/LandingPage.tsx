@@ -34,7 +34,7 @@ const LandingPage = () => {
           <img src={line_pattern_left} className="h-[290px] w-[15%] -ml-[100px] mb-[3%]" />
           <div className="flex flex-col text-center w-[50%] gap-y-10">
             <p className="text-4xl text-[#FFFFFF] font-[500] px-20">{t('landingPage.landingPageTitle')}</p>
-            <p className="text-[15px] text-[#E1EFFF] font-thin">{t('landingPage.landingPageSubTitle')}</p>
+            <p className="text-[15px] text-[#E1EFFF]">{t('landingPage.landingPageSubTitle')}</p>
           </div>
           <img src={line_pattern_right} className="h-[290px] w-[15%] -mr-[100px] -mb-[7%]" />
         </div>
@@ -42,7 +42,7 @@ const LandingPage = () => {
           <div className="flex flex-col w-full items-center mt-14 pb-[38px] space-y-8 bg-[url('../assets/landingPage_bg.png')] h-[400px]">
             <p className="text-2xl text-[##181D27] font-[500]">{t('landingPage.getStartedToday')}</p>
             <div className="flex place-self-center space-x-10">
-              <div className="flex flex-col bg-[#FFFFFF] w-[380px] h-auto border-0 rounded-xl items-center py-7 shadow-2xl space-y-5">
+              <div className="flex flex-col bg-[#FFFFFF] w-[380px] h-auto border-0 rounded-xl items-center py-7 shadow-2xl space-y-5 text-center justify-between">
                 <img src={driver_user_icon} className="h-10 border-0 p-2 rounded-md shadow-lg" />
                 <p className="font-[600]">{t('landingPage.driverRegistration')}</p>
                 <p className="text-[12px]">{t('landingPage.driverRegSubTitle')}</p>
@@ -51,7 +51,7 @@ const LandingPage = () => {
                 </p>
               </div>
 
-              <div className="flex flex-col bg-[#FFFFFF] w-[380px] h-auto border-0 rounded-xl items-center py-7 shadow-2xl space-y-5">
+              <div className="flex flex-col bg-[#FFFFFF] w-[380px] h-auto border-0 rounded-xl items-center py-7 shadow-2xl space-y-5 justify-between">
                 <img src={request_truck_pass_icon} className="h-10 border-0 p-2 rounded-md shadow-lg" />
                 <p className="font-[600]">{t('landingPage.requestTruckPass')}</p>
                 <p className="text-[12px]">{t('landingPage.requestTruckPassSubTitle')}</p>

@@ -3,6 +3,7 @@ import upload_to_cloud from '../assets/upload_cloud_icon.png';
 import file_type_icon from '../assets/file_type_icon.png';
 import cross_circle_icon from '../assets/cross_circle_icon.png';
 import trash_icon from '../assets/trash_icon.png';
+import { useTranslation } from 'react-i18next';
 
 export const CertificateUploadingSection: React.FC<CertificateUploadingSectionProps> = ({
   showUploadingBlock,
@@ -18,6 +19,8 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
   const [data, setData] = useState<string | null>(null);
   const [progress, setProgress] = useState<number>(0);
   const [fileSize, setFileSize] = useState<number>(0);
+  const { t } = useTranslation();
+
 
   const handleFileInputClick = () => {
     document.getElementById('file-upload')?.click();
@@ -67,6 +70,8 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
     setFileName(null);
     setProgress(0);
     setUploading(false);
+    setErrorMsg('');
+    setData(null);
     setShowUploadingBlock(false);
     setFileUploaded(false);
   };
@@ -74,7 +79,8 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
   const onChangeFile = () => {
     setShowUploadingBlock(false);
     setProgress(0);
-    setFileName('');
+    setUploading(false);
+    setFileName(null);
     setErrorMsg('');
     setData(null);
     setFileUploaded(false);
@@ -98,12 +104,12 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                 onClick={handleFileInputClick}
               />
             </div>
-            <p className="text-[12px] text-[#475467]">
-              <span className="text-[12px] text-[#006DE7] font-semibold cursor-pointer" onClick={handleFileInputClick}>
-                Certificate of Professional Competence (CPC)
-              </span>{' '} or click to browse
+            <p className="text-[13px] text-[#475467]">
+              <span className="text-[13px] text-[#006DE7] font-semibold cursor-pointer" onClick={handleFileInputClick}>
+                {t('certificationUploadSec.cpc')}
+              </span>{' '} {t('certificationUploadSec.clickToBrowse')}
             </p>
-            <p className="text-[12px] text-[#475467]">Please upload document with the file format as PNG or PDF and Size should be maximum of 5MB</p>
+            <p className="text-[13px] text-[#475467]">{t('certificationUploadSec.uploadCertificateInfo')}</p>
           </>
         )}
 
@@ -151,7 +157,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                   <div className='flex items-center gap-1'>
                     <p className="text-[0.6rem] text-[#475467] font-semibold">{fileSize} KB </p>
                     <img src={cross_circle_icon} className='h-3 pl-1.5' />
-                    <p className='text-[10px] text-[#D92D20]'>Failed</p>
+                    <p className='text-[10px] text-[#D92D20]'>{t('certificationUploadSec.failed')}</p>
                   </div>
 
                   <div className="flex justify-between gap-x-1 rounded-full h-2.5 mb-4">
@@ -168,7 +174,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                   className="h-4 w-4 cursor-pointer "
                   onClick={cancelUpload}
                 />
-                <p className="text-[#344054] self-center text-[0.7rem] bg-white">{progress}%</p>
+                <p className="text-[#344054] self-center text-[0.7rem] bg-white">100%</p>
               </div>
             </div>
           )

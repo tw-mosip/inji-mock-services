@@ -51,15 +51,74 @@
     },
     "selectCompany": {
         "selectRegisteredTransportCompany": "Select Registered Transport Company",
-        "chooseCompanyDesc": "Choose the transport company you wish to register with as a professional driver.",
-        "continue": "Continue"
+        "chooseCompanyDesc": "Choose the transport company you wish to register with as a professional driver."
     },
     "uinVerification": {
-        "uinVerification": "UIN Verification"
-
+        "uinVerification": "UIN Verification",
+        "readyForVerfication": "Ready for Verfication",
+        "verifiedSuccessFully": "Verified SuccessFully",
+        "verificationReadyInfo": "Click the button below to verify your UIN using eSignet. This will automatically fetch and fill your personal details.",
+        "verifiedInfo": "Your details have been verified. Please proceed to the next step.",
+        "verifyBtn": "Verify"
+    },
+    "registration": {
+        "personalInformation": "Personal Information",
+        "fullName": "Full Name",
+        "uin": "Unique Identification Number (UIN)",
+        "gender": "Gender",
+        "eMailId": "Email ID",
+        "phNum": "Phone Number",
+        "city": "City",
+        "additionalInfo": "Additional Information",
+        "provideInfo": "Please provide all required information.",
+        "driverLicenseNum": "Driver’s License Number",
+        "manualEntry": "Manual Entry",
+        "shareViaInjiVerify": "Share Via Inji Verify",
+        "shareLicenseViaInjiVerify": "Share License via Inji Verify",
+        "shareLicenseViaInjiVerifyInfo": "Click the button below to share your license through VP Flow. Your license number will be automatically fetched from the VC.",
+        "shareBtn": "Share",
+        "fetchedSuccessfully": "License Fetched Successfully",
+        "authenticatedSuccessfully": "Your details has been authenticated. Please proceed to the next step.",
+        "passportNum": "Passport Number",
+        "cpc": "Certificate of Professional Competence (CPC)",
+        "registering": "Registering",
+        "pleaseWait": "Please Wait!"
+    },
+    "certificationUploadSec": {
+        "cpc": "Certificate of Professional Competence (CPC)",
+        "clickToBrowse": " or click to browse",
+        "uploadCertificateInfo": "Please upload document with the file format as PNG or PDF and Size should be maximum of 5MB",
+        "failed": "Failed"
+    },
+    "confirmationPage": {
+        "registrationCompleted": "Registration Completed!",
+        "SuccessFullySubmitText": "Your application has been successFully submitted.",
+        "driverSummary": "Driver Summary",
+        "registrationDetailsInfo": "Registration details for {{driverName}}",
+        "fullName": "Full Name:",
+        "uin": "UIN",
+        "gender": "Gender",
+        "email": "Email:",
+        "phoneNumber": "Phone Number:",
+        "city": "City",
+        "transportCompany": "Transport Company",
+        "licenseNum": "License Number:",
+        "passportNumber": "Passport Number:",
+        "cpcCertificate": "CPC Certificate:",
+        "startNewRegistrationBtn": "Start New Registration"
+    },
+    "successPopUp": {
+        "header": "Registration Successful!",
+        "desc": "Driver registration successful."
     },
     "commans": {
         "inProgress": "In Progress",
-        "completed": "Completed"
+        "completed": "Completed",
+        "continue": "Continue",
+        "goBack": "Go Back",
+        "submit": "Submit"
+    },
+    "errors": {
+        
     }
 }

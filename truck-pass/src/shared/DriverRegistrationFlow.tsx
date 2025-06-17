@@ -7,7 +7,7 @@ import { Registration } from '../pages/driverRegistration/Registration';
 import { RegistrationLoader } from '../pages/driverRegistration/RegistrationLoader';
 import { ConfirmationPage } from '../pages/driverRegistration/ConfirmationPage';
 
-export const DriverRegistrationFlow: React.FC = () => {
+export const DriverRegistrationFlow: React.FC<DriverRegistrationFlowProps> = ({ setShowSuccessPopup }) => {
     const [getStartedBtn, setGetStartedBtn] = useState(false);
     const [selectionPageContinueBtn, setSelectionPageContinueBtn] = useState(false);
     const [uinVerificationContinueBtn, setUinVerificationContinueBtn] = useState(false);
@@ -34,15 +34,15 @@ export const DriverRegistrationFlow: React.FC = () => {
 
             {selectionPageContinueBtn && !uinVerificationContinueBtn &&
                 <UinVerification
-                    setSelectionPageContinueBtn = {setSelectionPageContinueBtn}
+                    setSelectionPageContinueBtn={setSelectionPageContinueBtn}
                     setUinVerificationContinueBtn={setUinVerificationContinueBtn}
                 />
             }
 
             {uinVerificationContinueBtn && !registrationSubmitBtn &&
-                <Registration 
-                setUinVerificationContinueBtn={setUinVerificationContinueBtn}
-                setRegistrationSubmitBtn={setRegistrationSubmitBtn} 
+                <Registration
+                    setUinVerificationContinueBtn={setUinVerificationContinueBtn}
+                    setRegistrationSubmitBtn={setRegistrationSubmitBtn}
                 />
             }
 
@@ -51,9 +51,15 @@ export const DriverRegistrationFlow: React.FC = () => {
             }
 
             {confirmationBtn &&
-                <ConfirmationPage />
+                <ConfirmationPage
+                    setShowSuccessPopup={setShowSuccessPopup}
+                />
             }
 
         </div>
     )
+}
+
+interface DriverRegistrationFlowProps {
+    setShowSuccessPopup: (status: boolean) => void;
 }

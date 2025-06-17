@@ -11,7 +11,7 @@ export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = (
         <div className={`flex flex-col bg-[#FFFFFF] pt-5 pb-9 w-full px-6 rounded-br-2xl rounded-tr-2xl justify-between font-inter`}>
             <div className="space-y-4 ">
                 <h1 className="font-semibold text-[22px]">{t('consentAndAgreementPage.consentAndAgreementTitle')}</h1>
-                <p className="text-[15px] font-thin">{t('consentAndAgreementPage.consentAndAgreementDesc')}</p>
+                <p className="text-[15px]">{t('consentAndAgreementPage.consentAndAgreementDesc')}</p>
 
                 <div className="h-[275px] border border-[#E2E8F0] rounded-lg p-4">
                     <div className="flex gap-x-2">
@@ -20,7 +20,7 @@ export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = (
                     </div>
                     <p className="text-[13px] text-[#64748B] pt-1.5 pb-4">{t('consentAndAgreementPage.termsAndConditionsInfo')}</p>
                     <div className="flex items-start gap-x-2">
-                        <input type="checkbox" className="border mt-1" onClick={() => setCheckBox(!checkBox)} />
+                        <input type="checkbox" className="border mt-1 cursor-pointer" onClick={() => setCheckBox(!checkBox)} />
                         <div className="flex flex-col gap-y-6">
                             <p className="text-[13px] text-[#020817]">
                                 {t('consentAndAgreementPage.consentPara1')}
