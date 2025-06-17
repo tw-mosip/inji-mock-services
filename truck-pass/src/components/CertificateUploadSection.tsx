@@ -182,7 +182,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
         {(showUploadingBlock || errorMsg) &&
           <button onClick={onChangeFile}
             className={`bg-transparent w-[23%] text-xs text-[#414651] border border-[#D5D7DA] font-[600] py-2.5 text-center rounded-[5px] cursor-pointer`}>
-            Change File
+            {t('certificationUploadSec.changeFile')}
           </button>
         }
       </div>

@@ -87,8 +87,10 @@
     "certificationUploadSec": {
         "cpc": "Certificat de Compétence Professionnelle (CPC)",
         "clickToBrowse": " ou cliquez pour parcourir",
-        "uploadCertificateInfo": "Veuillez télécharger le document au format PNG ou PDF et dont la taille ne dépasse pas 5 Mo",
-        "failed": "échoué"
+        "uploadManualCertificateInfo": "Veuillez télécharger le document au format PNG ou PDF et dont la taille ne dépasse pas 5 Mo",
+        "uploadViaInjiVerifyCertificateInfo": "PNG ou PDF (taille max. 1 Mo)",
+        "failed": "échoué",
+        "changeFile": "Changer de fichier"
     },
     "confirmationPage": {
         "registrationCompleted": "Enregistrement Terminé!",

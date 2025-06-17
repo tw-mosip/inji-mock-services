@@ -87,8 +87,10 @@
     "certificationUploadSec": {
         "cpc": "Certificate of Professional Competence (CPC)",
         "clickToBrowse": " or click to browse",
-        "uploadCertificateInfo": "Please upload document with the file format as PNG or PDF and Size should be maximum of 5MB",
-        "failed": "Failed"
+        "uploadManualCertificateInfo": "Please upload document with the file format as PNG or PDF and Size should be maximum of 5MB",
+        "uploadViaInjiVerifyCertificateInfo": "PNG or PDF (max size. 1mb)",
+        "failed": "Failed",
+        "changeFile": "Change File"
     },
     "confirmationPage": {
         "registrationCompleted": "Registration Completed!",
@@ -118,7 +120,5 @@
         "goBack": "Go Back",
         "submit": "Submit"
     },
-    "errors": {
-        
-    }
+    "errors": {}
 }

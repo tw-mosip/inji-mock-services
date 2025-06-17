@@ -181,10 +181,16 @@ export const Registration: React.FC<RegistrationProps> = ({ setUinVerificationCo
                     className={`bg-transparent w-[23%] text-xs text-[#414651] border border-[#D5D7DA] font-[600] py-2.5 text-center rounded-[5px] cursor-pointer`}>
                     {t('commans.goBack')}
                 </button>
-                <button disabled={!passportNum && !driverLicenceNum && !certificateUploaded} onClick={() => setRegistrationSubmitBtn(true)}
-                    className={`${(passportNum && driverLicenceNum && certificateUploaded) ? 'bg-[#006DE7]' : 'bg-[#C2C2C2]'} w-[33%] text-xs font-[600] py-2.5 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
+                {selectedOpt === 'shareViaInjiVerify' ?
+                 <button disabled={!passportNum || !driverLicenceNum || !certificateUploaded } onClick={() => setRegistrationSubmitBtn(true)}
+                    className={`${(passportNum && driverLicenceNum && certificateUploaded) ? 'bg-[#006DE7] cursor-pointer' : 'bg-[#C2C2C2]'} w-[33%] text-xs font-[600] py-2.5 text-center rounded-[5px] text-[#FFFFFF]`}>
                     {t('commans.submit')}
                 </button>
+                : <button disabled={!passportNum || !driverLicenceNum || !licenseShared || !certificateUploaded} onClick={() => setRegistrationSubmitBtn(true)}
+                    className={`${(passportNum && driverLicenceNum && licenseShared && certificateUploaded) ? 'bg-[#006DE7] cursor-pointer' : 'bg-[#C2C2C2]'} w-[33%] text-xs font-[600] py-2.5 text-center rounded-[5px] text-[#FFFFFF]`}>
+                    {t('commans.submit')}
+                </button>
+}
             </div>
         </div>
     )
