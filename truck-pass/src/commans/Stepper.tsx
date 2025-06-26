@@ -4,28 +4,17 @@ import tick_icon from "../assets/tick_icon.png";
 import { useTranslation } from 'react-i18next';
 
 export const Stepper: React.FC<StepperProps> = ({ consentStatus, selectCompanyStatus, uinVerificationStatus, registrationStatus, confirmationStatus }) => {
-
-    const [consentAgreed, setConsentAgreed] = useState(true);
-    const [companySelected, setCompanySelected] = useState(false);
-    const [uinVerified, setUinVerified] = useState(false);
-    const [registrationCompleted, setRegistrationCompleted] = useState(false);
-    const [confirmed, setconfirmed] = useState(false);
+    
     const { t } = useTranslation();
-
-
-    useEffect(() => {
-        if (consentStatus) { setConsentAgreed(false) }
-        if (selectCompanyStatus) { setCompanySelected(true) }
-        if (uinVerificationStatus) { setUinVerified(true) }
-        if (registrationStatus) { setRegistrationCompleted(true) }
-        if (confirmationStatus) { setconfirmed(true) }
-    },
-        [consentStatus, selectCompanyStatus, uinVerificationStatus, registrationStatus, confirmationStatus]
-    )
+    const consentAgreed = consentStatus;
+    const companySelected = selectCompanyStatus;
+    const uinVerified = uinVerificationStatus;
+    const registrationCompleted = registrationStatus;
+    const confirmed = confirmationStatus;
 
     const registrationProcessItems = [
-        { id: 1, title: t('stepper.consentAndAgreement'), inProgress: consentAgreed, completed: !consentAgreed },
-        { id: 2, title: t('stepper.selectCompany'), inProgress: (!consentAgreed && !companySelected), completed: companySelected },
+        { id: 1, title: t('stepper.consentAndAgreement'), inProgress: !consentAgreed, completed: consentAgreed },
+        { id: 2, title: t('stepper.selectCompany'), inProgress: (consentAgreed && !companySelected), completed: companySelected },
         { id: 3, title: t('stepper.uinVerification'), inProgress: (companySelected && !uinVerified), completed: uinVerified },
         { id: 4, title: t('stepper.registration'), inProgress: (uinVerified && !registrationCompleted), completed: registrationCompleted },
         { id: 5, title: t('stepper.submitApplication'), inProgress: (registrationCompleted && !confirmed), completed: confirmed },

@@ -17,7 +17,7 @@ const LandingPage = () => {
   const { t } = useTranslation();
 
   const moveToDriverRegistration = () => {
-    navigate('/DriverRegistrationProcessPage');
+    navigate('/driverRegistrationProcessPage/consentAndAgreementPage');
   }
 
   const streamlinedProcess = [
@@ -69,9 +69,9 @@ const LandingPage = () => {
 
           <div className="flex space-x-[4%] mt-[3%] justify-evenly px-[14%]">
 
-            {streamlinedProcess.map((item) => {
+            {streamlinedProcess.map((item, index) => {
               return (
-                <div className="flex flex-col space-y-4 items-center w-[18%] text-center">
+                <div key={index} className="flex flex-col space-y-4 items-center w-[18%] text-center">
                   <img src={item.icon} className="h-10 border-0 p-2 rounded-md shadow-lg" />
                   <p className="text-[13px] font-[700]">{item.title}</p>
                   <p className="text-[11px]">{item.subTitle}</p>

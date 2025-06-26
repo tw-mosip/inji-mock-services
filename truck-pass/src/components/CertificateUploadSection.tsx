@@ -20,6 +20,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
   const [progress, setProgress] = useState<number>(0);
   const [fileSize, setFileSize] = useState<number>(0);
   const { t } = useTranslation();
+  
 
 
   const handleFileInputClick = () => {
@@ -28,6 +29,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     setShowUploadingBlock(true);
+    setProgress(0);
     const file = e.target.files ? e.target.files[0] : null;
     if (!file) return;
 
