@@ -34,12 +34,15 @@ app.use(cors());
 
 function createUrlWithParams(params) {
     const baseUrl = "openid4vp://authorize";
-    const urlParams = new URLSearchParams();
+    const paramStrings = [];
 
     for (const [key, value] of Object.entries(params)) {
-        urlParams.append(key, value.toString());
+        const encodedKey = encodeURIComponent(key);
+        const encodedValue = encodeURIComponent(value.toString());
+        paramStrings.push(`${encodedKey}=${encodedValue}`);
     }
-    return `${baseUrl}?${urlParams.toString()}`;
+    
+    return `${baseUrl}?${paramStrings.join('&')}`;
 }
 
 app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res) => {
