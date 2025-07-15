@@ -22,7 +22,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
     const [verified, setVerified] = useState(false);
     const [errorCode, setErrorCode] = useState("");
     const [errorMsg, setErrorMsg] = useState('');
-    const [verificationStatus, setVerificationStatus] = useState<'pending' | 'verified' | 'already-registered'>('pending');
+    const [verificationStatus, setVerificationStatus] = useState<'pending' | 'verified' | 'already-registered' | 'unable-to-fetch-data'>('pending');
 
     const { post_fetchUserInfo } = {
         ...relyingPartyService,
@@ -77,7 +77,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                 setVerificationStatus('verified');
             }
             else {
-                setVerificationStatus('already-registered');
+                setVerificationStatus('unable-to-fetch-data');
             }
             console.log(userInfo);
 
@@ -141,17 +141,6 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                 ? '*'.repeat(value.length)
                 : value.slice(0, 2) + '*'.repeat(value.length - 4) + value.slice(-2);
 
-
-    // This is a placeholder to simulate verification logic
-    // const handleVerify = () => {
-    //     // Simulate different cases; update logic here to connect with API
-    //     const isAlreadyRegistered = false; // simulate flag
-    //     if (isAlreadyRegistered) {
-    //         setVerificationStatus('already-registered');
-    //     } else {
-    //         setVerificationStatus('verified');
-    //     }
-    // };
 
     const renderStatusBlock = () => {
         switch (verificationStatus) {
@@ -218,6 +207,23 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                         <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
                     </div>
                 );
+
+    //The case unable-to-fetch-data UI for the useCase of now for our convience
+            case 'unable-to-fetch-data':
+                return (
+                    <div className="flex flex-col bg-[#f87373] border border-[#fbb7b7] space-y-2 rounded-lg p-4">
+                        <h2 className="text-sm font-semibold text-[#a80414]">{t('Unable to fetch the data')}</h2>
+                        <div className="bg-pink-600 border border-[#FFE7B7] rounded-md px-3 py-2 flex justify-between items-center text-sm text-[#ee8263] font-semibold">
+                            {t('')} <span className="text-[#f62d63] flex items-center">
+                            </span>
+                        </div>
+                        <p className="text-[12px] text-[#ea9e89] font-[500]">{t('Better Check All the required aspects and Try Again.',)}</p>
+                        {/* <p className="text-[12px] text-[#ff0004] font-[500]">{t('uinVerification.alreadyRegisteredInfoTryAgain',)}</p> */}
+                        <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
+                    </div>
+                )
+    //The case unable-to-fetch-data UI for the useCase of now for our convience
+
             default:
                 return null;
         }

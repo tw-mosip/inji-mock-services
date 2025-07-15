@@ -65,7 +65,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
     const moveToConfirmationPage = () => {
         setRegistrationSubmitBtn(true);
         setConfirmationScreen(true);
-        const additionalInfo = {'driverLicenceNum' : driverLicenceNum, 'passportNum': passportNum};
+        const additionalInfo = { 'driverLicenceNum': driverLicenceNum, 'passportNum': passportNum };
         localStorage.setItem('additionalInfo', JSON.stringify(additionalInfo));
     }
 
@@ -146,7 +146,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                     <p className='text-sm'>{t('registration.city')}<span className='text-[#006DE7]'>*</span> </p>
                                     <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
                                 </label>
-                                <input disabled value={driverInfo?.city ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                <input disabled value={driverInfo?.address?.locality ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                             </div>
 
                             <div className='py-3 space-y-6'>
@@ -285,4 +285,5 @@ type DriverInfo = {
     email?: string;
     phone_number?: string;
     city?: string;
+    address?: { locality?: string };
 };

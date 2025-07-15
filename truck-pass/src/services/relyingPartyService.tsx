@@ -14,7 +14,7 @@ const post_fetchUserInfo = async (
   client_id: string,
   redirect_uri: string,
   grant_type: string
-) => {
+): Promise<any> => {
   const request = {
     code,
     client_id,
