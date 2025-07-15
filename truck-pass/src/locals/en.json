@@ -56,6 +56,8 @@
     "uinVerification": {
         "uinVerification": "UIN Verification",
         "readyForVerfication": "Ready for Verfication",
+        "uinAlreadyRegistered": "UIN Already Registered",
+        "alreadyRegisteredInfo": "A driver with this UIN is already registered in the TruckPass system.",
         "verifiedSuccessFully": "Verified SuccessFully",
         "verificationReadyInfo": "Click the button below to verify your UIN using eSignet. This will automatically fetch and fill your personal details.",
         "verifiedInfo": "Your details have been verified. Please proceed to the next step.",

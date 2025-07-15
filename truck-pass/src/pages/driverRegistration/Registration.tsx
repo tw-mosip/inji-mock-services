@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import user_photo from "../../assets/user_photo.png";
+import React, { useEffect, useState } from 'react';
 import help_icon from "../../assets/help_icon.png";
 import registering_process from "../../assets/registering_process.gif";
-import { QRCodeVerification } from "@mosip/react-inji-verify-sdk";
+// import { QRCodeVerification } from "@mosip/react-inji-verify-sdk";
 import poweredby_inji_icon from "../../assets/poweredby_inji_icon.png";
 import { CertificateUploadingSection } from '../../components/CertificateUploadSection';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Stepper } from '../../commans/Stepper';
+
 
 export const Registration: React.FC<RegistrationProps> = ({ }) => {
 
@@ -17,20 +17,30 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
     const [driverLicenceNum, setDriverLicenceNum] = useState('');
     const [licenseShared, setLicenseShared] = useState(false);
     const [passportNum, setPassportNum] = useState('');
+    const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null);
     const [confirmationScreen, setConfirmationScreen] = useState(false);
     const [showCertificateUploading, setShowCertificateUploading] = useState(false);
     const [certificateUploaded, setCertificateUploaded] = useState(false);
-    const [errorMsg, setErrorMsg] = useState('');
     const [registrationSubmitBtn, setRegistrationSubmitBtn] = useState(false);
     const [confirmationBtn, setConfirmationBtn] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
 
     const { t } = useTranslation();
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const data = localStorage.getItem('driverInformation');
+        if (data) {
+            const information = JSON.parse(data);
+            setDriverInfo(information);
+        }
+    }, []);
+
     const moveToVerifyUinPage = () => {
         navigate('/driverRegistrationProcessPage/verifyUINPage');
         setRegistrationSubmitBtn(false);
+        location.reload();
     }
 
     const RegistrationLoader = () => {
@@ -55,6 +65,8 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
     const moveToConfirmationPage = () => {
         setRegistrationSubmitBtn(true);
         setConfirmationScreen(true);
+        const additionalInfo = {'driverLicenceNum' : driverLicenceNum, 'passportNum': passportNum};
+        localStorage.setItem('additionalInfo', JSON.stringify(additionalInfo));
     }
 
     const handleEntryOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -92,14 +104,14 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                 : <div className={`flex flex-col bg-[#FFFFFF] pt-5 pb-9 w-full px-6 rounded-br-2xl rounded-tr-2xl justify-between font-inter`}>
                     <div className="space-y-4">
                         <h1 className="font-semibold text-[22px] pt-8">{t('registration.personalInformation')}</h1>
-                        <img src={user_photo} alt="user_photo" className='h-24 pt-2' />
+                        <img src={driverInfo?.picture ?? ''} alt="driver_user_icon" className='h-24 pt-2' />
                         <form className='flex flex-col gap-y-4'>
                             <div className='space-y-1'>
                                 <label className='flex items-center'>
                                     <p className='text-sm'>{t('registration.fullName')}<span className='text-[#006DE7]'>*</span> </p>
                                     <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
                                 </label>
-                                <input disabled value={'Rajesh Singh'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                <input disabled value={driverInfo?.name ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                             </div>
                             <div className='space-y-1'>
                                 <label className='flex items-center'>
@@ -113,28 +125,28 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                     <p className='text-sm'>{t('registration.gender')}<span className='text-[#006DE7]'>*</span> </p>
                                     <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
                                 </label>
-                                <input disabled value={'Male'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                <input disabled value={driverInfo?.gender ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                             </div>
                             <div className='space-y-1'>
                                 <label className='flex items-center'>
                                     <p className='text-sm'>{t('registration.eMailId')}<span className='text-[#006DE7]'>*</span> </p>
                                     <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
                                 </label>
-                                <input disabled value={'myemail@gmail.com'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                <input disabled value={driverInfo?.email ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                             </div>
                             <div className='space-y-1'>
                                 <label className='flex items-center'>
                                     <p className='text-sm'>{t('registration.phNum')}<span className='text-[#006DE7]'>*</span> </p>
                                     <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
                                 </label>
-                                <input disabled value={'+91 9876543210'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                <input disabled value={driverInfo?.phone_number ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                             </div>
                             <div className='space-y-1'>
                                 <label className='flex items-center'>
                                     <p className='text-sm'>{t('registration.city')}<span className='text-[#006DE7]'>*</span> </p>
                                     <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
                                 </label>
-                                <input disabled value={'Chandigarh'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                <input disabled value={driverInfo?.city ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                             </div>
 
                             <div className='py-3 space-y-6'>
@@ -264,4 +276,13 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
 
 interface RegistrationProps {
 
-}
+};
+
+type DriverInfo = {
+    name?: string;
+    picture?: string;
+    gender?: string;
+    email?: string;
+    phone_number?: string;
+    city?: string;
+};

@@ -19,14 +19,6 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
         { id: '7', name: 'International Freight Solutions', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
     ];
 
-    const registrationSteps = [
-        { step: 1, title: 'Consent & Agreement', status: 'completed' },
-        { step: 2, title: 'Select Company', status: 'current' },
-        { step: 3, title: 'UNI Verification', status: 'pending' },
-        { step: 4, title: 'Additional Information', status: 'pending' },
-        { step: 5, title: 'Submit Application', status: 'pending' },
-        { step: 6, title: 'Confirmation', status: 'pending' },
-    ];
     const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
@@ -48,6 +40,8 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
         setSearchTerm(company.name);
         setShowDropdown(false);
         setIsSearchFocused(false);
+        const companySelected = company;
+        localStorage.setItem('companySelected', JSON.stringify(companySelected));
     };
 
     const handleSearchFocus = () => {

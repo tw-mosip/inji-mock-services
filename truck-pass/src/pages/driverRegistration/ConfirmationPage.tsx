@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import confirmation_icon from '../../assets/confirmation_icon.png';
-import user_photo from "../../assets/user_photo.png";
 import { useTranslation } from 'react-i18next';
 import { SuccessPopup } from '../../components/SuccessPopup';
 import { Stepper } from '../../commans/Stepper';
@@ -12,9 +11,27 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ }) => {
     const navigate = useNavigate();
     const { t } = useTranslation();
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-
+    const [conformationDetails, setConformationDetails] = useState<ConformationDetails | null>(null);
+    const [selectedCompanyName, setSelectedCompanyName] = useState<SelectedCompany | null>(null);
+    const [driverAdditionalInfo, setDriverAdditionalInfo] = useState<DriverAdditionalDetails | null>(null);
 
     useEffect(() => {
+        const data = localStorage.getItem('driverInformation');
+        const selectedCompany = localStorage.getItem('companySelected');
+        const additionalInfo = localStorage.getItem('additionalInfo');
+
+        if (data) {
+            const information = JSON.parse(data);
+            setConformationDetails(information);
+        }
+        if (selectedCompany) {
+            const name = JSON.parse(selectedCompany);
+            setSelectedCompanyName(name);
+        }
+        if (additionalInfo) {
+            const requiredInfo = JSON.parse(additionalInfo);
+            setDriverAdditionalInfo(requiredInfo);
+        }
         setShowSuccessPopup(true);
         const timer = setTimeout(() => setShowSuccessPopup(false), 5000);
         return () => clearTimeout(timer);
@@ -42,7 +59,7 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ }) => {
 
                     <div className="w-[90%] border border-[#E2E8F0] rounded-lg p-6">
                         <div className='flex gap-x-3 items-center'>
-                            <img src={user_photo} alt="user_photo" className='h-20 pt-2' />
+                            <img src={conformationDetails?.picture} alt="driver_user_icon" className='h-20 pt-2' />
                             <div className='flex flex-col space-y-2 items-start'>
                                 <h1 className='font-bold'>{t('confirmationPage.driverSummary')}</h1>
                                 <p className='text-xs text-[#6B6B6B] font-[500]'>{t('confirmationPage.registrationDetailsInfo')}</p>
@@ -54,31 +71,31 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ }) => {
                             <ol className='pb-2'>
                                 <li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.fullName')}</p>
-                                    <p className='text-sm font-[500]'>Rajesh Singh</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.name}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.uin')}</p>
                                     <p className='text-sm font-[500]'>198765432123</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.gender')}</p>
-                                    <p className='text-sm font-[500]'>Male</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.gender}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.email')}</p>
-                                    <p className='text-sm font-[500]'>myemail@gmail.com</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.email}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.phoneNumber')}</p>
-                                    <p className='text-sm font-[500]'>+91 9876543210</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.phone_number}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.city')}</p>
                                     <p className='text-sm font-[500]'>Chandigarh</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.transportCompany')}</p>
-                                    <p className='text-sm font-[500]'>TransGlobal Logistics Ltd.</p>
+                                    <p className='text-sm font-[500]'>{selectedCompanyName?.name}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.licenseNum')}</p>
-                                    <p className='text-sm font-[500]'>DL-9876543210</p>
+                                    <p className='text-sm font-[500]'>{driverAdditionalInfo?.driverLicenceNum}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.passportNumber')}</p>
-                                    <p className='text-sm font-[500]'>Z7654321</p>
+                                    <p className='text-sm font-[500]'>{driverAdditionalInfo?.passportNum}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.cpcCertificate')}</p>
                                     <p className='text-sm font-[500]'>File Uploaded </p>
@@ -99,4 +116,25 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ }) => {
 
 interface ConfirmationPageProps {
 
+}
+
+type ConformationDetails = {
+    name?: string;
+    picture?: string;
+    gender?: string;
+    email?: string;
+    phone_number?: string;
+    city?: string;
+}
+
+type SelectedCompany = {
+    id: string;
+    name: string;
+    licenseStatus: string;
+    registrationType: string;
+}
+
+type DriverAdditionalDetails = {
+    driverLicenceNum?: string;
+    passportNum?: string;
 }

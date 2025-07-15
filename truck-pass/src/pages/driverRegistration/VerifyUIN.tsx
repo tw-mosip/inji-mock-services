@@ -1,19 +1,128 @@
-import React, { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next';
-import clientDetails from '../../constants/clientDetails';
+import React, { useEffect, useState } from 'react';
 import { useExternalScript } from '../../hooks/useExternalScript';
-import poweredBy_logo from '../../assets/poweredby_esignet_logo.png';
-import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Stepper } from '../../commans/Stepper';
+import relyingPartyService from '../../services/relyingPartyService';
+import eye_icon from "../../assets/eye_icon.png";
+import eye_off from "../../assets/eye_off.png";
+import poweredBy_logo from '../../assets/poweredby_esignet_logo.png';
+import clientDetails from '../../constants/clientDetails';
 
-export const VerifyUIN: React.FC<VerifyUinProps> = ({ }) => {
+export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
 
-    const [verified, setVerified] = useState(false);
     const { t } = useTranslation();
     const navigate = useNavigate();
     const [uinVerificationContinueBtn, setUinVerificationContinueBtn] = useState(false);
+    const signInButtonScript = window._env_.SIGN_IN_BUTTON_PLUGIN_URL;
+    const state = useExternalScript(signInButtonScript);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [uin, setUin] = useState('');
+    const [showUIN, setShowUIN] = useState(false);
+    const [verified, setVerified] = useState(false);
+    const [errorCode, setErrorCode] = useState("");
+    const [errorMsg, setErrorMsg] = useState('');
+    const [verificationStatus, setVerificationStatus] = useState<'pending' | 'verified' | 'already-registered'>('pending');
 
+    const { post_fetchUserInfo } = {
+        ...relyingPartyService,
+    };
 
+    // const navigateToLogin = (errorCode: string, errorDescription: string) => {
+    //     let params = "?";
+    //     if (errorDescription) {
+    //         params = params + "error_description=" + errorDescription + "&";
+    //     }
+
+    //     //REQUIRED
+    //     params = params + "error=" + errorCode;
+
+    //     navigate(process.env.PUBLIC_URL + "/" + params, { replace: true });
+    // };
+
+    useEffect(() => {
+        const getsearchparams = async () => {
+            let authCode = searchParams.get("code");
+            let errorCode = searchParams.get("error");
+            let error_desc = searchParams.get("error_description");
+
+            if (errorCode) {
+                // navigateToLogin(errorCode || '', error_desc || '');
+                return;
+            }
+
+            if (authCode) {
+                getUserDetails(authCode);
+            } else {
+                setErrorCode("authCode_missing");
+                return;
+            }
+        };
+        getsearchparams();
+    }, []);
+
+    const getUserDetails = async (authCode: string) => {
+        setErrorMsg("");
+        try {
+            let client_id = clientDetails.clientId;
+            let redirect_uri = clientDetails.redirect_uri_userprofile;
+            let grant_type = clientDetails.grant_type;
+            var userInfo = await post_fetchUserInfo(
+                authCode,
+                client_id,
+                redirect_uri,
+                grant_type
+            )
+            if (userInfo) {
+                setVerificationStatus('verified');
+            }
+            else {
+                setVerificationStatus('already-registered');
+            }
+            console.log(userInfo);
+
+            localStorage.setItem('driverInformation', JSON.stringify(userInfo));
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                setErrorMsg(error.message);
+            } else {
+                setErrorMsg(String(error));
+            }
+        }
+    };
+
+    useEffect(() => {
+        renderSignInButton();
+    }, [state])
+
+    const renderSignInButton = () => {
+
+        const oidcConfig = {
+            authorizeUri: clientDetails.uibaseUrl + clientDetails.authorizeEndpoint,
+            redirect_uri: clientDetails.redirect_uri_userprofile,
+            client_id: clientDetails.clientId,
+            scope: clientDetails.scopeUserProfile,
+            nonce: clientDetails.nonce,
+            state: clientDetails.state,
+            acr_values: clientDetails.acr_values,
+            claims_locales: clientDetails.claims_locales,
+            display: clientDetails.display,
+            prompt: clientDetails.prompt,
+            max_age: clientDetails.max_age,
+            ui_locales: 'en',
+            claims: JSON.parse(decodeURIComponent(clientDetails.userProfileClaims)),
+        };
+
+        (window as any).SignInWithEsignetButton?.init({
+            oidcConfig: oidcConfig,
+            buttonConfig: {
+                shape: "soft_edges",
+                labelText: t('uinVerification.verifyBtn'),
+            },
+            signInElement: document.getElementById("sign-in-with-esignet"),
+        });
+    }
 
     const moveToSelectCompanyPage = () => {
         navigate('/driverRegistrationProcessPage/selectCompanyPage');
@@ -25,52 +134,94 @@ export const VerifyUIN: React.FC<VerifyUinProps> = ({ }) => {
         setUinVerificationContinueBtn(true);
     };
 
-    const LoadingIndicator: React.FC = () => {
-        return (
-            <div className="flex justify-center space-x-2">
-                <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce delay-200"></div>
-                <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce delay-400"></div>
-                <div className="w-4 h-4 bg-blue-500 rounded-full animate-bounce delay-600"></div>
-            </div>
-        );
+    const displayValue = (value: string, showDetails: boolean, alwaysVisible = false) =>
+        showDetails || alwaysVisible
+            ? value
+            : value.length <= 4
+                ? '*'.repeat(value.length)
+                : value.slice(0, 2) + '*'.repeat(value.length - 4) + value.slice(-2);
+
+
+    // This is a placeholder to simulate verification logic
+    // const handleVerify = () => {
+    //     // Simulate different cases; update logic here to connect with API
+    //     const isAlreadyRegistered = false; // simulate flag
+    //     if (isAlreadyRegistered) {
+    //         setVerificationStatus('already-registered');
+    //     } else {
+    //         setVerificationStatus('verified');
+    //     }
+    // };
+
+    const renderStatusBlock = () => {
+        switch (verificationStatus) {
+            case 'pending':
+                return (
+                    <div className="flex flex-col bg-[#EEF7FF] border border-[#B9DDFD] space-y-2 rounded-lg p-4">
+                        <h2 className="text-sm font-semibold text-[#006DE7]">{t('uinVerification.readyForVerfication')}</h2>
+                        <p className="text-[12px] text-[#0059D4] font-[500]">{t('uinVerification.verificationReadyInfo')}</p>
+                        {!verified &&
+                            <div id='sign-in-with-esignet' className='w-full item-center'></div>
+                        }
+                        <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
+                    </div>
+                );
+            case 'verified':
+                const uin = "276301076687";
+                const toggleUIN = () => {
+                    setShowUIN(prev => !prev);
+                };
+
+                return (
+                    <div className="flex flex-col bg-[#EFFDF5] border border-[#B3F6D2] space-y-2 rounded-lg p-4">
+                        <h2 className="text-sm font-semibold text-[#007F41]">
+                            {t('uinVerification.verifiedSuccessFully')}
+                        </h2>
+
+                        <div className="bg-[#EEF7FF] border border-[#B9DDFD] rounded-md px-3 py-2 flex items-center text-sm text-[#007F41] font-semibold">
+                            <span className="text-[#0059D4] flex items-center">
+                                UIN Fetched:&nbsp;{displayValue(uin, showUIN)}
+                                <img
+                                    src={showUIN ? eye_off : eye_icon}
+                                    alt={showUIN ? "Hide UIN" : "Show UIN"}
+                                    className={`ml-2 ${showUIN ? 'h-4 cursor-pointer' : 'h-3 cursor-pointer'}`}
+                                    onClick={toggleUIN}
+                                />
+                            </span>
+                        </div>
+
+
+                        <p className="text-[12px] text-[#007F41] font-[500]">
+                            {t('uinVerification.verifiedInfo')}
+                        </p>
+
+                        <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
+                    </div>
+                );
+            case 'already-registered':
+                return (
+                    <div className="flex flex-col bg-[#FFF7E8] border border-[#FFE7B7] space-y-2 rounded-lg p-4">
+                        <h2 className="text-sm font-semibold text-[#C4320A]">{t('uinVerification.uinAlreadyRegistered')}</h2>
+                        <div className="bg-white border border-[#FFE7B7] rounded-md px-3 py-2 flex justify-between items-center text-sm text-[#C4320A] font-semibold">
+                            {t('')} <span className="text-[#0059D4] flex items-center">
+                                UIN Fetched:&nbsp;{displayValue("276301076687", showUIN)}
+                                <img
+                                    src={showUIN ? eye_off : eye_icon}
+                                    alt={showUIN ? "Hide UIN" : "Show UIN"}
+                                    className={`ml-2 ${showUIN ? 'h-4 cursor-pointer' : 'h-3 cursor-pointer'}`}
+                                    onClick={() => setShowUIN(prev => !prev)}
+                                />
+                            </span>
+                        </div>
+                        <p className="text-[12px] text-[#C4320A] font-[500]">{t('uinVerification.alreadyRegisteredInfo',)}</p>
+                        {/* <p className="text-[12px] text-[#ff0004] font-[500]">{t('uinVerification.alreadyRegisteredInfoTryAgain',)}</p> */}
+                        <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
+                    </div>
+                );
+            default:
+                return null;
+        }
     };
-
-    // const signInButtonScript = window._env_.SIGN_IN_BUTTON_PLUGIN_URL;
-    // const state = useExternalScript(signInButtonScript);
-
-    // useEffect(() => {
-    //     renderSignInButton();
-    // }, [state])
-
-    // if (!window._env_) return <LoadingIndicator />;
-
-    // const renderSignInButton = () => {
-
-    //     const oidcConfig = {
-    //         authorizeUri: clientDetails.uibaseUrl + clientDetails.authorizeEndpoint,
-    //         redirect_uri: clientDetails.redirect_uri_userprofile,
-    //         client_id: clientDetails.clientId,
-    //         scope: clientDetails.scopeUserProfile,
-    //         nonce: clientDetails.nonce,
-    //         state: clientDetails.state,
-    //         acr_values: clientDetails.acr_values,
-    //         claims_locales: clientDetails.claims_locales,
-    //         display: clientDetails.display,
-    //         prompt: clientDetails.prompt,
-    //         max_age: clientDetails.max_age,
-    //         ui_locales: 'en',
-    //         claims: JSON.parse(decodeURIComponent(clientDetails.userProfileClaims)),
-    //     };
-
-    //     (window as any).SignInWithEsignetButton?.init({
-    //         oidcConfig: oidcConfig,
-    //         buttonConfig: {
-    //             shape: "soft_edges",
-    //             labelText: t('uinVerification.verifyBtn'),
-    //         },
-    //         signInElement: document.getElementById("sign-in-with-esignet"),
-    //     });
-    // }
 
     return (
         <div className="flex w-[63%] shadow-lg rounded-2xl place-self-center">
@@ -81,37 +232,41 @@ export const VerifyUIN: React.FC<VerifyUinProps> = ({ }) => {
                 registrationStatus={false}
                 confirmationStatus={false}
             />
-            <div className={`flex flex-col bg-[#FFFFFF] pt-5 pb-9 w-full px-6 rounded-br-2xl rounded-tr-2xl justify-between font-inter`}>
+            <div className="flex flex-col bg-white pt-5 pb-9 w-full px-6 rounded-br-2xl rounded-tr-2xl justify-between font-inter">
                 <div className="space-y-4">
-                    <h1 className="font-semibold text-[22px]">{t('uinVerification.uinVerification')}</h1>
-
-                    <div className={`flex flex-col ${verified ? 'bg-[#EFFDF5] border-[#B3F6D2]' : 'bg-[#EEF7FF] border-[#B9DDFD]'} space-y-2 h-auto border rounded-lg p-4`}>
-                        <h2 className={`text-sm font-semibold ${verified ? 'text-[#007F41]' : 'text-[#006DE7]'}`}>{verified ? t('uinVerification.verifiedSuccessFully') : t('uinVerification.readyForVerfication')}</h2>
-                        <p className={`text-[12px] ${verified ? 'text-[#007F41]' : 'text-[#0059D4]'} font-[500]`}>
-                            {verified ? t('uinVerification.verifiedInfo') : t('uinVerification.verificationReadyInfo')}
-                        </p>
-                        {/* {!verified &&
-                            <div id='sign-in-with-esignet' className='w-full item-center'></div>
-                        } */}
-                        <img src={poweredBy_logo} alt="poweredBy_logo" className='h-7 w-[20%] pt-1' />
-                    </div>
-
+                    <h1 className="font-semibold text-[22px] ">{t('uinVerification.uinVerification')}</h1>
+                    {renderStatusBlock()}
                 </div>
-                <div className='flex space-x-2 justify-end'>
-                    <button onClick={moveToSelectCompanyPage}
-                        className={`bg-transparent w-[21%] text-xs text-[#414651] border border-[#D5D7DA] font-[600] py-2.5 text-center rounded-[5px] cursor-pointer`}>
+
+                <div className="flex space-x-2 justify-end mt-6">
+                    <button
+                        onClick={moveToSelectCompanyPage}
+                        className="bg-transparent w-[21%] text-xs text-[#414651] border border-[#D5D7DA] font-[600] py-2.5 text-center rounded-[5px] cursor-pointer"
+                    >
                         {t('commans.goBack')}
                     </button>
-                    <button disabled={false} onClick={moveToRegistrationPage}
-                        className={`${verified ? "bg-[#006DE7] cursor-pointer" : "bg-[#B0B0B0] focus:shadow-md cursor-pointer"}} w-[33%] text-xs font-[600] py-2.5 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
-                        {t('commans.continue')}
-                    </button>
+                    {verificationStatus === 'already-registered' ? (
+                        <button
+                            onClick={() => setVerificationStatus('pending')}
+                            className="bg-[#006DE7] w-[33%] text-xs font-[600] py-2.5 text-center rounded-[5px] text-white cursor-pointer"
+                        >
+                            {t('commans.tryAgain')}
+                        </button>
+                    ) : (
+                        <button
+                            disabled={verificationStatus !== 'verified'}
+                            onClick={moveToRegistrationPage}
+                            className={`w-[33%] text-xs font-[600] py-2.5 text-center rounded-[5px] ${verificationStatus === 'verified' ? 'bg-[#006DE7] text-white cursor-pointer' : 'bg-[#B0B0B0] text-white'
+                                }`}
+                        >
+                            {t('commans.continue')}
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-interface VerifyUinProps {
-
+interface VerifyUINProps {
 }
