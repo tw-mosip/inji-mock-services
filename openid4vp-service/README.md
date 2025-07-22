@@ -21,7 +21,7 @@ openID4VP [Specification-21](https://openid.net/specs/openid-4-verifiable-presen
   npm install
 ```
 2. Modify the configuration
-   - update the `baseUrl` constant in `app.js` file with the actual base url (exposed ngrok url) where the service is running.
+   - update the `baseUrl` constant in `app.js` file with the actual base url (exposed localtunnel url. Reference : [ https://theboroer.github.io/localtunnel-www/ ]) where the service is running.
    - modify `presentationDefinitionMock.json` file with the presentation definition object as per requirement.
 3. Start the service
    - Start the service by running the below command
@@ -39,7 +39,7 @@ Post performing the pre-requisites, you can run the below command to start the s
 
 ```shell
 npm install # install the dependencies
-npm start # asks base url (ngrok url or any remote url) and starts the service
+npm start # asks base url (localtunnel url or any remote url) and starts the service
 ```
 
 # Supported features
@@ -77,7 +77,7 @@ npm start # asks base url (ngrok url or any remote url) and starts the service
 
 - Here configure the **response_uri** field of the **Authorization Request** with the actual
   end-point where we would like to receive the response. Here Localhost won't be accessible from the
-  physical device, recommended using ngrok [https://ngrok.com/docs/getting-started/] to generate a
+  physical device, recommended using local tunnel [https://theboroer.github.io/localtunnel-www/ ] generate a
   corresponding mapping url for the Localhost.
 - As part of the Authorization Request Verifier can send **presentation_definition_uri** instead of the full **presentation_definition** to reduce the amount of data embedded in the QR code and this uri returns the actual **presentation_definition** object when called and only one of **presentation_definition** & **presentation_definition_uri** should be present in the request.
 
@@ -93,7 +93,7 @@ npm start # asks base url (ngrok url or any remote url) and starts the service
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
     &presentation_definition=...
     &nonce=n-0S6_WzA2Mj
-    &response_uri=ngrokUrl+"/verifier/vp-response"
+    &response_uri=baseUrl+"/verifier/vp-response"
     &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp_json%22:%
     7B%22alg%22:%5B%22EdDSA%22,%22ES256K%22%5D%7D,%22ldp
     _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
@@ -110,9 +110,9 @@ or
     &response_mode=direct_post
     &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
     &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &presentation_definition_uri=ngrokUrl+"/verifier/presentation_definition_uri"
+    &presentation_definition_uri=baseUrl+"/verifier/presentation_definition_uri"
     &nonce=n-0S6_WzA2Mj
-    &response_uri=ngrokUrl+"/verifier/vp-response"
+    &response_uri=baseUrl+"/verifier/vp-response"
     &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp_json%22:%
     7B%22alg%22:%5B%22EdDSA%22,%22ES256K%22%5D%7D,%22ldp
     _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
@@ -125,7 +125,7 @@ or
 /verifier/generate-auth-request-by-reference-qr
 ```
 - This end-point can be used to generate the QR code with `request uri` field which is used to get the Verifier's Authorization Request to fetch the Verifiable Credentials from the Wallet.
-- Here configure the `request_uri` field with the actual end-point where we can fetch the Authorization Request. Here Localhost won't be accessible from the physical device, recommended using ngrok [https://ngrok.com/docs/getting-started/] to generate a corresponding mapping url for the Localhost. 
+- Here configure the `request_uri` field with the actual end-point where we can fetch the Authorization Request. Here Localhost won't be accessible from the physical device, recommended using localtunnel [https://theboroer.github.io/localtunnel-www/ ] to generate a corresponding mapping url for the Localhost. 
 - The response of the `request_uri` will either be a jwt or base64 encoded json string which contains the Authorization Request 
 ##### Send _request_uri_ in the qr code:
 ```javascript
@@ -133,7 +133,7 @@ or
     "https://client.example.org/universal-link?
     &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
     &request_uri_method=get
-    &request_uri=ngrokUrl+"/verifier/get-auth-request-obj"
+    &request_uri=baseUrl+"/verifier/get-auth-request-obj"
 
 ```
 
@@ -171,6 +171,25 @@ or
 1. `redirect_uri` scheme (example: client_id: `https://client.example.org/cb`)
 2. `did` scheme (example: client_id: `did:example:123`)
 3. `pre-registered` scheme (example: client_id: `mock-example client`)
+
+## Port & Tunnel Configuration
+
+**Mock Backend Service**
+- Runs on http://localhost:3000 and is exposed via LocalTunnel at a public URL (e.g., https://your-subdomain.loca.lt).
+- Expose port number `3000` using localtunnel
+  - Install localtunnel globally if you haven't already:
+    ```
+    npm install -g localtunnel
+    ```
+      - Start localtunnel to expose your backend service:
+    ```
+    lt --port 3000 --subdomain <name> # Replace <name> with any unique subdomain
+    ```
+- Open the exposed localtunnel url in browser and access the mock services using tunnel password. Steps to get tunnel password are provided in the mock service page itself.
+    
+**Mock Frontend UI**
+- Runs on http://localhost:3001 and is exposed via ngrok at a public URL (e.g., https://your-ui.ngrok.io).
+- Steps to run the Mock Frontend UI are provided in the `ovp-client/README.md` file.
 
 Reference: https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html#name-client-identifier-scheme-an
 
