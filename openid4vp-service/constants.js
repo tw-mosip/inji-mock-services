@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const ed25519PublicKey = "IKXhA7W1HD1sAl+OfG59VKAqciWrrOL1Rw5F+PGLhi4="
 const ed25519PrivateKey = "vlo/0lVUn4oCEFo/PiPi3FyqSBSdZ2JDSBJJcvbf6o0="
 //update this baseurl with the ngrok url
-const baseUrl = "https://mock-service-backend.loca.lt"
+const baseUrl = "<local-tunnel url>"
 const requestUri = `${baseUrl}/verifier/get-auth-request-obj`
 const responseUri = `${baseUrl}/verifier/vp-response`
 const presentationDefinitionUri  = `${baseUrl}/verifier/presentation_definition_uri`
