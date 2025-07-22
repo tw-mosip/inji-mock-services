@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export const BACKEND_PORT = 3000;
+
 
 const Home = () => {
     const navigate = useNavigate();
