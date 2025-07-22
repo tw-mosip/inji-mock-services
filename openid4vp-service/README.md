@@ -187,18 +187,9 @@ or
     ```
 - Open the exposed localtunnel url in browser and access the mock services using tunnel password. Steps to get tunnel password are provided in the mock service page itself.
     
-
-
 **Mock Frontend UI**
 - Runs on http://localhost:3001 and is exposed via ngrok at a public URL (e.g., https://your-ui.ngrok.io).
-- Steps to setup ngrok url are given here [ https://ngrok.com/docs/getting-started/ ]
-
-
-
-
-## Mock Frontend UI
 - Steps to run the Mock Frontend UI are provided in the `ovp-client/README.md` file.
-
 
 Reference: https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html#name-client-identifier-scheme-an
 
