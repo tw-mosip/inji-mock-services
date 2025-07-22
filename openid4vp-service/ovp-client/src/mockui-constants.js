@@ -1,2 +1,2 @@
-export const BACKEND_URL = "https://mock-service-backend.loca.lt"
+export const BACKEND_URL = "<local-tunnel url>"
 
