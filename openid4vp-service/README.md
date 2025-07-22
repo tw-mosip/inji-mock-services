@@ -125,7 +125,7 @@ or
 /verifier/generate-auth-request-by-reference-qr
 ```
 - This end-point can be used to generate the QR code with `request uri` field which is used to get the Verifier's Authorization Request to fetch the Verifiable Credentials from the Wallet.
-- Here configure the `request_uri` field with the actual end-point where we can fetch the Authorization Request. Here Localhost won't be accessible from the physical device, recommended using localtunnel [https://ngrok.com/docs/getting-started/ ] to generate a corresponding mapping url for the Localhost. 
+- Here configure the `request_uri` field with the actual end-point where we can fetch the Authorization Request. Here Localhost won't be accessible from the physical device, recommended using localtunnel [https://theboroer.github.io/localtunnel-www/ ] to generate a corresponding mapping url for the Localhost. 
 - The response of the `request_uri` will either be a jwt or base64 encoded json string which contains the Authorization Request 
 ##### Send _request_uri_ in the qr code:
 ```javascript
@@ -171,6 +171,34 @@ or
 1. `redirect_uri` scheme (example: client_id: `https://client.example.org/cb`)
 2. `did` scheme (example: client_id: `did:example:123`)
 3. `pre-registered` scheme (example: client_id: `mock-example client`)
+
+## Port & Tunnel Configuration
+
+**Mock Backend Service**
+- Runs on http://localhost:3000 and is exposed via LocalTunnel at a public URL (e.g., https://your-subdomain.loca.lt).
+- Expose port number `3000` using localtunnel
+  - Install localtunnel globally if you haven't already:
+    ```
+    npm install -g localtunnel
+    ```
+      - Start localtunnel to expose your backend service:
+    ```
+    lt --port 3000 --subdomain <name> # Replace <name> with any unique subdomain
+    ```
+- Open the exposed localtunnel url in browser and access the mock services using tunnel password. Steps to get tunnel password are provided in the mock service page itself.
+    
+
+
+**Mock Frontend UI**
+- Runs on http://localhost:3001 and is exposed via ngrok at a public URL (e.g., https://your-ui.ngrok.io).
+- Steps to setup ngrok url are given here [ https://ngrok.com/docs/getting-started/ ]
+
+
+
+
+## Mock Frontend UI
+- Steps to run the Mock Frontend UI are provided in the `ovp-client/README.md` file.
+
 
 Reference: https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html#name-client-identifier-scheme-an
 
