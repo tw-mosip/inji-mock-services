@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BACKEND_PORT } from "./Home";
 import {prettyScanResult} from "./jsonHelper";
+import {BACKEND_URL} from "./mockui-constants";
 
 const QrScreen = () => {
     const { state } = useLocation();
@@ -20,7 +20,7 @@ const QrScreen = () => {
     useEffect(() => {
         const fetchQr = async () => {
             try {
-                const response = await axios.get(`http://localhost:${BACKEND_PORT}${state.endpoint}`);
+                const response = await axios.get(`${BACKEND_URL}${state.endpoint}`);
                 setQrCodeData(response.data.qrCodeData);
                 setQrData(response.data.qrData);
                 setInputData(response.data.inputData)
@@ -39,7 +39,7 @@ const QrScreen = () => {
     useEffect(() => {
         const interval = setInterval(async () => {
             try {
-                const response = await axios.get(`http://localhost:${BACKEND_PORT}/verifier/vp-result`);
+                const response = await axios.get(`${BACKEND_URL}/verifier/vp-result`);
                 if (response.data && response.data !== false) {
                     setScanResult(response.data);
                 }
