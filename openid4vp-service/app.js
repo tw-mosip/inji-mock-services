@@ -96,11 +96,16 @@ app.get('/verifier/get-auth-request-obj', async (req, res) => {
 
 app.post('/verifier/get-auth-request-obj', async (req, res) => {
     try {
-        const jwt = await createJWT(didAuthorizationRequest)
-        res.contentType("application/oauth-authz-req+jwt")
-        res.send(jwt)
-        //res.send(btoa(JSON.stringify(jwtPayload)))
-    } catch (error) {
+        console.info("Received request with request body:", req.body);
+        const walletNonce = req.body?.wallet_nonce;
+        const jwt = walletNonce
+            ? await createJWT({ ...didAuthorizationRequest, wallet_nonce: walletNonce })
+            : await createJWT(didAuthorizationRequest);
+        res.contentType("application/oauth-authz-req+jwt");
+        res.send(jwt);
+        //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
+
+    }  catch (error) {
         console.error('Error generating JWT :', error);
         res.status(500).send('Internal Server Error');
     }
