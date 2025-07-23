@@ -9,14 +9,19 @@ This React client application is built to interact with the OpenID4VP mock verif
 - It serves as a frontend demo for testing OpenID4VP flows using mock services.
 
 ## Steps to run the client app
-- Update the baseUrl in `openid4vp-service/constants.js` and BACKEND_URL in `ovp-client/src/mockui-constants.js` with the localtunnel url.
 - Run the mock services by running `npm start` in the `openid4vp-service` directory. It will be running in the port `3000`.
+- Expose the backend service using localtunnel url by running the command `lt --port 3000 --subdomain <your-subdomain>` in another terminal. Replace `<your-subdomain>` with any unique name.
+- Update the baseUrl in `openid4vp-service/constants.js` and BACKEND_URL in `ovp-client/src/mockui-constants.js` with the localtunnel url. Restart the backend service.
 - In other terminal, go inside the `ovp-client` directory and run `npm install` to install the required dependencies.
 - Then run ``npm start`` to start the client app. It will be running in the port `3001`.
 - Open your browser and navigate to `http://localhost:3001` to access the client app.
-- Expose client app through ngrok using command `ngrok http 3001` if you want to access it from a mobile device. Refer [ https://ngrok.com/docs/getting-started/ ] for ngrok setup
 - You can now interact with the OpenID4VP mock services through the client app.
 - User can select the Auth Request Type to generate respective QR Codes for the wallet to scan.
 - User can download QR code by clicking on the download icon below to the QR code.
 - Once the wallet scans the QR code, it will send the Verifiable Presentation (VP) response back to the client app.
 - Error response also shown in Scan Result section.
+- Running in mobile browser:
+  - Run localtunnel backend url in mobile browser and provide tunnel password if it prompts. This step is mandatory to make sure the localtunnel baceknd url is accessible from mobile.
+  - Expose client app through ngrok using command `ngrok http 3001` if you want to access it from a mobile device. Refer [ https://ngrok.com/docs/getting-started/ ] for ngrok setup
+  - Hit the exposed ngrok url in the browser.
+
