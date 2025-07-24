@@ -1,0 +1,23 @@
+{
+  "assertionMethod": [
+    "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs-multibase#key-0"
+  ],
+  "service": [],
+  "id": "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs-multibase",
+  "verificationMethod": [
+    {
+      "publicKeyMultibase": "z6MkwAm9tLpXZNfeEAqj9jcccFhjdiTwxVD32GhcjyeqGYSo",
+      "controller": "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs-multibase",
+      "id": "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs-multibase#key-0",
+      "type": "Ed25519VerificationKey2020",
+      "@context": "https://w3id.org/security/suites/ed25519-2020/v1"
+    }
+  ],
+  "@context": [
+    "https://www.w3.org/ns/did/v1"
+  ],
+  "alsoKnownAs": [],
+  "authentication": [
+    "did:web:mosip.github.io:inji-mock-services:openid4vp-service:docs-multibase#key-0"
+  ]
+}
