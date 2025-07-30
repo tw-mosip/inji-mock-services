@@ -83,9 +83,13 @@ app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
 
 app.get('/verifier/get-auth-request-obj', async (req, res) => {
     try {
-        const jwt = await createJWT(didAuthorizationRequest)
-        res.contentType("application/oauth-authz-req+jwt")
-        res.send(jwt)
+        console.info("Received request with request body:", req.body);
+        const walletNonce = req.body?.wallet_nonce;
+        const jwt = walletNonce
+            ? await createJWT({ ...didAuthorizationRequest, wallet_nonce: walletNonce })
+            : await createJWT(didAuthorizationRequest);
+        res.contentType("application/oauth-authz-req+jwt");
+        res.send(jwt);
         //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
 
     } catch (error) {
