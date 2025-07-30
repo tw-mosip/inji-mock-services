@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 
 const ed25519PublicKey = "IKXhA7W1HD1sAl+OfG59VKAqciWrrOL1Rw5F+PGLhi4="
-const ed25519PrivateKey = "vlo/0lVUn4oCEFo/PiPi3FyqSBSdZ2JDSBJJcvbf6o0="
+const ed25519PrivateKey = "7JGq310it2uq1_KZ3kARpoUB36KaVO2Ki5VeqQ_856A"
 //update this baseurl with the localtunnel url
 const baseUrl = "<local-tunnel url>"
 const requestUri = `${baseUrl}/verifier/get-auth-request-obj`
