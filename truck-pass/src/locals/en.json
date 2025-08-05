@@ -1,7 +1,9 @@
 {
     "navbar": {
         "home": "Home",
-        "help": "Help"
+        "help": "Help",
+        "english": "English",
+        "french": "French"
     },
     "footer": {
         "footerText": "© 2025 TruckPass. All rights reserved."
@@ -50,8 +52,13 @@
         "getStarted": "Get Started"
     },
     "selectCompany": {
+        "searchTransportCompany": "Search Transport Company *",
         "selectRegisteredTransportCompany": "Select Registered Transport Company",
-        "chooseCompanyDesc": "Choose the transport company you wish to register with as a professional driver."
+        "chooseCompanyDesc": "Choose the transport company you wish to register with as a professional driver.",
+        "companyDetails": "Company Details",
+        "selected": "Selected: ",
+        "licenseStatus": "License Status: ",
+        "registrationType": "Registration Type: "
     },
     "uinVerification": {
         "uinVerification": "UIN Verification",
@@ -59,6 +66,8 @@
         "uinAlreadyRegistered": "UIN Already Registered",
         "alreadyRegisteredInfo": "A driver with this UIN is already registered in the TruckPass system.",
         "verifiedSuccessFully": "Verified SuccessFully",
+        "uinFetched": "UIN Fetched: ",
+        "unableToFetchInfo": "Better check All the required aspects and Try Again.",
         "verificationReadyInfo": "Click the button below to verify your UIN using eSignet. This will automatically fetch and fill your personal details.",
         "verifiedInfo": "Your details have been verified. Please proceed to the next step.",
         "verifyBtn": "Verify"
@@ -92,6 +101,8 @@
         "uploadManualCertificateInfo": "Please upload document with the file format as PNG or PDF and Size should be maximum of 5MB",
         "uploadViaInjiVerifyCertificateInfo": "PNG or PDF (max size. 1mb)",
         "failed": "Failed",
+        "kb": "KB",
+        "fullPercentage": "100%",
         "changeFile": "Change File"
     },
     "confirmationPage": {
@@ -108,19 +119,29 @@
         "transportCompany": "Transport Company",
         "licenseNum": "License Number:",
         "passportNumber": "Passport Number:",
-        "cpcCertificate": "CPC Certificate:",
-        "startNewRegistrationBtn": "Start New Registration"
+        "cpcCertificate": "CPC Certificate: ",
+        "startNewRegistrationBtn": "Start New Registration",
+        "fileUploaded": "File Uploaded"
     },
     "successPopUp": {
         "header": "Registration Successful!",
         "desc": "Driver registration successful."
+    },
+    "errorPopUp": {
+        "header": "Registration Failed!",
+        "desc": "Driver registration failed. Please check all the provided fields & Try again "
     },
     "commans": {
         "inProgress": "In Progress",
         "completed": "Completed",
         "continue": "Continue",
         "goBack": "Go Back",
-        "submit": "Submit"
+        "submit": "Submit",
+        "tryAgain": "Try Again"
     },
-    "errors": {}
+    "errors": {
+        "uploadingCertificateErr": "Unsupported file type. Please upload valid PDF or image documents.",
+        "licenseNumberErr": "Driver's License Number should include hypen '-'.",
+        "passportNumberErr": "Please fill all required fields correctly before submitting."
+    }
 }

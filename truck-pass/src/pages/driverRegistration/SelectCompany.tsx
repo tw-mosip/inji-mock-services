@@ -1,30 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import help_icon from "../../assets/help_icon.png";
 import { useNavigate } from 'react-router-dom';
 import { Stepper } from '../../commans/Stepper';
+import relyingPartyService from '../../services/relyingPartyService';
 
 
 export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
 
     const navigate = useNavigate();
-
-    const companies: Company[] = [
-        { id: '1', name: 'TransGlobal Company 1', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
-        { id: '2', name: 'TransGlobal Logistics Ltd.', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
-        { id: '3', name: 'TransGlobal Company 2', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
-        { id: '4', name: 'TransGlobal Company 3', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
-        { id: '5', name: 'TransGlobal Company 4', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
-        { id: '6', name: 'Global Express Transport', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
-        { id: '7', name: 'International Freight Solutions', licenseStatus: 'Active and Valid', registrationType: 'Commercial Transport' },
-    ];
-
     const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState('');
+    const [companies, setCompanies] = useState<Company[]>([]);
     const [showDropdown, setShowDropdown] = useState(false);
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
     const [selectionPageContinueBtn, setSelectionPageContinueBtn] = useState(false);
+
+
+    const { get_companiesList } = {
+        ...relyingPartyService,
+    };
+
+    useEffect(() => {
+        const fetchCompanies = async () => {
+            try {
+                const list = await get_companiesList();
+                if (list) {
+                    setCompanies(list);
+                }
+            } catch {
+                console.log("Getting failed to fetch the companies");
+            }
+        };
+        fetchCompanies();
+    }, [])
+
 
     const moveToVerifyUinPage = () => {
         setSelectionPageContinueBtn(true);
@@ -32,12 +43,12 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
     }
 
     const filteredCompanies = companies.filter(company =>
-        company.name.toLowerCase().includes(searchTerm.toLowerCase())
+        company.companyName.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleCompanySelect = (company: Company) => {
         setSelectedCompany(company);
-        setSearchTerm(company.name);
+        setSearchTerm(company.companyName);
         setShowDropdown(false);
         setIsSearchFocused(false);
         const companySelected = company;
@@ -76,14 +87,14 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
             />
 
             <div className={`flex flex-col bg-[#FFFFFF] pt-5 pb-9 w-full px-6 rounded-br-2xl rounded-tr-2xl justify-between font-inter`}>
-            
+
                 <div className="space-y-4">
                     <h1 className="font-semibold text-[22px]">{t('selectCompany.selectRegisteredTransportCompany')}</h1>
                     <p className="text-[15px]">{t('selectCompany.chooseCompanyDesc')}</p>
 
                     <div className="relative mb-6">
                         <label htmlFor="company-search" className="flex items-center text-[13px] font-medium text-gray-700 mb-2">
-                            Search Transport Company *
+                            {t('selectCompany.searchTransportCompany')}
                             <img src={help_icon} className='h-3 cursor-pointer px-1' />
                         </label>
                         <div className="relative">
@@ -110,7 +121,7 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
                                         className="w-full p-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-50"
                                     >
                                         <div className="text-sm font-medium text-gray-900">
-                                            {company.name}
+                                            {company.companyName}
                                         </div>
                                     </button>
                                 ))}
@@ -120,27 +131,27 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
 
                     {/* Selected Company Details */}
                     {selectedCompany && (
-                        <div className="bg-[#EFFDF5] border border-green-200 rounded-lg p-4 mb-4">
-                            <h4 className="text-base font-semibold text-[#007F41] mb-3">Company Details</h4>
+                        <div className={`${selectedCompany.registrationStatus === 'Active' ? "bg-[#EFFDF5] border-green-200" : "bg-[#ee9595] border-red-200"} border  rounded-lg p-4 mb-4`}>
+                            <h4 className={`text-base font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"} mb-3`}>{t('selectCompany.companyDetails')}</h4>
                             <div>
                                 <div>
-                                    <span className="text-[12px] font-semibold text-[#007F41]">Selected: </span>
-                                    <span className="text-[12px] text-[#007F41]">{selectedCompany.name}</span>
+                                    <span className={`${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"} text-[12px] font-semibold`}>{t('selectCompany.selected')}</span>
+                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.companyName}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[12px] font-semibold text-[#007F41]">License Status: </span>
-                                    <span className="text-[12px] text-[#007F41]">{selectedCompany.licenseStatus}</span>
+                                    <span className={`text-[12px] font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.licenseStatus')}</span>
+                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registrationStatus}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[12px] font-semibold text-[#007F41]">Registration Type: </span>
-                                    <span className="text-[12px] text-[#007F41]">{selectedCompany.registrationType}</span>
+                                    <span className={`text-[12px] font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.registrationType')}</span>
+                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registrationType}</span>
                                 </div>
                             </div>
                         </div>
                     )}
                 </div>
-                <button disabled={!selectedCompany} onClick={() => moveToVerifyUinPage()}
-                    className={`${selectedCompany ? "bg-[#006DE7] cursor-pointer" : "bg-[#B0B0B0] focus:shadow-md cursor-pointer"}} w-[21%] text-xs font-[600] place-self-end align-bottom py-2.5 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
+                <button disabled={!selectedCompany || selectedCompany.registrationStatus === 'Inactive'} onClick={() => moveToVerifyUinPage()}
+                    className={`${selectedCompany && selectedCompany.registrationStatus === 'Active' ? "bg-[#006DE7] cursor-pointer" : "bg-[#B0B0B0] focus:shadow-md cursor-default"}} w-[21%] text-xs font-[600] place-self-end align-bottom py-2.5 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
                     {t('commans.continue')}
                 </button>
             </div>
@@ -149,10 +160,12 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
 }
 
 interface Company {
+    registrationType: string;
+    registrationStatus: string;
+    companyName: string;
     id: string;
     name: string;
     licenseStatus: string;
-    registrationType: string;
 }
 
 interface SelectCompanyProps {

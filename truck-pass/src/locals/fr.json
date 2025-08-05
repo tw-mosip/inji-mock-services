@@ -1,7 +1,9 @@
 {
     "navbar": {
         "home": "Maison",
-        "help": "Aide"
+        "help": "Aide",
+        "english": "Anglaise",
+        "french": "Français"
     },
     "footer": {
         "footerText": "© 2025 TruckPass. Tous droits réservés."
@@ -50,13 +52,22 @@
         "getStarted": "Commencer"
     },
     "selectCompany": {
-        "selectRegisteredTransportCompany": "Sélectionner une Entreprise de Transport Enregistrée",
-        "chooseCompanyDesc": "Choisissez l'entreprise de transport avec laquelle vous souhaitez vous enregistrer en tant que conducteur professionnel."
+        "searchTransportCompany": "Rechercher une entreprise de transport *",
+        "selectRegisteredTransportCompany": "Sélectionnez une entreprise de transport enregistrée",
+        "chooseCompanyDesc": "Choisissez la société de transport auprès de laquelle vous souhaitez vous inscrire en tant que chauffeur professionnel.",
+        "companyDetails": "Détails de l'entreprise",
+        "selected": "Choisi: ",
+        "licenseStatus": "Statut de la licence : ",
+        "registrationType": "Type d'inscription : "
     },
     "uinVerification": {
         "uinVerification": "Vérification UIN",
         "readyForVerfication": "Prêt pour la Vérification",
+        "uinAlreadyRegistered": "UIN déjà enregistré",
+        "alreadyRegisteredInfo": "Un conducteur avec cet UIN est déjà enregistré dans le système TruckPass.",
         "verifiedSuccessFully": "Vérifié avec Succès",
+        "uinFetched": "UIN récupéré :",
+        "unableToFetchInfo": "Il vaut mieux vérifier tous les aspects requis et réessayer.",
         "verificationReadyInfo": "Cliquez sur le bouton ci-dessous pour vérifier votre UIN en utilisant eSignet. Cela remplira automatiquement vos coordonnées.",
         "verifiedInfo": "Vos coordonnées ont été vérifiées. Veuillez passer à l'étape suivante.",
         "verifyBtn": "Vérifier"
@@ -90,6 +101,8 @@
         "uploadManualCertificateInfo": "Veuillez télécharger le document au format PNG ou PDF et dont la taille ne dépasse pas 5 Mo",
         "uploadViaInjiVerifyCertificateInfo": "PNG ou PDF (taille max. 1 Mo)",
         "failed": "échoué",
+        "kb": "Ko",
+        "fullPercentage": "100%",
         "changeFile": "Changer de fichier"
     },
     "confirmationPage": {
@@ -106,19 +119,29 @@
         "transportCompany": "Entreprise de Transport",
         "licenseNum": "Numéro de Permis:",
         "passportNumber": "Numéro de Passeport:",
-        "cpcCertificate": "Certificat CPC:",
-        "startNewRegistrationBtn": "Commencer un Nouvel Enregistrement"
+        "cpcCertificate": "Certificat CPC :",
+        "startNewRegistrationBtn": "Commencer une nouvelle inscription",
+        "fileUploaded": "Fichier téléchargé"
     },
     "successPopUp": {
         "header": "Enregistrement Réussi!",
         "desc": "Enregistrement du conducteur réussi."
+    },
+    "errorPopUp": {
+        "header": "L'inscription a échoué !",
+        "desc": "Échec de l'enregistrement du conducteur. Veuillez vérifier tous les champs et réessayer."
     },
     "commans": {
         "inProgress": "En Cours",
         "completed": "Terminé",
         "continue": "Continuer",
         "goBack": "Retourner",
-        "submit": "Soumettre"
+        "submit": "Soumettre",
+        "tryAgain": "Essayer à nouveau"
     },
-    "errors": {}
+    "errors": {
+        "uploadingCertificateErr": "Type de fichier non pris en charge. Veuillez télécharger des documents PDF ou image valides.",
+        "licenseNumberErr": "Le numéro de permis de conduire doit inclure le trait d'union « - ».",
+        "passportNumberErr": "Veuillez remplir correctement tous les champs obligatoires avant de soumettre."
+    }
 }

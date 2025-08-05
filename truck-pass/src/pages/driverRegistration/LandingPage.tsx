@@ -21,10 +21,10 @@ const LandingPage = () => {
   }
 
   const streamlinedProcess = [
-    { id: 1, icon: application_submit_icon, title: t('landingPage.subApplication'), subTitle: t('landingPage.subApplicationInfo')},
-    { id: 2, icon: verfication_icon, title: t('landingPage.securityVerification'), subTitle: t('landingPage.securityVerificationInfo')},
-    { id: 3, icon: approval_issuance_icon, title: t('landingPage.approvalAndIssuance'), subTitle:t('landingPage.approvalAndIssuanceInfo')},
-    { id: 4, icon: truck_icon, title: t('landingPage.crossBorder'), subTitle: t('landingPage.crossBorderInfo')}
+    { id: 1, icon: application_submit_icon, title: t('landingPage.subApplication'), subTitle: t('landingPage.subApplicationInfo') },
+    { id: 2, icon: verfication_icon, title: t('landingPage.securityVerification'), subTitle: t('landingPage.securityVerificationInfo') },
+    { id: 3, icon: approval_issuance_icon, title: t('landingPage.approvalAndIssuance'), subTitle: t('landingPage.approvalAndIssuanceInfo') },
+    { id: 4, icon: truck_icon, title: t('landingPage.crossBorder'), subTitle: t('landingPage.crossBorderInfo') }
   ]
 
   return (
@@ -85,7 +85,7 @@ const LandingPage = () => {
       {/* Footer */}
 
       <footer className='text-sm text-[#717171] place-self-center pt-12 pb-6 bg-transparent font-inter'>
-        © 2025 TruckPass. All rights reserved.
+        {t('footer.footerText')}
       </footer>
 
       {/* Footer */}

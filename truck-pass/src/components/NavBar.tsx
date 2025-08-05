@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import truckpass_title from "../assets/truck_pass_title.png";
 import globe_icon from "../assets/globe_icon.png";
 import dropdown_icon from "../assets/Dropdown_icon.png";
@@ -34,8 +33,8 @@ const NavBar = () => {
             {dropdown &&
               (
                 <div className="flex flex-col absolute w-auo p-3 mt-4.5 right-[69px] bg-[#FFFFFF] space-y-2 rounded-b-md shadow-2xl duration-700">
-                  <button className="cursor-pointer" onClick={() => changeLanguage('en', 'English')}>English</button>
-                  <button className="cursor-pointer" onClick={() => changeLanguage('fr', "French")}>French</button>
+                  <button className="cursor-pointer" onClick={() => changeLanguage('en', 'English')}>{t('navbar.english')}</button>
+                  <button className="cursor-pointer" onClick={() => changeLanguage('fr', "French")}>{t('navbar.french')}</button>
                 </div>
               )}
           </div>

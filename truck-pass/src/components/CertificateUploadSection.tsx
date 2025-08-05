@@ -9,18 +9,18 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
   showUploadingBlock,
   setShowUploadingBlock,
   setFileUploaded,
-  errorMsg,
-  setErrorMsg
+  setDataInFile,
+  cpcUploadErrorMsg,
+  setCpcUploadErrorMsg
 }) => {
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploading, setUploading] = useState<boolean>(false);
   const [removeLastUploadData, setRemoveLastUploadData] = useState<boolean>(true);
-  const [data, setData] = useState<string | null>(null);
   const [progress, setProgress] = useState<number>(0);
   const [fileSize, setFileSize] = useState<number>(0);
   const { t } = useTranslation();
-  
+
 
 
   const handleFileInputClick = () => {
@@ -35,45 +35,51 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
 
     if (file) {
       const fileName = file.name;
-      setFileSize(file.size);
-      setErrorMsg('');
+      setFileSize(Math.round(file.size / 1024));
+      setCpcUploadErrorMsg('');
       const fileExtension = fileName.split('.').pop()?.toLowerCase();
-      if (fileExtension === 'pdf' || fileExtension === 'png') {
+      if (fileExtension === 'pdf' || fileExtension === 'png' || fileExtension === 'jpeg' || fileExtension === 'jpg') {
         const reader = new FileReader();
         reader.onload = (e) => {
           const fileData = e.target?.result as string;
           setUploading(true);
           setRemoveLastUploadData(true);
           setFileName(fileName);
-          setData(fileData);
-          const uploadSimulation = setInterval(() => {
-            setProgress((prev) => {
-              const newProgress = prev + 20;
-              if (newProgress >= 100) {
-                clearInterval(uploadSimulation);
-                setUploading(false);
-              }
-              if (newProgress === 100) {
-                setFileUploaded(true);
-              }
-              return newProgress;
-            });
-          }, 500);
-        }
-        reader.readAsText(file);
+          setDataInFile(fileData);
+
+          setTimeout(() => {
+            const uploadSimulation = setInterval(() => {
+              setProgress((prev) => {
+                const newProgress = prev + 20;
+                if (newProgress >= 100) {
+                  clearInterval(uploadSimulation);
+                  setUploading(false);
+                }
+                if (newProgress === 100) {
+                  clearInterval(uploadSimulation);
+                  setUploading(false);
+                  setFileUploaded(true);
+                }
+                return newProgress;
+              });
+            }, 500);
+          }, 0);
+        };
+        reader.readAsDataURL(file);
       } else {
         setFileName(fileName);
-        setErrorMsg('Unsupported file type. Please upload valid PDF or image documents.');
+        setCpcUploadErrorMsg(t('errors.uploadingCertificateErr'));
       }
     }
   };
+
 
   const cancelUpload = () => {
     setFileName(null);
     setProgress(0);
     setUploading(false);
-    setErrorMsg('');
-    setData(null);
+    setCpcUploadErrorMsg('');
+    setDataInFile(null);
     setShowUploadingBlock(false);
     setFileUploaded(false);
   };
@@ -83,14 +89,14 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
     setProgress(0);
     setUploading(false);
     setFileName(null);
-    setErrorMsg('');
-    setData(null);
+    setCpcUploadErrorMsg('');
+    setDataInFile(null);
     setFileUploaded(false);
   }
 
   return (
     <div className="flex flex-col ">
-      <div className={`flex flex-col h-[200px] px-6 space-y-3 items-center bg-white border ${errorMsg ? 'border-[#FDA29B]' : 'border-[#E4E7EC]'} rounded-lg`}>
+      <div className={`flex flex-col h-[200px] px-6 space-y-3 items-center bg-white border ${cpcUploadErrorMsg ? 'border-[#FDA29B]' : 'border-[#E4E7EC]'} rounded-lg`}>
         {!showUploadingBlock && (
           <>
             <div className="border border-[#E4E7EC] p-2 mt-12 rounded-md">
@@ -101,21 +107,22 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                 className="cursor-pointer hidden"
               />
               <img
+                itemType='file'
                 src={upload_to_cloud}
                 className="h-4 cursor-pointer"
                 onClick={handleFileInputClick}
               />
             </div>
             <p className="text-[13px] text-[#475467]">
-              <span className="text-[13px] text-[#006DE7] font-semibold cursor-pointer" onClick={handleFileInputClick}>
+              <span itemType='file' className="text-[13px] text-[#006DE7] font-semibold cursor-pointer" onClick={handleFileInputClick}>
                 {t('certificationUploadSec.cpc')}
               </span>{' '} {t('certificationUploadSec.clickToBrowse')}
             </p>
-            <p className="text-[13px] text-[#475467]">{t('certificationUploadSec.uploadCertificateInfo')}</p>
+            <p className="text-[10px] text-[#475467]">{t('certificationUploadSec.uploadManualCertificateInfo')}</p>
           </>
         )}
 
-        {showUploadingBlock && !errorMsg ? (
+        {showUploadingBlock && !cpcUploadErrorMsg ? (
           <div className="flex items-center justify-between w-full h-[4.5rem] border border-[#E4E7EC] rounded-md px-2.5 mt-12">
             <div className="flex items-center space-x-2 w-full">
               <div className='items-center -mt-3'>
@@ -146,7 +153,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
             </div>
           </div>
         ) : (
-          errorMsg && (
+          cpcUploadErrorMsg && (
             <div className="flex items-center justify-between w-full h-[4.5rem] border border-[#FDA29B] rounded-md px-2.5 mt-12">
               <div className="flex items-center space-x-2 w-full">
                 <div className='items-center -mt-3'>
@@ -157,7 +164,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                     {fileName ? fileName : 'CPC.pdf'}
                   </p>
                   <div className='flex items-center gap-1'>
-                    <p className="text-[0.6rem] text-[#475467] font-semibold">{fileSize} KB </p>
+                    <p className="text-[0.6rem] text-[#475467] font-semibold">{fileSize} {t('certificationUploadSec.kb')}</p>
                     <img src={cross_circle_icon} className='h-3 pl-1.5' />
                     <p className='text-[10px] text-[#D92D20]'>{t('certificationUploadSec.failed')}</p>
                   </div>
@@ -176,19 +183,19 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                   className="h-4 w-4 cursor-pointer "
                   onClick={cancelUpload}
                 />
-                <p className="text-[#344054] self-center text-[0.7rem] bg-white">100%</p>
+                <p className="text-[#344054] self-center text-[0.7rem] bg-white">{t('certificationUploadSec.fullPercentage')}</p>
               </div>
             </div>
           )
         )}
-        {(showUploadingBlock || errorMsg) &&
+        {(showUploadingBlock || cpcUploadErrorMsg) &&
           <button onClick={onChangeFile}
             className={`bg-transparent w-[23%] text-xs text-[#414651] border border-[#D5D7DA] font-[600] py-2.5 text-center rounded-[5px] cursor-pointer`}>
             {t('certificationUploadSec.changeFile')}
           </button>
         }
       </div>
-      <p className='text-xs text-[#D92D20] pt-1'>{errorMsg}</p>
+      <p className='text-xs text-[#D92D20] pt-1'>{cpcUploadErrorMsg}</p>
     </div>
   );
 };
@@ -199,6 +206,7 @@ interface CertificateUploadingSectionProps {
   showUploadingBlock: boolean;
   setShowUploadingBlock: React.Dispatch<React.SetStateAction<boolean>>;
   setFileUploaded: React.Dispatch<React.SetStateAction<boolean>>;
-  errorMsg: string;
-  setErrorMsg: React.Dispatch<React.SetStateAction<string>>;
+  setDataInFile: React.Dispatch<React.SetStateAction<string | null>>;
+  cpcUploadErrorMsg: string;
+  setCpcUploadErrorMsg: React.Dispatch<React.SetStateAction<string>>;
 }

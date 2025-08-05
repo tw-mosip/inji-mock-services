@@ -12,29 +12,24 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ }) => {
     const { t } = useTranslation();
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [conformationDetails, setConformationDetails] = useState<ConformationDetails | null>(null);
-    const [selectedCompanyName, setSelectedCompanyName] = useState<SelectedCompany | null>(null);
-    const [driverAdditionalInfo, setDriverAdditionalInfo] = useState<DriverAdditionalDetails | null>(null);
+    const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfo | null>(null);
 
     useEffect(() => {
-        const data = localStorage.getItem('driverInformation');
-        const selectedCompany = localStorage.getItem('companySelected');
-        const additionalInfo = localStorage.getItem('additionalInfo');
+        const details = localStorage.getItem('driverDetails');
+        const additonalFiles = localStorage.getItem('driverAdditionalFiles')
 
-        if (data) {
-            const information = JSON.parse(data);
-            setConformationDetails(information);
+        if (details) {
+            const driverDetails = JSON.parse(details);
+            if (driverDetails) {
+                setConformationDetails(driverDetails);
+            }
         }
-        if (selectedCompany) {
-            const name = JSON.parse(selectedCompany);
-            setSelectedCompanyName(name);
+        if (additonalFiles) {
+            const additionalDetails = JSON.parse(additonalFiles);
+            if (additionalDetails) {
+                setAdditionalInfo(additionalDetails);
+            }
         }
-        if (additionalInfo) {
-            const requiredInfo = JSON.parse(additionalInfo);
-            setDriverAdditionalInfo(requiredInfo);
-        }
-        setShowSuccessPopup(true);
-        const timer = setTimeout(() => setShowSuccessPopup(false), 5000);
-        return () => clearTimeout(timer);
     }, []);
 
     const onStartNewRegistration = () => {
@@ -59,10 +54,12 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ }) => {
 
                     <div className="w-[90%] border border-[#E2E8F0] rounded-lg p-6">
                         <div className='flex gap-x-3 items-center'>
-                            <img src={conformationDetails?.picture} alt="driver_user_icon" className='h-20 pt-2' />
+                            <img src={additionalInfo?.driverPicture} alt="driver_user_icon" className='h-20 pt-2' />
                             <div className='flex flex-col space-y-2 items-start'>
                                 <h1 className='font-bold'>{t('confirmationPage.driverSummary')}</h1>
-                                <p className='text-xs text-[#6B6B6B] font-[500]'>{t('confirmationPage.registrationDetailsInfo')}</p>
+                                <p className='text-xs text-[#6B6B6B] font-[500]'>
+                                    {t('confirmationPage.registrationDetailsInfo', { driverName: conformationDetails?.fullName })}
+                                </p>
                             </div>
                         </div>
                         <hr className='w-full border border-[#E5E5E5] my-4' />
@@ -71,34 +68,34 @@ export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ }) => {
                             <ol className='pb-2'>
                                 <li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.fullName')}</p>
-                                    <p className='text-sm font-[500]'>{conformationDetails?.name}</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.fullName}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.uin')}</p>
-                                    <p className='text-sm font-[500]'>198765432123</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.uin}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.gender')}</p>
                                     <p className='text-sm font-[500]'>{conformationDetails?.gender}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.email')}</p>
-                                    <p className='text-sm font-[500]'>{conformationDetails?.email}</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.emailId}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.phoneNumber')}</p>
-                                    <p className='text-sm font-[500]'>{conformationDetails?.phone_number}</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.phoneNumber}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.city')}</p>
-                                    <p className='text-sm font-[500]'>Chandigarh</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.city}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.transportCompany')}</p>
-                                    <p className='text-sm font-[500]'>{selectedCompanyName?.name}</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.transportCompany}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.licenseNum')}</p>
-                                    <p className='text-sm font-[500]'>{driverAdditionalInfo?.driverLicenceNum}</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.driverLicenseNum}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.passportNumber')}</p>
-                                    <p className='text-sm font-[500]'>{driverAdditionalInfo?.passportNum}</p>
+                                    <p className='text-sm font-[500]'>{conformationDetails?.passportNum}</p>
                                 </li><li className='flex justify-between py-2.5'>
                                     <p className='font-semibold text-sm'>{t('confirmationPage.cpcCertificate')}</p>
-                                    <p className='text-sm font-[500]'>File Uploaded </p>
+                                    <p className='text-sm font-[500]'>{t('confirmationPage.fileUploaded')}</p>
                                 </li>
                             </ol>
                         </div>
@@ -118,23 +115,20 @@ interface ConfirmationPageProps {
 
 }
 
+type AdditionalInfo = {
+    driverPicture: string;
+    cpcFile: string
+};
+
 type ConformationDetails = {
-    name?: string;
     picture?: string;
-    gender?: string;
-    email?: string;
-    phone_number?: string;
+    fullName?: string;
+    uin?: string,
+    gender?: string,
+    emailId?: string;
     city?: string;
-}
-
-type SelectedCompany = {
-    id: string;
-    name: string;
-    licenseStatus: string;
-    registrationType: string;
-}
-
-type DriverAdditionalDetails = {
-    driverLicenceNum?: string;
-    passportNum?: string;
-}
+    phoneNumber?: string;
+    driverLicenseNum?: string,
+    passportNum?: string,
+    transportCompany?: string
+};

@@ -79,7 +79,6 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
             else {
                 setVerificationStatus('unable-to-fetch-data');
             }
-            console.log(userInfo);
 
             localStorage.setItem('driverInformation', JSON.stringify(userInfo));
         }
@@ -95,6 +94,11 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
     useEffect(() => {
         renderSignInButton();
     }, [state])
+
+    const verifyAgain = () => {
+        setVerificationStatus('pending');
+        window.location.reload();
+    };
 
     const renderSignInButton = () => {
 
@@ -156,7 +160,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                     </div>
                 );
             case 'verified':
-                const uin = "276301076687";
+                const uin = "8769123460";
                 const toggleUIN = () => {
                     setShowUIN(prev => !prev);
                 };
@@ -169,7 +173,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
 
                         <div className="bg-[#EEF7FF] border border-[#B9DDFD] rounded-md px-3 py-2 flex items-center text-sm text-[#007F41] font-semibold">
                             <span className="text-[#0059D4] flex items-center">
-                                UIN Fetched:&nbsp;{displayValue(uin, showUIN)}
+                                {t('uinVerification.uinFetched')}&nbsp;{displayValue(uin, showUIN)}
                                 <img
                                     src={showUIN ? eye_off : eye_icon}
                                     alt={showUIN ? "Hide UIN" : "Show UIN"}
@@ -187,13 +191,15 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                         <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
                     </div>
                 );
+
+            //The case when  already driver was registered with the same UIN 
             case 'already-registered':
                 return (
                     <div className="flex flex-col bg-[#FFF7E8] border border-[#FFE7B7] space-y-2 rounded-lg p-4">
                         <h2 className="text-sm font-semibold text-[#C4320A]">{t('uinVerification.uinAlreadyRegistered')}</h2>
                         <div className="bg-white border border-[#FFE7B7] rounded-md px-3 py-2 flex justify-between items-center text-sm text-[#C4320A] font-semibold">
                             {t('')} <span className="text-[#0059D4] flex items-center">
-                                UIN Fetched:&nbsp;{displayValue("276301076687", showUIN)}
+                                {t('uinVerification.uinFetched')}&nbsp;{displayValue("276301076687", showUIN)}
                                 <img
                                     src={showUIN ? eye_off : eye_icon}
                                     alt={showUIN ? "Hide UIN" : "Show UIN"}
@@ -202,13 +208,12 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                                 />
                             </span>
                         </div>
-                        <p className="text-[12px] text-[#C4320A] font-[500]">{t('uinVerification.alreadyRegisteredInfo',)}</p>
-                        {/* <p className="text-[12px] text-[#ff0004] font-[500]">{t('uinVerification.alreadyRegisteredInfoTryAgain',)}</p> */}
+                        <p className="text-[12px] text-[#C4320A] font-[500]">{t('uinVerification.alreadyRegisteredInfo')}</p>
                         <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
                     </div>
                 );
 
-    //The case unable-to-fetch-data UI for the useCase of now for our convience
+            //The case when unable-to-fetch-data UI for the useCase of now for our convience
             case 'unable-to-fetch-data':
                 return (
                     <div className="flex flex-col bg-[#f87373] border border-[#fbb7b7] space-y-2 rounded-lg p-4">
@@ -217,12 +222,10 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                             {t('')} <span className="text-[#f62d63] flex items-center">
                             </span>
                         </div>
-                        <p className="text-[12px] text-[#ea9e89] font-[500]">{t('Better Check All the required aspects and Try Again.',)}</p>
-                        {/* <p className="text-[12px] text-[#ff0004] font-[500]">{t('uinVerification.alreadyRegisteredInfoTryAgain',)}</p> */}
+                        <p className="text-[12px] text-[#ea9e89] font-[500]">{t('uinVerification.unableToFetchInfo')}</p>
                         <img src={poweredBy_logo} alt="poweredBy_logo" className="h-7 w-[20%] pt-1" />
                     </div>
                 )
-    //The case unable-to-fetch-data UI for the useCase of now for our convience
 
             default:
                 return null;
@@ -251,9 +254,9 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                     >
                         {t('commans.goBack')}
                     </button>
-                    {verificationStatus === 'already-registered' ? (
+                    {(verificationStatus === 'already-registered' || verificationStatus === 'unable-to-fetch-data') ? (
                         <button
-                            onClick={() => setVerificationStatus('pending')}
+                            onClick={verifyAgain}
                             className="bg-[#006DE7] w-[33%] text-xs font-[600] py-2.5 text-center rounded-[5px] text-white cursor-pointer"
                         >
                             {t('commans.tryAgain')}
