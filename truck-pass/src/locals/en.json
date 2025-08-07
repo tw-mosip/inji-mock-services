@@ -58,6 +58,8 @@
         "companyDetails": "Company Details",
         "selected": "Selected: ",
         "licenseStatus": "License Status: ",
+        "activeText": "Active and Valid",
+        "inActiveText": "Inctive and Invalid",
         "registrationType": "Registration Type: "
     },
     "uinVerification": {

@@ -140,7 +140,7 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
                                 </div>
                                 <div>
                                     <span className={`text-[12px] font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.licenseStatus')}</span>
-                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registrationStatus}</span>
+                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registrationStatus === 'Active' ? t('selectCompany.activeText') : t('selectCompany.inActiveText')}</span>
                                 </div>
                                 <div>
                                     <span className={`text-[12px] font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.registrationType')}</span>

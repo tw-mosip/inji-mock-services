@@ -58,6 +58,8 @@
         "companyDetails": "Détails de l'entreprise",
         "selected": "Choisi: ",
         "licenseStatus": "Statut de la licence : ",
+        "activeText": "Actif et valide",
+        "inActiveText": "Inactif et non valide",
         "registrationType": "Type d'inscription : "
     },
     "uinVerification": {
