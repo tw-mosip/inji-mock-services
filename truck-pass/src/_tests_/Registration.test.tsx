@@ -1,291 +1,200 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { Registration } from '../pages/driverRegistration/Registration';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { CertificateUploadingSection } from '../components/CertificateUploadSection';
-import { Stepper } from '../commans/Stepper';
-
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
-
-jest.mock('react-router-dom', () => ({
-  useNavigate: jest.fn(),
-}));
-
-jest.mock('../components/CertificateUploadSection', () => ({
-  CertificateUploadingSection: jest.fn(({ showUploadingBlock, setShowUploadingBlock, setFileUploaded, errorMsg, setErrorMsg }) => {
-    const [localShowUploadingBlock, setLocalShowUploadingBlock] = jest.requireActual('react').useState(showUploadingBlock);
-    const [progress, setProgress] = jest.requireActual('react').useState(0);
-
-    const simulateUpload = () => {
-      setLocalShowUploadingBlock(true);
-      setShowUploadingBlock(true);
-      let currentProgress = 0;
-      const interval = setInterval(() => {
-        currentProgress += 20;
-        setProgress(currentProgress);
-        if (currentProgress >= 100) {
-          clearInterval(interval);
-          setTimeout(() => {
-            setFileUploaded(true);
-          }, 0);
-        }
-      }, 100);
-    };
-
-    return (
-      <div data-testid="certificate-upload-section">
-        <button
-          type="button"
-          data-testid="toggle-upload-button"
-          onClick={() => {
-            const newValue = !localShowUploadingBlock;
-            setLocalShowUploadingBlock(newValue);
-            setShowUploadingBlock(newValue);
-          }}
-        >
-          Toggle Upload Block
-        </button>
-        <button
-          type="button"
-          data-testid="upload-certificate-button"
-          onClick={simulateUpload}
-        >
-          Upload Certificate
-        </button>
-        {errorMsg && <p>{errorMsg}</p>}
-        {localShowUploadingBlock && <div data-testid="upload-block">Upload Block (Progress: {progress}%)</div>}
-      </div>
-    );
-  }),
-}));
-
-jest.mock('../commans/Stepper', () => ({
-  Stepper: jest.fn(() => <div data-testid="stepper">Stepper Component</div>),
-}));
-
-jest.mock('../../assets/user_photo.png', () => 'user_photo.png');
-jest.mock('../../assets/help_icon.png', () => 'help_icon.png');
-jest.mock('../../assets/registering_process.gif', () => 'registering_process.gif');
-jest.mock('../../assets/poweredby_inji_icon.png', () => 'poweredby_inji_icon.png');
-
-describe('Registration Component', () => {
-  let mockNavigate: jest.Mock;
-
-  beforeEach(() => {
-    mockNavigate = jest.fn();
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-    jest.useFakeTimers();
-    (CertificateUploadingSection as jest.Mock).mockClear();
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    jest.useRealTimers();
-  });
-
-  test('renders personal information section correctly', () => {
-    render(<Registration />);
-
-    expect(screen.getByText('registration.personalInformation')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Rajesh Singh')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('198765432123')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Male')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('myemail@gmail.com')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('+91 9876543210')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('Chandigarh')).toBeInTheDocument();
-  });
-
-  test('renders additional information section correctly', () => {
-    render(<Registration />);
-
-    expect(screen.getByText('registration.additionalInfo')).toBeInTheDocument();
-    expect(screen.getByText('registration.driverLicenseNum')).toBeInTheDocument();
-    expect(screen.getByText('registration.passportNum')).toBeInTheDocument();
-    expect(screen.getByText('registration.cpc')).toBeInTheDocument();
-  });
-
-  test('updates driver license number on input change', async () => {
-    render(<Registration />);
-
-    const driverLicenseInput = screen.getByPlaceholderText('e.g., DL-9876543210');
-    await act(async () => {
-      fireEvent.change(driverLicenseInput, { target: { value: 'DL-1234567890' } });
-    });
-
-    expect(driverLicenseInput).toHaveValue('DL-1234567890');
-  });
-
-  test('updates passport number on input change', async () => {
-    render(<Registration />);
-
-    const passportInput = screen.getByPlaceholderText('e.g., Z7654321');
-    await act(async () => {
-      fireEvent.change(passportInput, { target: { value: 'Z1234567' } });
-    });
-
-    expect(passportInput).toHaveValue('Z1234567');
-  });
-
-  test('toggles between manual entry and share via Inji Verify', async () => {
-    render(<Registration />);
-
-    const manualEntryRadio = screen.getByLabelText('registration.manualEntry');
-    const injiVerifyRadio = screen.getByLabelText('registration.shareViaInjiVerify');
-
-    expect(manualEntryRadio).toBeChecked();
-    expect(injiVerifyRadio).not.toBeChecked();
-
-    await act(async () => {
-      fireEvent.click(injiVerifyRadio);
-      jest.advanceTimersByTime(500);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(manualEntryRadio).not.toBeChecked();
-      expect(injiVerifyRadio).toBeChecked();
-    });
-  });
-
-  test('disables submit button when required fields are empty', () => {
-    render(<Registration />);
-
-    const submitButton = screen.getByText('commans.submit');
-    expect(submitButton).toBeDisabled();
-  });
-
-  test('enables submit button when required fields are filled (manual entry)', async () => {
-    render(<Registration />);
-
-    const driverLicenseInput = screen.getByPlaceholderText('e.g., DL-9876543210');
-    const passportInput = screen.getByPlaceholderText('e.g., Z7654321');
-    const uploadCertificateButton = screen.getByTestId('upload-certificate-button');
-
-    await act(async () => {
-      fireEvent.change(driverLicenseInput, { target: { value: 'DL-1234567890' } });
-      fireEvent.change(passportInput, { target: { value: 'Z1234567' } });
-      fireEvent.click(uploadCertificateButton);
-      jest.advanceTimersByTime(600);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      const submitButton = screen.getByText('commans.submit');
-      expect(submitButton).not.toBeDisabled();
-    });
-  });
-
-  // Commented out due to TypeError: Cannot destructure property 'setLicenseShared'
-  /*
-  test('enables submit button when required fields are filled (Inji Verify)', async () => {
-    render(<Registration />);
-
-    const injiVerifyRadio = screen.getByLabelText('registration.shareViaInjiVerify');
-    const driverLicenseInput = screen.getByPlaceholderText('e.g., DL-9876543210');
-    const passportInput = screen.getByPlaceholderText('e.g., Z7654321');
-    const uploadCertificateButton = screen.getByTestId('upload-certificate-button');
-
-    await act(async () => {
-      // Select Inji Verify and mock licenseShared to true
-      fireEvent.click(injiVerifyRadio);
-      jest.advanceTimersByTime(500);
-      // Mock the shareViaInjiVerify effect since it's commented out
-      const { setLicenseShared } = require('../pages/driverRegistration/Registration').default;
-      act(() => {
-        setLicenseShared(true);
-      });
-      jest.runAllTimers();
-      fireEvent.change(driverLicenseInput, { target: { value: 'DL-1234567890' } });
-      fireEvent.change(passportInput, { target: { value: 'Z1234567' } });
-      fireEvent.click(uploadCertificateButton);
-      jest.advanceTimersByTime(600);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      const submitButton = screen.getByText('commans.submit');
-      expect(submitButton).not.toBeDisabled();
-    });
-  });
-  */
-
-  test('navigates to verify UIN page on go back button click', async () => {
-    render(<Registration />);
-
-    const goBackButton = screen.getByText('commans.goBack');
-    await act(async () => {
-      fireEvent.click(goBackButton);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith('/driverRegistrationProcessPage/verifyUINPage');
-  });
-
-  test('shows registration loader and navigates to confirmation page on submit', async () => {
-    render(<Registration />);
-
-    const driverLicenseInput = screen.getByPlaceholderText('e.g., DL-9876543210');
-    const passportInput = screen.getByPlaceholderText('e.g., Z7654321');
-    const uploadCertificateButton = screen.getByTestId('upload-certificate-button');
-    const submitButton = screen.getByText('commans.submit');
-
-    await act(async () => {
-      fireEvent.change(driverLicenseInput, { target: { value: 'DL-1234567890' } });
-      fireEvent.change(passportInput, { target: { value: 'Z1234567' } });
-      fireEvent.click(uploadCertificateButton);
-      jest.advanceTimersByTime(600);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('commans.submit')).not.toBeDisabled();
-    });
-
-    await act(async () => {
-      fireEvent.click(submitButton);
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('registration.registering')).toBeInTheDocument();
-      expect(screen.getByText('registration.pleaseWait')).toBeInTheDocument();
-    });
-
-    await act(async () => {
-      jest.advanceTimersByTime(4000);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/driverRegistrationProcessPage/confirmationPagePage');
-    });
-  });
-
-  test('toggles certificate uploading section visibility', async () => {
-    render(<Registration />);
-
-    const toggleUploadButton = screen.getByTestId('toggle-upload-button');
-    await act(async () => {
-      fireEvent.click(toggleUploadButton);
-      jest.advanceTimersByTime(500);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByTestId('upload-block')).toBeInTheDocument();
-    });
+beforeAll(() => {
+  (global as any).window = Object.create(window);
+  Object.defineProperty(window, '_env_', {
+    value: {
+      MOCK_RELYING_PARTY_SERVER_URL: 'http://mock-url.test',
+    },
+    writable: true,
   });
 });
 
-// Test1: Checks if the personal information section displays the correct initial data
-// Test2: Verifies that the additional information section shows the right labels
-// Test3: Tests if the driver license number updates when typing a new value
-// Test4: Tests if the passport number updates when typing a new value
-// Test5: Checks if switching between manual entry and Inji Verify radio buttons works
-// Test6: Ensures the submit button is disabled when required fields are empty
-// Test7: Verifies the submit button enables when required fields are filled using manual entry
-// Test8: Checks if clicking the go back button navigates to the verify UIN page
-// Test9: Tests if submitting shows a loader and then navigates to the confirmation page
-// Test10: Verifies that clicking the toggle button shows or hides the certificate uploading section
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
+import { Registration } from '../pages/driverRegistration/Registration';
+import { BrowserRouter } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../i18';
+import relyingPartyService from '../services/relyingPartyService';
+import type { ClassAttributes, HTMLAttributes } from 'react';
+import type { JSX } from 'react/jsx-runtime';
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: any) => key,
+  }),
+}));
+
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
+jest.mock('../components/ErrorPopup', () => ({
+ ErrorPopup: ({ showErrorPopup }: { showErrorPopup: boolean }) =>
+    showErrorPopup ? <div data-testid="error-popup" /> : null,
+}));
+
+jest.mock('../commans/Stepper', () => ({
+  Stepper: (props: JSX.IntrinsicAttributes & ClassAttributes<HTMLDivElement> & HTMLAttributes<HTMLDivElement>) => <div data-testid="stepper" {...props} />,
+}));
+
+jest.mock('../components/CertificateUploadSection', () => ({
+  CertificateUploadingSection: (props: { setShowUploadingBlock: (arg0: boolean) => void; setFileUploaded: (arg0: boolean) => void; setDataInFile: (arg0: string) => void; }) => (
+    <div data-testid="upload-section">
+      <button onClick={() => {
+        props.setShowUploadingBlock(true);
+        props.setFileUploaded(true);
+        props.setDataInFile('data:image/png;base64,AAAA');
+      }}>Upload</button>
+    </div>
+  ),
+}));
+
+describe('Registration component', () => {
+  beforeEach(() => {
+    localStorage.clear();
+    mockNavigate.mockClear();
+  });
+
+  test('renders personal info form when driver info is in localStorage', () => {
+    const driverInfo = {
+      name: 'John Doe',
+      picture: '',
+      gender: 'Male',
+      email: 'john@example.com',
+      phone_number: '1234',
+      address: { locality: 'City' },
+    };
+    const company = { companyName: 'ABC Corp' };
+    localStorage.setItem('driverInformation', JSON.stringify(driverInfo));
+    localStorage.setItem('companySelected', JSON.stringify(company));
+
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <Registration />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText('registration.personalInformation')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Male')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('john@example.com')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('City')).toBeInTheDocument();
+  });
+
+  test('shows validation error if license format is invalid', () => {
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <Registration />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/DL-/i), { target: { value: 'INVALID' } });
+    fireEvent.change(screen.getByPlaceholderText(/Z\d+/i), { target: { value: 'Z123' } });
+    fireEvent.click(screen.getByText('commans.submit'));
+    expect(screen.getByText(/must include a '-'/)).toBeInTheDocument();
+  });
+
+  test('submits form successfully and navigates on positive response', async () => {
+    const postSpy = jest.spyOn(relyingPartyService, 'post_driver_registration').mockResolvedValue({});
+
+    const driverInfo = { name: 'A', gender: 'F', email: 'a@b.com', phone_number: '000', picture: 'data:image/png;base64,AAA', address: { locality: 'X' } };
+    localStorage.setItem('driverInformation', JSON.stringify(driverInfo));
+
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <Registration />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+
+    // fill in inputs
+    fireEvent.change(screen.getByPlaceholderText(/DL-/i), { target: { value: 'DL-1234' } });
+    fireEvent.change(screen.getByPlaceholderText(/Z\d+/i), { target: { value: 'Z999' } });
+
+    // simulate upload
+    fireEvent.click(screen.getByText('Upload'));
+    fireEvent.click(screen.getByText('commans.submit'));
+
+    // loader shows
+    await waitFor(() => expect(screen.getByText('registration.registering')).toBeInTheDocument());
+
+    // after timeout: navigate
+    await act(async () => {
+      jest.advanceTimersByTime(3000);
+    });
+
+    expect(postSpy).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith('/driverRegistrationProcessPage/confirmationPagePage');
+  });
+
+  test('shows error popup when registration fails', async () => {
+    jest.useFakeTimers();
+    jest.spyOn(relyingPartyService, 'post_driver_registration').mockRejectedValue({});
+
+    const driverInfo = { name: 'A', gender: 'F', email: 'a@b.com', phone_number: '000', picture: '', address: { locality: 'X' } };
+    localStorage.setItem('driverInformation', JSON.stringify(driverInfo));
+
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <Registration />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+
+    fireEvent.change(screen.getByPlaceholderText(/DL-/i), { target: { value: 'DL-5678' } });
+    fireEvent.change(screen.getByPlaceholderText(/Z\d+/i), { target: { value: 'Z777' } });
+
+    fireEvent.click(screen.getByText('Upload'));
+    fireEvent.click(screen.getByText('commans.submit'));
+
+    await act(async () => {
+      jest.advanceTimersByTime(3000);
+    });
+
+    expect(await screen.findByTestId('error-popup')).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  test('base64ToFile throws on invalid input', () => {
+    const { base64ToFile } = require('../pages/Registration');
+    expect(() => base64ToFile('invalid-base64', 'file')).toThrow(/Invalid base64 string format/);
+  });
+
+  test('radio option toggles and disables Inji-verify section initially', () => {
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <Registration />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+    const manualRadio = screen.getByLabelText('registration.manualEntry');
+    fireEvent.click(manualRadio);
+    expect(manualRadio).toBeChecked();
+
+    const shareRadio = screen.getByLabelText('registration.shareViaInjiVerify');
+    expect(shareRadio).toBeDisabled();
+  });
+
+  test('share via Inji verify flow shows poweredby icon and share button', () => {
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <Registration />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+    fireEvent.click(screen.getByLabelText('registration.shareViaInjiVerify'));
+    expect(screen.getByText('registration.shareBtn')).toBeInTheDocument();
+    expect(screen.getByAltText('poweredBy_logo')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('registration.shareBtn'));
+    expect(screen.getByText('registration.fetchedSuccessfully')).toBeInTheDocument();
+  });
+});

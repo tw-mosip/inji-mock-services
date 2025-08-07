@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1754493652206" clover="3.2.0">
+  <project timestamp="1754493652207" name="All files">
+    <metrics statements="213" coveredstatements="126" conditionals="87" coveredconditionals="48" methods="42" coveredmethods="21" elements="342" coveredelements="195" complexity="0" loc="213" ncloc="213" packages="6" files="14" classes="14"/>
+    <package name="src">
+      <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="i18.ts" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\i18.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="20" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src._tests_.mocks">
+      <metrics statements="13" coveredstatements="10" conditionals="2" coveredconditionals="0" methods="9" coveredmethods="6"/>
+      <file name="fileMock.ts" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\_tests_\mocks\fileMock.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="7" type="stmt"/>
+      </file>
+      <file name="i18n.ts" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\_tests_\mocks\i18n.ts">
+        <metrics statements="5" coveredstatements="4" conditionals="2" coveredconditionals="0" methods="5" coveredmethods="4"/>
+        <line num="1" count="10" type="stmt"/>
+        <line num="3" count="19" type="stmt"/>
+        <line num="4" count="19" type="stmt"/>
+        <line num="5" count="45" type="stmt"/>
+        <line num="8" count="0" type="cond" truecount="0" falsecount="2"/>
+      </file>
+      <file name="react-router-dom.ts" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\_tests_\mocks\react-router-dom.ts">
+        <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="2"/>
+        <line num="1" count="10" type="stmt"/>
+        <line num="3" count="10" type="stmt"/>
+        <line num="4" count="4" type="stmt"/>
+        <line num="6" count="4" type="stmt"/>
+        <line num="9" count="6" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.commans">
+      <metrics statements="14" coveredstatements="14" conditionals="22" coveredconditionals="22" methods="2" coveredmethods="2"/>
+      <file name="Stepper.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\commans\Stepper.tsx">
+        <metrics statements="14" coveredstatements="14" conditionals="22" coveredconditionals="22" methods="2" coveredmethods="2"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="27" count="24" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components">
+      <metrics statements="100" coveredstatements="44" conditionals="43" coveredconditionals="23" methods="17" coveredmethods="6"/>
+      <file name="CertificateUploadSection.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\components\CertificateUploadSection.tsx">
+        <metrics statements="65" coveredstatements="18" conditionals="33" coveredconditionals="15" methods="9" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="17" count="8" type="stmt"/>
+        <line num="18" count="8" type="stmt"/>
+        <line num="19" count="8" type="stmt"/>
+        <line num="20" count="8" type="stmt"/>
+        <line num="21" count="8" type="stmt"/>
+        <line num="22" count="8" type="stmt"/>
+        <line num="26" count="8" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="30" count="8" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="cond" truecount="0" falsecount="6"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="58" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="77" count="8" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="87" count="8" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="97" count="8" type="stmt"/>
+      </file>
+      <file name="NavBar.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\components\NavBar.tsx">
+        <metrics statements="27" coveredstatements="18" conditionals="8" coveredconditionals="6" methods="6" coveredmethods="3"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="11" count="6" type="stmt"/>
+        <line num="13" count="6" type="stmt"/>
+        <line num="15" count="6" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="6" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="27" count="4" type="cond" truecount="2" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="34" count="6" type="stmt"/>
+        <line num="44" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+      </file>
+      <file name="SuccessPopup.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\components\SuccessPopup.tsx">
+        <metrics statements="8" coveredstatements="8" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="1" count="2" type="stmt"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="8" count="5" type="stmt"/>
+        <line num="10" count="5" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.pages.driverRegistration">
+      <metrics statements="72" coveredstatements="44" conditionals="20" coveredconditionals="3" methods="12" coveredmethods="5"/>
+      <file name="ConfirmationPage.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\pages\driverRegistration\ConfirmationPage.tsx">
+        <metrics statements="27" coveredstatements="7" conditionals="16" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+      </file>
+      <file name="ConsentAndAgreementPage.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\pages\driverRegistration\ConsentAndAgreementPage.tsx">
+        <metrics statements="15" coveredstatements="15" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="9" count="8" type="stmt"/>
+        <line num="10" count="8" type="stmt"/>
+        <line num="11" count="8" type="stmt"/>
+        <line num="12" count="8" type="stmt"/>
+        <line num="15" count="8" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="20" count="8" type="stmt"/>
+        <line num="42" count="2" type="stmt"/>
+      </file>
+      <file name="DriverRegistrationProcess.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\pages\driverRegistration\DriverRegistrationProcess.tsx">
+        <metrics statements="11" coveredstatements="10" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="12" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+      </file>
+      <file name="LandingPage.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\pages\driverRegistration\LandingPage.tsx">
+        <metrics statements="19" coveredstatements="12" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="97" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.shared">
+      <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+      <file name="DriverRegistrationFlow.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\shared\DriverRegistrationFlow.tsx">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+      </file>
+      <file name="DriverRegistrationMainLayout.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\shared\DriverRegistrationMainLayout.tsx">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

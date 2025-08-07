@@ -11,7 +11,7 @@ import clientDetails from '../../constants/clientDetails';
 
 export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
 
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const navigate = useNavigate();
     const [uinVerificationContinueBtn, setUinVerificationContinueBtn] = useState(false);
     const signInButtonScript = window._env_.SIGN_IN_BUTTON_PLUGIN_URL;
@@ -45,7 +45,12 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
             let authCode = searchParams.get("code");
             let errorCode = searchParams.get("error");
             let error_desc = searchParams.get("error_description");
+            const savedLang = localStorage.getItem("appLanguage");
 
+            if (savedLang) {
+                i18n.changeLanguage(savedLang);
+            }
+            
             if (errorCode) {
                 // navigateToLogin(errorCode || '', error_desc || '');
                 return;

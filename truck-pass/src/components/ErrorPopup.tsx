@@ -22,6 +22,6 @@ export const ErrorPopup: React.FC<ErrorPopupProps> = ({ showErrorPopup, setShowE
 }
 
 interface ErrorPopupProps {
-    showErrorPopup: boolean;
+    showErrorPopup?: boolean;
     setShowErrorPopup: (status: boolean) => void;
 }

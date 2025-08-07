@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/driverRegistration/LandingPage';
 import DriverRegistrationProcess from './pages/driverRegistration/DriverRegistrationProcess';
 import DriverRegistrationMainLayout from './shared/DriverRegistrationMainLayout';
-import './styles/main.css';
+import './styles/main.css'
 import './i18';
 import { VerifyUIN } from './pages/driverRegistration/VerifyUIN';
 import { ConsentAndAgreementPage } from './pages/driverRegistration/ConsentAndAgreementPage';

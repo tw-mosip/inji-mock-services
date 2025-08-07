@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DriverRegistrationFlow } from "../../shared/DriverRegistrationFlow";
 import { useTranslation } from "react-i18next";
 
 const DriverRegistrationProcess: React.FC<DriverRegistrationProcessProps> = ({ children }) => {
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    const savedLng = localStorage.getItem("appLanguage");
+
+    if (savedLng) {
+      i18n.changeLanguage(savedLng);
+    }
+  }, []);
 
   return (
     <div className="flex flex-col bg-[#ECF5FF] w-full items-center pt-12 gap-y-10 font-inter h-auto">

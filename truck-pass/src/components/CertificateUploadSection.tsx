@@ -14,11 +14,11 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
   setCpcUploadErrorMsg
 }) => {
 
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [uploading, setUploading] = useState<boolean>(false);
-  const [removeLastUploadData, setRemoveLastUploadData] = useState<boolean>(true);
-  const [progress, setProgress] = useState<number>(0);
-  const [fileSize, setFileSize] = useState<number>(0);
+  const [fileName, setFileName] = useState('');
+  const [uploading, setUploading] = useState(false);
+  const [removeLastUploadData, setRemoveLastUploadData] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [fileSize, setFileSize] = useState(0);
   const { t } = useTranslation();
 
 
@@ -75,11 +75,11 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
 
 
   const cancelUpload = () => {
-    setFileName(null);
+    setFileName('');
     setProgress(0);
     setUploading(false);
     setCpcUploadErrorMsg('');
-    setDataInFile(null);
+    setDataInFile('');
     setShowUploadingBlock(false);
     setFileUploaded(false);
   };
@@ -88,9 +88,9 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
     setShowUploadingBlock(false);
     setProgress(0);
     setUploading(false);
-    setFileName(null);
+    setFileName('');
     setCpcUploadErrorMsg('');
-    setDataInFile(null);
+    setDataInFile('');
     setFileUploaded(false);
   }
 
@@ -204,9 +204,9 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
 
 interface CertificateUploadingSectionProps {
   showUploadingBlock: boolean;
-  setShowUploadingBlock: React.Dispatch<React.SetStateAction<boolean>>;
-  setFileUploaded: React.Dispatch<React.SetStateAction<boolean>>;
-  setDataInFile: React.Dispatch<React.SetStateAction<string | null>>;
-  cpcUploadErrorMsg: string;
-  setCpcUploadErrorMsg: React.Dispatch<React.SetStateAction<string>>;
+  setShowUploadingBlock: (value : boolean) => void;
+  setFileUploaded: (value : boolean) => void;
+  setDataInFile: (value : string) => void;
+  cpcUploadErrorMsg?: string;
+  setCpcUploadErrorMsg: (value : string) => void;
 }

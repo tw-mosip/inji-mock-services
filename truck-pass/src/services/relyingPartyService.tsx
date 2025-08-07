@@ -3,7 +3,7 @@ declare const window: CustomWindow;
 const baseUrl: string =
   process.env.NODE_ENV === "develop"
     ? (process.env.REACT_APP_MOCK_RELYING_PARTY_SERVER_URL as string)
-    : window._env_.MOCK_RELYING_PARTY_SERVER_URL;
+    : window?._env_?.MOCK_RELYING_PARTY_SERVER_URL;
 
 const fetchUserInfoEndPoint = "/fetchUserInfo";
 const COMPANIES_API_URL = "http://localhost:8080/api";                 //Will be adjust for frontend URL Later

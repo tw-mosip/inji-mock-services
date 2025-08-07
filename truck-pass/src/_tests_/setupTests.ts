@@ -1,6 +1,6 @@
 import { TextEncoder, TextDecoder } from 'text-encoding';
 import '@testing-library/jest-dom';
-import '../_tests_/mocks/i18n';
+import './mocks/i18n';
 import '../_tests_/mocks/react-router-dom';
 
 // Polyfill TextEncoder/Decoder
