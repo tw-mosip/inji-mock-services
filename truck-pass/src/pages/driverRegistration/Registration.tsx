@@ -6,9 +6,9 @@ import poweredby_inji_icon from "../../assets/poweredby_inji_icon.png";
 import { CertificateUploadingSection } from '../../components/CertificateUploadSection';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Stepper } from './DriverRegistrationStepper';
 import relyingPartyService from '../../services/relyingPartyService';
 import { ErrorPopup } from '../../components/ErrorPopup';
+import { DriverRegistrationStepper } from './DriverRegistrationStepper';
 
 
 export const Registration: React.FC<RegistrationProps> = ({ }) => {
@@ -186,7 +186,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
             {showErrorPopup && <ErrorPopup showErrorPopup={showErrorPopup} setShowErrorPopup={setShowErrorPopup} />}
 
             <div className="flex w-[63%] shadow-lg rounded-2xl place-self-center">
-                <Stepper
+                <DriverRegistrationStepper
                     consentStatus={true}
                     selectCompanyStatus={true}
                     uinVerificationStatus={true}

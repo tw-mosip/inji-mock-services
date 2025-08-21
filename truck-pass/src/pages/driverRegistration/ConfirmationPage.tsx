@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import confirmation_icon from '../../assets/confirmation_icon.png';
 import { useTranslation } from 'react-i18next';
 import { SuccessPopup } from '../../components/SuccessPopup';
-import { Stepper } from './DriverRegistrationStepper';
+import { DriverRegistrationStepper } from './DriverRegistrationStepper';
 
 export const ConfirmationPage: React.FC = () => {
   const navigate = useNavigate();
@@ -45,7 +45,7 @@ export const ConfirmationPage: React.FC = () => {
         />
       )}
 
-      <Stepper
+      <DriverRegistrationStepper
         consentStatus
         selectCompanyStatus
         uinVerificationStatus

@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from '../components/NavBar';
+import NavBar from '../commans/NavBar';
 
 const AppMainLayout: React.FC<AppMainLayoutProps> = ({ children }) => {
 

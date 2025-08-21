@@ -2,7 +2,7 @@ import { useState } from "react";
 import consent_terms_icon from "../../assets/terms_icon.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Stepper } from "./DriverRegistrationStepper";
+import { DriverRegistrationStepper } from "./DriverRegistrationStepper";
 
 export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = ({ }) => {
 
@@ -19,7 +19,7 @@ export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = (
 
     return (
         <div className="flex w-[63%] shadow-lg rounded-2xl place-self-center">
-            <Stepper
+            <DriverRegistrationStepper
                 consentStatus={getStartedBtn}
                 selectCompanyStatus={false}
                 uinVerificationStatus={false}

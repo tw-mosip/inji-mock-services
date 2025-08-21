@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useExternalScript } from '../../hooks/useExternalScript';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Stepper } from './DriverRegistrationStepper';
 import relyingPartyService from '../../services/relyingPartyService';
 import eye_icon from "../../assets/eye_icon.png";
 import eye_off from "../../assets/eye_off.png";
 import poweredBy_logo from '../../assets/poweredby_esignet_logo.png';
 import clientDetails from '../../constants/clientDetails';
+import { DriverRegistrationStepper } from './DriverRegistrationStepper';
 
 export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
 
@@ -239,7 +239,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
 
     return (
         <div className="flex w-[63%] shadow-lg rounded-2xl place-self-center">
-            <Stepper
+            <DriverRegistrationStepper
                 consentStatus={true}
                 selectCompanyStatus={true}
                 uinVerificationStatus={uinVerificationContinueBtn}

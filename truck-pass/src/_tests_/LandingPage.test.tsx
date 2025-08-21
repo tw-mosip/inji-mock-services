@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '../i18';
-import LandingPage from '../pages/driverRegistration/LandingPage';
+import LandingPage from '../commans/LandingPage';
 
 // Mock useNavigate from react-router-dom
 jest.mock('react-router-dom', () => ({

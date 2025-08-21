@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import LandingPage from './pages/driverRegistration/LandingPage';
+import LandingPage from './commans/LandingPage';
 import DriverRegistrationProcess from './pages/driverRegistration/DriverRegistrationProcess';
 import AppMainLayout from './shared/AppMainLayout';
 import './styles/main.css'

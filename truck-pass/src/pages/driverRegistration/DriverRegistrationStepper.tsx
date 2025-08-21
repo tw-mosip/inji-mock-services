@@ -3,7 +3,7 @@ import connector_icon from "../../assets/connector_icon.png";
 import tick_icon from "../../assets/tick_icon.png";
 import { useTranslation } from 'react-i18next';
 
-export const Stepper: React.FC<StepperProps> = ({ consentStatus, selectCompanyStatus, uinVerificationStatus, registrationStatus, confirmationStatus }) => {
+export const DriverRegistrationStepper: React.FC<StepperProps> = ({ consentStatus, selectCompanyStatus, uinVerificationStatus, registrationStatus, confirmationStatus }) => {
     
     const { t } = useTranslation();
     const consentAgreed = consentStatus;
@@ -39,7 +39,6 @@ export const Stepper: React.FC<StepperProps> = ({ consentStatus, selectCompanySt
                             {item.inProgress
                                 ? <p className={`text-[#535862] text-xs font-[300]`}>{t('commans.inProgress')}</p>
                                 : (item.completed ? <p className={`text-[#535862] text-xs font-[300]`}>{t('commans.completed')}</p> : <p></p>)
-
                             }
                         </div>
                     </div>
