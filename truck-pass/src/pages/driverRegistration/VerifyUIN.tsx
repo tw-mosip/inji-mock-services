@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useExternalScript } from '../../hooks/useExternalScript';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Stepper } from '../../commans/Stepper';
+import { Stepper } from './DriverRegistrationStepper';
 import relyingPartyService from '../../services/relyingPartyService';
 import eye_icon from "../../assets/eye_icon.png";
 import eye_off from "../../assets/eye_off.png";

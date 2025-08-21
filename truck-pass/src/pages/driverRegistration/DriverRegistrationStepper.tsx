@@ -1,6 +1,6 @@
 import React from 'react';
-import connector_icon from "../assets/connector_icon.png";
-import tick_icon from "../assets/tick_icon.png";
+import connector_icon from "../../assets/connector_icon.png";
+import tick_icon from "../../assets/tick_icon.png";
 import { useTranslation } from 'react-i18next';
 
 export const Stepper: React.FC<StepperProps> = ({ consentStatus, selectCompanyStatus, uinVerificationStatus, registrationStatus, confirmationStatus }) => {

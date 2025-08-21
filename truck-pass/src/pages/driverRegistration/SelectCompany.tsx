@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import help_icon from "../../assets/help_icon.png";
 import { useNavigate } from 'react-router-dom';
-import { Stepper } from '../../commans/Stepper';
+import { Stepper } from './DriverRegistrationStepper';
 import relyingPartyService from '../../services/relyingPartyService';
 
 

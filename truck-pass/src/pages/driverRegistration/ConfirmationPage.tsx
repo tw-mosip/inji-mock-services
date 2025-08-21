@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import confirmation_icon from '../../assets/confirmation_icon.png';
 import { useTranslation } from 'react-i18next';
 import { SuccessPopup } from '../../components/SuccessPopup';
-import { Stepper } from '../../commans/Stepper';
+import { Stepper } from './DriverRegistrationStepper';
 
 export const ConfirmationPage: React.FC = () => {
   const navigate = useNavigate();

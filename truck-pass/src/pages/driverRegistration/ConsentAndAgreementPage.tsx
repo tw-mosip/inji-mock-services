@@ -2,7 +2,7 @@ import { useState } from "react";
 import consent_terms_icon from "../../assets/terms_icon.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Stepper } from "../../commans/Stepper";
+import { Stepper } from "./DriverRegistrationStepper";
 
 export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = ({ }) => {
 

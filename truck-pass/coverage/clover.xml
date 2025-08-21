@@ -266,7 +266,7 @@
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
       </file>
-      <file name="DriverRegistrationMainLayout.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\shared\DriverRegistrationMainLayout.tsx">
+      <file name="AppMainLayout.tsx" path="C:\Users\91852\Documents\MOSIP_Modules\Inji-Modules\Inji-Mock-Services\truck-pass\src\shared\AppMainLayout.tsx">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>

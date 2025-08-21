@@ -20,6 +20,11 @@ const LandingPage = () => {
     navigate('/driverRegistrationProcessPage/consentAndAgreementPage');
   }
 
+  const moveToRequestTruckPass = () => {
+    navigate('/requestTruckpassProcess/requestedPassesDashboard');
+
+  }
+
   const streamlinedProcess = [
     { id: 1, icon: application_submit_icon, title: t('landingPage.subApplication'), subTitle: t('landingPage.subApplicationInfo') },
     { id: 2, icon: verfication_icon, title: t('landingPage.securityVerification'), subTitle: t('landingPage.securityVerificationInfo') },
@@ -55,7 +60,7 @@ const LandingPage = () => {
                 <img src={request_truck_pass_icon} className="h-10 border-0 p-2 rounded-md shadow-lg" />
                 <p className="font-[600]">{t('landingPage.requestTruckPass')}</p>
                 <p className="text-[12px]">{t('landingPage.requestTruckPassSubTitle')}</p>
-                <button className="bg-[#006DE7] w-[90%] text-[10px] font-[600] py-[2%] text-center rounded-[5px] text-[#FFFFFF] cursor-pointer">
+                <button onClick={moveToRequestTruckPass} className="bg-[#006DE7] w-[90%] text-[10px] font-[600] py-[2%] text-center rounded-[5px] text-[#FFFFFF] cursor-pointer">
                   {t('landingPage.login')}
                 </button>
               </div>

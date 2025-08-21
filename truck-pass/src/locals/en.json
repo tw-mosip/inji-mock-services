@@ -125,9 +125,62 @@
         "startNewRegistrationBtn": "Start New Registration",
         "fileUploaded": "File Uploaded"
     },
+    "dashBoard": {
+        "activeRequest": "Active Request",
+        "approvedPasses": "Approved Passes",
+        "pendingReview": "Pending Review",
+        "totalTrucks": "Total Trucks",
+        "requestId": "Request ID",
+        "driverName": "Driver Name",
+        "licenceNumber": "Licence Number",
+        "status": "Status",
+        "date": "Date",
+        "myDashBoard": "My dash board",
+        "newTruckPassRequest": "+ New Truck Pass Request"
+    },
+    "newTruckPassRequest": {
+        "newTruckPassRequest": "New Truck Pass Request",
+        "headerDesc": "Complete all steps to submit your request"
+    },
+    "driverProfilePage": {
+        "header": "Driver Profile Summary",
+        "driverFound": "Driver Found",
+        "driverProfileSuccessMsg": "Driver profile has been successfully retrieved and verified from the system.",
+        "fullName": "Full Name",
+        "gender": "Gender",
+        "uin": "UIN",
+        "phoneNumber": "Phone Number",
+        "emailID": "Email ID",
+        "city": "City",
+        "driverLicenseNum": "Driver’s License Number",
+        "passportNum": "Passport Number"
+    },
     "successPopUp": {
         "header": "Registration Successful!",
         "desc": "Driver registration successful."
+    },
+    "consignmentDetails": {
+        "header": "Consignment Details",
+        "inVoiceNumber": "Invoice Number",
+        "inVoiceNumPlaceHolder": "e.g., INV-2024-001",
+        "waybillNumber": "Waybill Number",
+        "waybillNumPlaceHolder": "e.g., WB-2024-001",
+        "weightCertificate": "Weight Certificate ",
+        "uploadweightcertificate":"Upload weight certificate",
+        "customsDocuments": "Customs Documents ",
+        "uploadCustomDocument": "Upload custom document",
+        "invoiceNumErrorMsg": "In-Voice Number must include a '-' (e.g., INV-2024-001).",
+        "waybillNumErrorMsg": "Way Bill Number must include a '-' (e.g., WB-2024-001)."
+    },
+    "vehicleDetails": {
+        "header": "Vehicle Details",
+        "": ""
+    },
+    "registrationSuccessPage": {
+        "header": "Registration Completed",
+        "desc1": "Truck Pass VC issued and ready for download",
+        "desc2": " Please request your driver to download the pass in his/her Inji Wallet usingh his/her UIN.",
+        "submitAnotherApplication": "Submit Another Application"
     },
     "errorPopUp": {
         "header": "Registration Failed!",
@@ -139,7 +192,8 @@
         "continue": "Continue",
         "goBack": "Go Back",
         "submit": "Submit",
-        "tryAgain": "Try Again"
+        "tryAgain": "Try Again",
+        "confirmAndSubmit": "Confirm & Submit"
     },
     "errors": {
         "uploadingCertificateErr": "Unsupported file type. Please upload valid PDF or image documents.",

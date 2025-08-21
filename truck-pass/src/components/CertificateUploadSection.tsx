@@ -6,12 +6,15 @@ import trash_icon from '../assets/trash_icon.png';
 import { useTranslation } from 'react-i18next';
 
 export const CertificateUploadingSection: React.FC<CertificateUploadingSectionProps> = ({
+  driverRegistrationCpc,
+  vehicleRegistrationDocument,
   showUploadingBlock,
   setShowUploadingBlock,
+  clickableText,
   setFileUploaded,
   setDataInFile,
-  cpcUploadErrorMsg,
-  setCpcUploadErrorMsg
+  fileUploadErrorMsg,
+  setFileUploadErrorMsg
 }) => {
 
   const [fileName, setFileName] = useState('');
@@ -36,7 +39,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
     if (file) {
       const fileName = file.name;
       setFileSize(Math.round(file.size / 1024));
-      setCpcUploadErrorMsg('');
+      setFileUploadErrorMsg('');
       const fileExtension = fileName.split('.').pop()?.toLowerCase();
       if (fileExtension === 'pdf' || fileExtension === 'png' || fileExtension === 'jpeg' || fileExtension === 'jpg') {
         const reader = new FileReader();
@@ -68,7 +71,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
         reader.readAsDataURL(file);
       } else {
         setFileName(fileName);
-        setCpcUploadErrorMsg(t('errors.uploadingCertificateErr'));
+        setFileUploadErrorMsg(t('errors.uploadingCertificateErr'));
       }
     }
   };
@@ -78,7 +81,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
     setFileName('');
     setProgress(0);
     setUploading(false);
-    setCpcUploadErrorMsg('');
+    setFileUploadErrorMsg('');
     setDataInFile('');
     setShowUploadingBlock(false);
     setFileUploaded(false);
@@ -89,14 +92,14 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
     setProgress(0);
     setUploading(false);
     setFileName('');
-    setCpcUploadErrorMsg('');
+    setFileUploadErrorMsg('');
     setDataInFile('');
     setFileUploaded(false);
   }
 
   return (
     <div className="flex flex-col ">
-      <div className={`flex flex-col h-[200px] px-6 space-y-3 items-center bg-white border ${cpcUploadErrorMsg ? 'border-[#FDA29B]' : 'border-[#E4E7EC]'} rounded-lg`}>
+      <div className={`flex flex-col ${vehicleRegistrationDocument ? 'h-[236px]' : 'h-[200px]'} px-6 space-y-3 items-center bg-white border ${fileUploadErrorMsg ? 'border-[#FDA29B]' : 'border-[#E4E7EC]'} rounded-lg`}>
         {!showUploadingBlock && (
           <>
             <div className="border border-[#E4E7EC] p-2 mt-12 rounded-md">
@@ -113,16 +116,18 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                 onClick={handleFileInputClick}
               />
             </div>
-            <p className="text-[13px] text-[#475467]">
-              <span itemType='file' className="text-[13px] text-[#006DE7] font-semibold cursor-pointer" onClick={handleFileInputClick}>
-                {t('certificationUploadSec.cpc')}
-              </span>{' '} {t('certificationUploadSec.clickToBrowse')}
-            </p>
-            <p className="text-[10px] text-[#475467]">{t('certificationUploadSec.uploadManualCertificateInfo')}</p>
+            <div className={`${!driverRegistrationCpc ? 'text-center w-[55%]' : ''}`}>
+              <p className="text-[13px] text-[#475467]">
+                <span itemType='file' className="text-[13px] text-[#006DE7] font-semibold cursor-pointer" onClick={handleFileInputClick}>
+                  {clickableText}
+                </span>{' '} {t('certificationUploadSec.clickToBrowse')}
+              </p>
+              <p className="text-[12px] text-[#475467]">{t('certificationUploadSec.uploadManualCertificateInfo')}</p>
+            </div>
           </>
         )}
 
-        {showUploadingBlock && !cpcUploadErrorMsg ? (
+        {showUploadingBlock && !fileUploadErrorMsg ? (
           <div className="flex items-center justify-between w-full h-[4.5rem] border border-[#E4E7EC] rounded-md px-2.5 mt-12">
             <div className="flex items-center space-x-2 w-full">
               <div className='items-center -mt-3'>
@@ -153,7 +158,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
             </div>
           </div>
         ) : (
-          cpcUploadErrorMsg && (
+          fileUploadErrorMsg && (
             <div className="flex items-center justify-between w-full h-[4.5rem] border border-[#FDA29B] rounded-md px-2.5 mt-12">
               <div className="flex items-center space-x-2 w-full">
                 <div className='items-center -mt-3'>
@@ -188,14 +193,14 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
             </div>
           )
         )}
-        {(showUploadingBlock || cpcUploadErrorMsg) &&
+        {(showUploadingBlock || fileUploadErrorMsg) &&
           <button onClick={onChangeFile}
             className={`bg-transparent w-[23%] text-xs text-[#414651] border border-[#D5D7DA] font-[600] py-2.5 text-center rounded-[5px] cursor-pointer`}>
             {t('certificationUploadSec.changeFile')}
           </button>
         }
       </div>
-      <p className='text-xs text-[#D92D20] pt-1'>{cpcUploadErrorMsg}</p>
+      <p className='text-xs text-[#D92D20] pt-1'>{fileUploadErrorMsg}</p>
     </div>
   );
 };
@@ -203,10 +208,13 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
 
 
 interface CertificateUploadingSectionProps {
+  driverRegistrationCpc?: boolean;
+  vehicleRegistrationDocument?: boolean;
   showUploadingBlock: boolean;
-  setShowUploadingBlock: (value : boolean) => void;
-  setFileUploaded: (value : boolean) => void;
-  setDataInFile: (value : string) => void;
-  cpcUploadErrorMsg?: string;
-  setCpcUploadErrorMsg: (value : string) => void;
+  setShowUploadingBlock: (value: boolean) => void;
+  clickableText: string;
+  setFileUploaded: (value: boolean) => void;
+  setDataInFile: (value: string) => void;
+  fileUploadErrorMsg?: string;
+  setFileUploadErrorMsg: (value: string) => void;
 }

@@ -6,7 +6,7 @@ import poweredby_inji_icon from "../../assets/poweredby_inji_icon.png";
 import { CertificateUploadingSection } from '../../components/CertificateUploadSection';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Stepper } from '../../commans/Stepper';
+import { Stepper } from './DriverRegistrationStepper';
 import relyingPartyService from '../../services/relyingPartyService';
 import { ErrorPopup } from '../../components/ErrorPopup';
 
@@ -147,8 +147,8 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
             const response = await post_driver_registration('/driverRegister', driverRegistrationFormData);
             if (response) {
                 const driverAdditionalFiles = {
-                    driverPicture : driverInfo?.picture,
-                    cpcFile : fileData
+                    driverPicture: driverInfo?.picture,
+                    cpcFile: fileData
                 }
                 localStorage.setItem('driverDetails', JSON.stringify(driverRegistrationFormData));
                 localStorage.setItem('driverAdditionalFiles', JSON.stringify(driverAdditionalFiles));
@@ -202,43 +202,37 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                             <form className='flex flex-col gap-y-4'>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
-                                        <p className='text-sm'>{t('registration.fullName')}<span className='text-[#006DE7]'>*</span> </p>
-                                        <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
+                                        <p className='text-sm'>{t('registration.fullName')} </p>
                                     </label>
                                     <input type='text' disabled value={driverInfo?.name ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
-                                        <p className='text-sm'>{t('registration.uin')}<span className='text-[#006DE7]'>*</span> </p>
-                                        <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
+                                        <p className='text-sm'>{t('registration.uin')} </p>
                                     </label>
                                     <input type='text' disabled value={'198765432123'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
-                                        <p className='text-sm'>{t('registration.gender')}<span className='text-[#006DE7]'>*</span> </p>
-                                        <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
+                                        <p className='text-sm'>{t('registration.gender')} </p>
                                     </label>
                                     <input type='text' disabled value={driverInfo?.gender ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
-                                        <p className='text-sm'>{t('registration.eMailId')}<span className='text-[#006DE7]'>*</span> </p>
-                                        <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
+                                        <p className='text-sm'>{t('registration.eMailId')} </p>
                                     </label>
                                     <input type='text' disabled value={driverInfo?.email ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
-                                        <p className='text-sm'>{t('registration.phNum')}<span className='text-[#006DE7]'>*</span> </p>
-                                        <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
+                                        <p className='text-sm'>{t('registration.phNum')} </p>
                                     </label>
                                     <input type='text' disabled value={driverInfo?.phone_number ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
-                                        <p className='text-sm'>{t('registration.city')}<span className='text-[#006DE7]'>*</span> </p>
-                                        <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
+                                        <p className='text-sm'>{t('registration.city')} </p>
                                     </label>
                                     <input type='text' disabled value={driverInfo?.address?.locality ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
@@ -338,12 +332,14 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                             <img src={help_icon} alt='help_icon' className='h-3.5 cursor-pointer' />
                                         </label>
                                         <CertificateUploadingSection
+                                            driverRegistrationCpc={true}
                                             showUploadingBlock={showCertificateUploading}
                                             setShowUploadingBlock={setShowCertificateUploading}
+                                            clickableText={t('certificationUploadSec.cpc')}
                                             setFileUploaded={setCertificateUploaded}
                                             setDataInFile={setFileData}
-                                            cpcUploadErrorMsg={cpcUploadErrorMsg}
-                                            setCpcUploadErrorMsg={setCpcUploadErrorMsg}
+                                            fileUploadErrorMsg={cpcUploadErrorMsg}
+                                            setFileUploadErrorMsg={setCpcUploadErrorMsg}
                                         />
                                     </div>
                                 </div>
@@ -378,7 +374,7 @@ type RegistrationProps = {
 }
 
 type CompanyInfo = {
-companyName?: string;
+    companyName?: string;
 }
 
 type DriverInfo = {
