@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
-import { Stepper } from '../commans/Stepper'; 
+import { Stepper } from '../pages/driverRegistration/DriverRegistrationStepper'; 
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({

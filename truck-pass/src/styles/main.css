@@ -2,4 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom styles can go here */
+
+.SignInWithEsignet-module_softLogoBox__jj7aZ {
+    display: none !important;
+}
+
+.SignInWithEsignet-module_standardOutline__la5Rh {
+    background-color: #006DE7 !important;
+    height: 40px !important;
+    width:39% !important;
+    border: #FFFFFF1F !important;
+}
+
+.SignInWithEsignet-module_softRectBox__hXT5v {
+    color: white !important;
+    text-align: 'center' !important;
+    padding-left: 14% !important;
+    font-size: 12px !important;
+}

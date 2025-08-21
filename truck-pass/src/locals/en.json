@@ -1,7 +1,9 @@
 {
     "navbar": {
         "home": "Home",
-        "help": "Help"
+        "help": "Help",
+        "english": "English",
+        "french": "French"
     },
     "footer": {
         "footerText": "© 2025 TruckPass. All rights reserved."
@@ -50,18 +52,27 @@
         "getStarted": "Get Started"
     },
     "selectCompany": {
+        "searchTransportCompany": "Search Transport Company *",
         "selectRegisteredTransportCompany": "Select Registered Transport Company",
-        "chooseCompanyDesc": "Choose the transport company you wish to register with as a professional driver."
+        "chooseCompanyDesc": "Choose the transport company you wish to register with as a professional driver.",
+        "companyDetails": "Company Details",
+        "selected": "Selected: ",
+        "licenseStatus": "License Status: ",
+        "activeText": "Active and Valid",
+        "inActiveText": "Inctive and Invalid",
+        "registrationType": "Registration Type: "
     },
     "uinVerification": {
         "uinVerification": "UIN Verification",
         "readyForVerfication": "Ready for Verfication",
+        "uinAlreadyRegistered": "UIN Already Registered",
+        "alreadyRegisteredInfo": "A driver with this UIN is already registered in the TruckPass system.",
         "verifiedSuccessFully": "Verified SuccessFully",
+        "uinFetched": "UIN Fetched: ",
+        "unableToFetchInfo": "Better check All the required aspects and Try Again.",
         "verificationReadyInfo": "Click the button below to verify your UIN using eSignet. This will automatically fetch and fill your personal details.",
         "verifiedInfo": "Your details have been verified. Please proceed to the next step.",
-        "verifyBtn": "Verify",
-        "uinAlreadyRegistered": "UIN Already Registered",
-        "alreadyRegisteredInfo": "A driver with this UIN is already registered in the Truckpass system"
+        "verifyBtn": "Verify"
     },
     "registration": {
         "personalInformation": "Personal Information",
@@ -89,14 +100,16 @@
     "certificationUploadSec": {
         "cpc": "Certificate of Professional Competence (CPC)",
         "clickToBrowse": " or click to browse",
-        "uploadCertificateInfo": "Please upload document with the file format as PNG or PDF and Size should be maximum of 5MB",
+        "uploadManualCertificateInfo": "Please upload document with the file format as PNG or PDF and Size should be maximum of 5MB",
         "uploadViaInjiVerifyCertificateInfo": "PNG or PDF (max size. 1mb)",
         "failed": "Failed",
+        "kb": "KB",
+        "fullPercentage": "100%",
         "changeFile": "Change File"
     },
     "confirmationPage": {
         "registrationCompleted": "Registration Completed!",
-        "SuccessFullySubmitText": "You're all set! Your registration was successful, and a confirmation email is on its way to your inbox.",
+        "SuccessFullySubmitText": "Your application has been successFully submitted.",
         "driverSummary": "Driver Summary",
         "registrationDetailsInfo": "Registration details for {{driverName}}",
         "fullName": "Full Name:",
@@ -108,12 +121,70 @@
         "transportCompany": "Transport Company",
         "licenseNum": "License Number:",
         "passportNumber": "Passport Number:",
-        "cpcCertificate": "CPC Certificate:",
-        "startNewRegistrationBtn": "Start New Registration"
+        "cpcCertificate": "CPC Certificate: ",
+        "startNewRegistrationBtn": "Start New Registration",
+        "fileUploaded": "File Uploaded"
+    },
+    "dashBoard": {
+        "activeRequest": "Active Request",
+        "approvedPasses": "Approved Passes",
+        "pendingReview": "Pending Review",
+        "totalTrucks": "Total Trucks",
+        "requestId": "Request ID",
+        "driverName": "Driver Name",
+        "licenceNumber": "Licence Number",
+        "status": "Status",
+        "date": "Date",
+        "myDashBoard": "My dash board",
+        "newTruckPassRequest": "+ New Truck Pass Request"
+    },
+    "newTruckPassRequest": {
+        "newTruckPassRequest": "New Truck Pass Request",
+        "headerDesc": "Complete all steps to submit your request"
+    },
+    "driverProfilePage": {
+        "header": "Driver Profile Summary",
+        "driverFound": "Driver Found",
+        "driverProfileSuccessMsg": "Driver profile has been successfully retrieved and verified from the system.",
+        "fullName": "Full Name",
+        "gender": "Gender",
+        "uin": "UIN",
+        "phoneNumber": "Phone Number",
+        "emailID": "Email ID",
+        "city": "City",
+        "driverLicenseNum": "Driver’s License Number",
+        "passportNum": "Passport Number"
     },
     "successPopUp": {
         "header": "Registration Successful!",
         "desc": "Driver registration successful."
+    },
+    "consignmentDetails": {
+        "header": "Consignment Details",
+        "inVoiceNumber": "Invoice Number",
+        "inVoiceNumPlaceHolder": "e.g., INV-2024-001",
+        "waybillNumber": "Waybill Number",
+        "waybillNumPlaceHolder": "e.g., WB-2024-001",
+        "weightCertificate": "Weight Certificate ",
+        "uploadweightcertificate":"Upload weight certificate",
+        "customsDocuments": "Customs Documents ",
+        "uploadCustomDocument": "Upload custom document",
+        "invoiceNumErrorMsg": "In-Voice Number must include a '-' (e.g., INV-2024-001).",
+        "waybillNumErrorMsg": "Way Bill Number must include a '-' (e.g., WB-2024-001)."
+    },
+    "vehicleDetails": {
+        "header": "Vehicle Details",
+        "": ""
+    },
+    "registrationSuccessPage": {
+        "header": "Registration Completed",
+        "desc1": "Truck Pass VC issued and ready for download",
+        "desc2": " Please request your driver to download the pass in his/her Inji Wallet usingh his/her UIN.",
+        "submitAnotherApplication": "Submit Another Application"
+    },
+    "errorPopUp": {
+        "header": "Registration Failed!",
+        "desc": "Driver registration failed. Please check all the provided fields & Try again "
     },
     "commans": {
         "inProgress": "In Progress",
@@ -121,18 +192,12 @@
         "continue": "Continue",
         "goBack": "Go Back",
         "submit": "Submit",
-        "tryAgain": "Try Again"
+        "tryAgain": "Try Again",
+        "confirmAndSubmit": "Confirm & Submit"
     },
-    "upload": {
-        "error": {
-            "unsupportedFileType": "Unsupported file type. Please upload only PDF or PNG files.",
-            "fileSizeExceeded": "File size exceeds 5MB limit."
-        }
-    },
-    "form": {
-        "error": {
-            "requiredFields": "Please fill all required fields correctly before submitting."
-        }
-    },
-    "errors": {}
+    "errors": {
+        "uploadingCertificateErr": "Unsupported file type. Please upload valid PDF or image documents.",
+        "licenseNumberErr": "Driver's License Number should include hypen '-'.",
+        "passportNumberErr": "Please fill all required fields correctly before submitting."
+    }
 }

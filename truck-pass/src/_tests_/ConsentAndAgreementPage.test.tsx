@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ConsentAndAgreementPage } from '../pages/driverRegistration/ConsentAndAgreementPage'; 
-import { Stepper } from '../commans/Stepper'; 
+import { Stepper } from '../pages/driverRegistration/DriverRegistrationStepper'; 
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),

@@ -1,16 +1,16 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import DriverRegistrationMainLayout from '../shared/DriverRegistrationMainLayout';
+import AppMainLayout from '../shared/AppMainLayout';
 
 jest.mock('../components/NavBar', () => () => <div data-testid="navbar">NavBar</div>);
 
-describe('DriverRegistrationMainLayout Component', () => {
+describe('AppMainLayout Component', () => {
   test('renders NavBar and children with correct classes', () => {
     const testChild = <div data-testid="test-child">Test Content</div>;
     render(
       <MemoryRouter>
-        <DriverRegistrationMainLayout>{testChild}</DriverRegistrationMainLayout>
+        <AppMainLayout>{testChild}</AppMainLayout>
       </MemoryRouter>
     );
 

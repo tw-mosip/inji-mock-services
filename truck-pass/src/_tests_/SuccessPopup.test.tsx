@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SuccessPopup } from '../components/SuccessPopup';
-import '../_tests_/mocks/i18n';
+import './mocks/i18n';
 
 describe('SuccessPopup', () => {
   const mockSetShowSuccessPopup = jest.fn();

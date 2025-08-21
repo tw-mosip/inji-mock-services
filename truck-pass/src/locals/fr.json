@@ -1,138 +1,149 @@
 {
     "navbar": {
-        "home": "Accueil",
-        "help": "Aide"
+        "home": "Maison",
+        "help": "Aide",
+        "english": "Anglaise",
+        "french": "Français"
     },
     "footer": {
         "footerText": "© 2025 TruckPass. Tous droits réservés."
     },
     "landingPage": {
-        "landingPageTitle": "Système Numérique de Passe pour Camions Transfrontaliers",
-        "landingPageSubTitle": "Simplifiez le transport transfrontalier avec notre système de passe numérique sécurisé et efficace. Réduisez les temps d'attente, renforcez la sécurité et simplifiez la documentation pour tous les intervenants.",
+        "landingPageTitle": "Système Numérique de Permis de Camion Transfrontalier",
+        "landingPageSubTitle": "Simplifiez le transport transfrontalier avec notre système de permis numérique sécurisé et efficace. Réduisez les temps d'attente, améliorez la sécurité et simplifiez la documentation pour toutes les parties prenantes.",
         "getStartedToday": "Commencez Aujourd'hui",
-        "driverRegistration": "Inscription des Conducteurs",
-        "driverRegSubTitle": "Inscription autonome pour les opérateurs indépendants et les conducteurs.",
+        "driverRegistration": "Enregistrement du Conducteur",
+        "driverRegSubTitle": "Auto-enregistrement pour les opérateurs et conducteurs indépendants.",
         "registerAsDriver": "S'inscrire en tant que Conducteur",
-        "requestTruckPass": "Demander un Passe pour Camion",
+        "requestTruckPass": "Demander un Permis de Camion",
         "requestTruckPassSubTitle": "Lorem ipsum dolor sit amet consectetur.",
-        "login": "Connexion",
-        "howItWorks": "Comment Ça Fonctionne",
+        "login": "Se Connecter",
+        "howItWorks": "Comment Ça Marche",
         "landingPageInfo": "Notre processus simplifié rend le transport transfrontalier simple et sécurisé.",
-        "subApplication": "Soumettre une Demande",
-        "subApplicationInfo": "Complétez le formulaire de demande numérique avec les documents requis et les informations sur le véhicule.",
+        "subApplication": "Soumettre la Demande",
+        "subApplicationInfo": "Complétez le formulaire de demande numérique avec la documentation requise et les informations sur le véhicule.",
         "securityVerification": "Vérification de Sécurité",
-        "securityVerificationInfo": "Notre système effectue des vérifications de sécurité automatisées et valide les documents soumis.",
+        "securityVerificationInfo": "Notre système effectue des vérifications de sécurité automatisées et la validation des documents soumis.",
         "approvalAndIssuance": "Approbation & Délivrance",
-        "approvalAndIssuanceInfo": "Recevez votre passe numérique avec un code QR et un numéro de suivi pour le passage de la frontière.",
-        "crossBorder": "Passage de la Frontière",
-        "crossBorderInfo": "Présentez votre passe numérique aux points de contrôle de la frontière pour un passage rapide et sécurisé."
+        "approvalAndIssuanceInfo": "Recevez votre permis numérique avec un code QR et un numéro de suivi pour le passage de la frontière.",
+        "crossBorder": "Transfrontalier",
+        "crossBorderInfo": "Présentez votre permis numérique aux points de contrôle frontaliers pour un passage rapide et sécurisé."
     },
     "driverRegistrationProcess": {
-        "processMainTitle": "Inscription au Transport Transfrontalier",
-        "respDescription": "Inscrivez-vous en tant que Conducteur Professionnel de Camion"
+        "processMainTitle": "Enregistrement du Transport Transfrontalier",
+        "respDescription": "S'inscrire en tant que Conducteur de Camion Professionnel"
     },
     "stepper": {
-        "registrationProcess": "Processus d'Inscription",
+        "registrationProcess": "Processus d'Enregistrement",
         "consentAndAgreement": "Consentement & Accord",
-        "selectCompany": "Sélectionner une Entreprise",
+        "selectCompany": "Sélectionner l'Entreprise",
         "uinVerification": "Vérification UIN",
-        "registration": "Inscription",
+        "registration": "Enregistrement",
         "submitApplication": "Soumettre la Demande",
         "confirmation": "Confirmation"
     },
     "consentAndAgreementPage": {
         "consentAndAgreementTitle": "Consentement & Accord",
-        "consentAndAgreementDesc": "Veuillez lire et accepter les conditions suivantes pour poursuivre votre inscription.",
-        "termsAndConditions": "Conditions Générales",
-        "termsAndConditionsInfo": "Veuillez consulter nos conditions générales pour les conducteurs professionnels de camions.",
-        "consentPara1": "J'accepte par la présente la collecte et l'utilisation de mes informations personnelles aux fins de mon inscription pour recevoir un passe TruckPass de démonstration. Je comprends que ces données sont collectées uniquement à des fins de démonstration liées à la présentation du produit Inji Stack et pour me fournir une expérience d'auto-service dans l'environnement de bac à sable MOSIP.",
-        "consentPara2": "Je reconnais que mes données ne seront pas utilisées à d'autres fins ni partagées avec un tiers au-delà de ce qui est requis pour cette démonstration. Je comprends également que cet environnement n'est pas de production et que les données fournies seront gérées conformément aux pratiques de protection des données applicables.",
+        "consentAndAgreementDesc": "Veuillez lire et accepter les conditions suivantes pour continuer votre enregistrement",
+        "termsAndConditions": "Termes et Conditions",
+        "termsAndConditionsInfo": "Veuillez consulter nos termes et conditions pour les conducteurs de camions professionnels",
+        "consentPara1": "Je consens par la présente à la collecte et à l'utilisation de mes informations personnelles dans le but de m'enregistrer pour recevoir un permis de camion de démonstration. Je comprends que ces données sont collectées uniquement à des fins de démonstration liées à la présentation du produit Inji Stack et pour me fournir une expérience en libre-service dans l'environnement MOSIP Sandbox.",
+        "consentPara2": "Je reconnais que mes données ne seront utilisées à aucune autre fin et ne seront pas partagées avec des tiers au-delà de ce qui est requis pour cette démonstration. Je comprends également qu'il s'agit d'un environnement non productif et que les données fournies seront traitées conformément aux pratiques de protection des données applicables.",
         "getStarted": "Commencer"
     },
     "selectCompany": {
-        "selectRegisteredTransportCompany": "Sélectionner une Entreprise de Transport Enregistrée",
-        "chooseCompanyDesc": "Choisissez l'entreprise de transport avec laquelle vous souhaitez vous inscrire en tant que conducteur professionnel."
+        "searchTransportCompany": "Rechercher une entreprise de transport *",
+        "selectRegisteredTransportCompany": "Sélectionnez une entreprise de transport enregistrée",
+        "chooseCompanyDesc": "Choisissez la société de transport auprès de laquelle vous souhaitez vous inscrire en tant que chauffeur professionnel.",
+        "companyDetails": "Détails de l'entreprise",
+        "selected": "Choisi: ",
+        "licenseStatus": "Statut de la licence : ",
+        "activeText": "Actif et valide",
+        "inActiveText": "Inactif et non valide",
+        "registrationType": "Type d'inscription : "
     },
     "uinVerification": {
         "uinVerification": "Vérification UIN",
         "readyForVerfication": "Prêt pour la Vérification",
+        "uinAlreadyRegistered": "UIN déjà enregistré",
+        "alreadyRegisteredInfo": "Un conducteur avec cet UIN est déjà enregistré dans le système TruckPass.",
         "verifiedSuccessFully": "Vérifié avec Succès",
-        "verificationReadyInfo": "Cliquez sur le bouton ci-dessous pour vérifier votre UIN avec eSignet. Cela remplira automatiquement vos détails personnels.",
-        "verifiedInfo": "Vos détails ont été vérifiés. Veuillez passer à l'étape suivante.",
-        "verifyBtn": "Vérifier",
-        "uinAlreadyRegistered": "UIN Déjà Enregistré",
-        "alreadyRegisteredInfo": "Un conducteur avec cet UIN est déjà enregistré dans le système Truckpass."
+        "uinFetched": "UIN récupéré :",
+        "unableToFetchInfo": "Il vaut mieux vérifier tous les aspects requis et réessayer.",
+        "verificationReadyInfo": "Cliquez sur le bouton ci-dessous pour vérifier votre UIN en utilisant eSignet. Cela remplira automatiquement vos coordonnées.",
+        "verifiedInfo": "Vos coordonnées ont été vérifiées. Veuillez passer à l'étape suivante.",
+        "verifyBtn": "Vérifier"
     },
     "registration": {
         "personalInformation": "Informations Personnelles",
         "fullName": "Nom Complet",
         "uin": "Numéro d'Identification Unique (UIN)",
         "gender": "Genre",
-        "eMailId": "Adresse Email",
+        "eMailId": "ID Email",
         "phNum": "Numéro de Téléphone",
         "city": "Ville",
-        "additionalInfo": "Informations Complémentaires",
+        "additionalInfo": "Informations Supplémentaires",
         "provideInfo": "Veuillez fournir toutes les informations requises.",
         "driverLicenseNum": "Numéro de Permis de Conduire",
         "manualEntry": "Saisie Manuelle",
-        "shareViaInjiVerify": "Partage via Inji Verify",
-        "shareLicenseViaInjiVerify": "Partage de la Licence via Inji Verify",
-        "shareLicenseViaInjiVerifyInfo": "Cliquez sur le bouton ci-dessous pour partager votre licence via VP Flow. Votre numéro de licence sera automatiquement récupéré à partir du VC.",
+        "shareViaInjiVerify": "Partager via Inji Verify",
+        "shareLicenseViaInjiVerify": "Partager le Permis via Inji Verify",
+        "shareLicenseViaInjiVerifyInfo": "Cliquez sur le bouton ci-dessous pour partager votre permis via VP Flow. Votre numéro de permis sera automatiquement récupéré depuis le VC.",
         "shareBtn": "Partager",
-        "fetchedSuccessfully": "Licence Récupérée avec Succès",
-        "authenticatedSuccessfully": "Vos détails ont été authentifiés. Veuillez passer à l'étape suivante.",
+        "fetchedSuccessfully": "Permis Récupéré avec Succès",
+        "authenticatedSuccessfully": "Vos coordonnées ont été authentifiées. Veuillez passer à l'étape suivante.",
         "passportNum": "Numéro de Passeport",
         "cpc": "Certificat de Compétence Professionnelle (CPC)",
-        "registering": "Inscription en Cours",
-        "pleaseWait": "Veuillez Patienter !"
+        "registering": "Enregistrement",
+        "pleaseWait": "Veuillez Patienter!"
     },
     "certificationUploadSec": {
         "cpc": "Certificat de Compétence Professionnelle (CPC)",
-        "clickToBrowse": "ou cliquez pour parcourir",
-        "uploadCertificateInfo": "Veuillez télécharger un document au format PNG ou PDF avec une taille maximale de 5 Mo",
+        "clickToBrowse": " ou cliquez pour parcourir",
+        "uploadManualCertificateInfo": "Veuillez télécharger le document au format PNG ou PDF et dont la taille ne dépasse pas 5 Mo",
         "uploadViaInjiVerifyCertificateInfo": "PNG ou PDF (taille max. 1 Mo)",
-        "failed": "Échec",
-        "changeFile": "Changer de Fichier"
+        "failed": "échoué",
+        "kb": "Ko",
+        "fullPercentage": "100%",
+        "changeFile": "Changer de fichier"
     },
     "confirmationPage": {
-        "registrationCompleted": "Inscription Terminée !",
-        "SuccessFullySubmitText": "Tout est prêt ! Votre inscription a réussi, et un email de confirmation est en route vers votre boîte de réception.",
+        "registrationCompleted": "Enregistrement Terminé!",
+        "SuccessFullySubmitText": "Votre demande a été soumise avec succès.",
         "driverSummary": "Résumé du Conducteur",
-        "registrationDetailsInfo": "Détails d'inscription pour {{driverName}}",
-        "fullName": "Nom Complet :",
+        "registrationDetailsInfo": "Détails de l'enregistrement pour {{driverName}}",
+        "fullName": "Nom Complet:",
         "uin": "UIN",
         "gender": "Genre",
-        "email": "Email :",
-        "phoneNumber": "Numéro de Téléphone :",
+        "email": "Email:",
+        "phoneNumber": "Numéro de Téléphone:",
         "city": "Ville",
         "transportCompany": "Entreprise de Transport",
-        "licenseNum": "Numéro de Licence :",
-        "passportNumber": "Numéro de Passeport :",
+        "licenseNum": "Numéro de Permis:",
+        "passportNumber": "Numéro de Passeport:",
         "cpcCertificate": "Certificat CPC :",
-        "startNewRegistrationBtn": "Commencer une Nouvelle Inscription"
+        "startNewRegistrationBtn": "Commencer une nouvelle inscription",
+        "fileUploaded": "Fichier téléchargé"
     },
     "successPopUp": {
-        "header": "Inscription Réussie !",
-        "desc": "Inscription du conducteur réussie."
+        "header": "Enregistrement Réussi!",
+        "desc": "Enregistrement du conducteur réussi."
+    },
+    "errorPopUp": {
+        "header": "L'inscription a échoué !",
+        "desc": "Échec de l'enregistrement du conducteur. Veuillez vérifier tous les champs et réessayer."
     },
     "commans": {
         "inProgress": "En Cours",
         "completed": "Terminé",
         "continue": "Continuer",
-        "goBack": "Retour",
+        "goBack": "Retourner",
         "submit": "Soumettre",
-        "tryAgain": "Réessayer"
+        "tryAgain": "Essayer à nouveau"
     },
-    "upload": {
-        "error": {
-            "unsupportedFileType": "Type de fichier non pris en charge. Veuillez télécharger uniquement des fichiers PDF ou PNG.",
-            "fileSizeExceeded": "La taille du fichier dépasse la limite de 5 Mo."
-        }
-    },
-    "form": {
-        "error": {
-            "requiredFields": "Veuillez remplir correctement tous les champs requis avant de soumettre."
-        }
-    },
-    "errors": {}
+    "errors": {
+        "uploadingCertificateErr": "Type de fichier non pris en charge. Veuillez télécharger des documents PDF ou image valides.",
+        "licenseNumberErr": "Le numéro de permis de conduire doit inclure le trait d'union « - ».",
+        "passportNumberErr": "Veuillez remplir correctement tous les champs obligatoires avant de soumettre."
+    }
 }

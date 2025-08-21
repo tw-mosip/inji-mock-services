@@ -1,116 +1,76 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import LandingPage from '../pages/driverRegistration/LandingPage';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../i18';
+import LandingPage from '../commans/LandingPage';
 
+// Mock useNavigate from react-router-dom
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),
-  useLocation: () => ({ pathname: '/' }),
 }));
 
 describe('LandingPage', () => {
-  let mockNavigate: jest.Mock;
+  it('renders LandingPage and its main sections', () => {
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <LandingPage />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockNavigate = jest.fn();
+    // Headings
+    expect(screen.getByText(i18n.t('landingPage.landingPageTitle'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('landingPage.getStartedToday'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('landingPage.howItWorks'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('footer.footerText'))).toBeInTheDocument();
+  });
+
+  it('renders "Register as Driver" and triggers navigation', () => {
+    const mockNavigate = jest.fn();
     jest.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(mockNavigate);
-  });
 
-  test('renders initial UI elements', () => {
     render(
-      <MemoryRouter>
-        <LandingPage />
-      </MemoryRouter>
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <LandingPage />
+        </I18nextProvider>
+      </BrowserRouter>
     );
 
-    expect(screen.getByText(/landingPage.landingPageTitle/i)).toBeInTheDocument();
-    expect(screen.getByText(/landingPage.landingPageSubTitle/i)).toBeInTheDocument();
-    expect(screen.getByAltText('Line Pattern Left')).toBeInTheDocument();
-    expect(screen.getByAltText('Line Pattern Right')).toBeInTheDocument();
+    const registerButton = screen.getByText(i18n.t('landingPage.registerAsDriver'));
+    expect(registerButton).toBeInTheDocument();
 
-    expect(screen.getByText(/landingPage.getStartedToday/i)).toBeInTheDocument();
-    expect(screen.getByText(/landingPage.driverRegistration/i)).toBeInTheDocument();
-    expect(screen.getByTestId('request-truck-pass-title')).toBeInTheDocument();
-    expect(screen.getByAltText('Driver Icon')).toBeInTheDocument();
-    expect(screen.getByAltText('Truck Pass Icon')).toBeInTheDocument();
-
-    expect(screen.getByText(/landingPage.howItWorks/i)).toBeInTheDocument();
-    expect(screen.getByText(/landingPage.landingPageInfo/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/landingPage.subApplication/i)[0]).toBeInTheDocument(); // First occurrence
-    expect(screen.getByTestId('step-security-verification')).toBeInTheDocument();
-    expect(screen.getByTestId('step-approval-and-issuance')).toBeInTheDocument();
-    expect(screen.getByTestId('step-cross-border')).toBeInTheDocument();
-
-    expect(screen.getByText(/footer.footerText/i)).toBeInTheDocument();
-  });
-
-  test('handles driver registration card hover and navigation', async () => {
-    render(
-      <MemoryRouter>
-        <LandingPage />
-      </MemoryRouter>
-    );
-
-    const driverCard = screen.getByText(/landingPage.driverRegistration/i).closest('div');
-    expect(driverCard).toHaveClass('border-transparent');
-
-    await act(async () => {
-      fireEvent.mouseEnter(driverCard!);
-    });
-    await waitFor(() => {
-      expect(screen.getByAltText('Driver Icon')).toHaveClass('bg-[#006DE7]');
-    }, { timeout: 500 });
-
-    const registerButton = screen.getByText(/landingPage.registerAsDriver/i);
-    await act(async () => {
-      fireEvent.click(registerButton);
-    });
+    fireEvent.click(registerButton);
     expect(mockNavigate).toHaveBeenCalledWith('/driverRegistrationProcessPage/consentAndAgreementPage');
   });
 
-  test('handles truck pass card hover and navigation', async () => {
+  it('renders all streamlined process items', () => {
     render(
-      <MemoryRouter>
-        <LandingPage />
-      </MemoryRouter>
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <LandingPage />
+        </I18nextProvider>
+      </BrowserRouter>
     );
 
-    const truckPassCard = screen.getByRole('img', { name: /Truck Pass Icon/ }).closest('div');
-    expect(truckPassCard).toHaveClass('border-transparent');
-
-    await act(async () => {
-      fireEvent.mouseEnter(truckPassCard!);
-    });
-    await waitFor(() => {
-      expect(screen.getByAltText('Truck Pass Icon')).toHaveClass('bg-[#006DE7]');
-    }, { timeout: 500 });
-
-    const loginButton = screen.getByText(/landingPage.login/i);
-    await act(async () => {
-      fireEvent.click(loginButton);
-    });
-    expect(mockNavigate).toHaveBeenCalledWith('/truckpasslogin');
+    expect(screen.getByText(i18n.t('landingPage.subApplication'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('landingPage.securityVerification'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('landingPage.approvalAndIssuance'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('landingPage.crossBorder'))).toBeInTheDocument();
   });
 
-  test('renders streamlined process steps correctly', () => {
+  it('renders truck pass section with login button', () => {
     render(
-      <MemoryRouter>
-        <LandingPage />
-      </MemoryRouter>
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <LandingPage />
+        </I18nextProvider>
+      </BrowserRouter>
     );
 
-    const steps = screen.getAllByRole('img', { name: /Step [1-4]/i });
-    expect(steps.length).toBe(4);
-    expect(screen.getByText(/landingPage.subApplicationInfo/i)).toBeInTheDocument();
-    expect(screen.getByText(/landingPage.securityVerificationInfo/i)).toBeInTheDocument();
-    expect(screen.getByText(/landingPage.approvalAndIssuanceInfo/i)).toBeInTheDocument();
-    expect(screen.getByText(/landingPage.crossBorderInfo/i)).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('landingPage.requestTruckPass'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('landingPage.login'))).toBeInTheDocument();
   });
 });
-
-// Test1: Checks if the page shows all its main parts like the header, get started section, how it works section, and footer when it loads
-// Test2: Tests if hovering over the driver registration card changes the icon color and clicking the register button navigates to the consent page
-// Test3: Tests if hovering over the truck pass card changes the icon color and clicking the login button navigates to the login page
-// Test4: Verifies that the streamlined process steps with their images and descriptions are displayed correctly

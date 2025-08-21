@@ -1,7 +1,7 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+import NavBar from '../commans/NavBar';
 
 describe('NavBar', () => {
   test('renders logo and navigation links', () => {

@@ -1,141 +1,55 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { SelectCompany } from '../pages/driverRegistration/SelectCompany';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { Stepper } from '../commans/Stepper';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { SelectCompany } from "../pages/driverRegistration/SelectCompany";
+import { BrowserRouter } from "react-router-dom";
+import { I18nextProvider } from "react-i18next";
+import i18n from "../i18";
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
+const mockGetCompaniesList = jest.fn();
+jest.mock("../../services/relyingPartyService", () => ({
+  __esModule: true,
+  default: {
+    get_companiesList: () => mockGetCompaniesList(),
+  },
 }));
 
-jest.mock('react-router-dom', () => ({
-  useNavigate: jest.fn(),
-}));
-
-jest.mock('../commans/Stepper', () => ({
-  Stepper: jest.fn(() => <div data-testid="stepper">Stepper Component</div>),
-}));
-
-jest.mock('../../assets/help_icon.png', () => 'help_icon.png');
-
-describe('SelectCompany Component', () => {
-  let mockNavigate: jest.Mock;
-
+describe("SelectCompany Page", () => {
   beforeEach(() => {
-    mockNavigate = jest.fn();
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-    jest.useFakeTimers();
+    mockGetCompaniesList.mockResolvedValue([
+      { id: "1", companyName: "ABC Transport", registrationType: "Type A", registrationStatus: "Active", name: "ABC", licenseStatus: "Valid" },
+      { id: "2", companyName: "XYZ Logistics", registrationType: "Type B", registrationStatus: "Inactive", name: "XYZ", licenseStatus: "Expired" }
+    ]);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-    jest.useRealTimers();
+  it("renders and selects a company", async () => {
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <SelectCompany />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+
+    const input = screen.getByPlaceholderText("Start typing to search companies");
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "ABC" } });
+
+    await waitFor(() => expect(screen.getByText("ABC Transport")).toBeInTheDocument());
+
+    fireEvent.mouseDown(screen.getByText("ABC Transport"));
+    fireEvent.click(screen.getByText("ABC Transport"));
+
+    expect(await screen.findByText("Type A")).toBeInTheDocument();
   });
 
-  test('renders select company section correctly', () => {
-    render(<SelectCompany />);
-
-    expect(screen.getByText('selectCompany.selectRegisteredTransportCompany')).toBeInTheDocument();
-    expect(screen.getByText('selectCompany.chooseCompanyDesc')).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: /Search Transport Company/i })).toBeInTheDocument();
-    expect(screen.getByTestId('stepper')).toBeInTheDocument();
-    expect(screen.queryByText('Company Details')).not.toBeInTheDocument();
-    expect(screen.getByText('commans.continue')).toBeInTheDocument();
-    expect(screen.getByText('commans.continue')).toBeDisabled();
-  });
-
-  test('filters companies based on search input', async () => {
-    render(<SelectCompany />);
-
-    const searchInput = screen.getByRole('textbox', { name: /Search Transport Company/i });
-    await act(async () => {
-      fireEvent.focus(searchInput);
-      fireEvent.change(searchInput, { target: { value: 'TransGlobal' } });
-      jest.advanceTimersByTime(0);
-    });
-
-    await waitFor(() => {
-      expect(screen.getAllByText(/TransGlobal/).length).toBeGreaterThan(0);
-      expect(screen.queryByText('Global Express Transport')).not.toBeInTheDocument();
-    });
-  });
-
-  test('selects a company and displays details', async () => {
-    render(<SelectCompany />);
-
-    const searchInput = screen.getByRole('textbox', { name: /Search Transport Company/i });
-    await act(async () => {
-      fireEvent.focus(searchInput);
-      fireEvent.change(searchInput, { target: { value: 'TransGlobal Company 1' } });
-      jest.advanceTimersByTime(0);
-    });
-
-    const companyOption = screen.getByText('TransGlobal Company 1');
-    await act(async () => {
-      fireEvent.click(companyOption);
-      jest.advanceTimersByTime(150);
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('Company Details')).toBeInTheDocument();
-      expect(screen.getByText('TransGlobal Company 1')).toBeInTheDocument();
-      expect(screen.getByText('Active and Valid')).toBeInTheDocument();
-      expect(screen.getByText('Commercial Transport')).toBeInTheDocument();
-      expect(searchInput).toHaveValue('TransGlobal Company 1');
-    });
-  });
-
-  test('enables continue button when company is selected', async () => {
-    render(<SelectCompany />);
-
-    const searchInput = screen.getByRole('textbox', { name: /Search Transport Company/i });
-    const continueButton = screen.getByText('commans.continue');
-
-    expect(continueButton).toBeDisabled();
-
-    await act(async () => {
-      fireEvent.focus(searchInput);
-      fireEvent.change(searchInput, { target: { value: 'TransGlobal Company 1' } });
-      jest.advanceTimersByTime(0);
-      fireEvent.click(screen.getByText('TransGlobal Company 1'));
-      jest.advanceTimersByTime(150); 
-    });
-
-    await waitFor(() => {
-      expect(continueButton).not.toBeDisabled();
-    });
-  });
-
-  test('navigates to verify UIN page on continue button click', async () => {
-    render(<SelectCompany />);
-
-    const searchInput = screen.getByRole('textbox', { name: /Search Transport Company/i });
-    const continueButton = screen.getByText('commans.continue');
-
-    await act(async () => {
-      fireEvent.focus(searchInput);
-      fireEvent.change(searchInput, { target: { value: 'TransGlobal Company 1' } });
-      jest.advanceTimersByTime(0);
-      fireEvent.click(screen.getByText('TransGlobal Company 1'));
-      jest.advanceTimersByTime(150); 
-    });
-
-    await waitFor(() => {
-      expect(continueButton).not.toBeDisabled();
-    });
-
-    await act(async () => {
-      fireEvent.click(continueButton);
-    });
-
-    expect(mockNavigate).toHaveBeenCalledWith('/driverRegistrationProcessPage/verifyUINPage');
+  it("handles API error gracefully", async () => {
+    mockGetCompaniesList.mockRejectedValueOnce(new Error("Network error"));
+    render(
+      <BrowserRouter>
+        <I18nextProvider i18n={i18n}>
+          <SelectCompany />
+        </I18nextProvider>
+      </BrowserRouter>
+    );
+    await waitFor(() => expect(mockGetCompaniesList).toHaveBeenCalled());
   });
 });
-
-// Test1: Checks if the select company section displays the title, description, search box, stepper, and disabled continue button
-// Test2: Tests if searching for a company like 'TransGlobal' filters the list correctly
-// Test3: Verifies that selecting a company shows its details like name and status
-// Test4: Ensures the continue button becomes enabled after a company is selected
-// Test5: Checks if clicking the continue button navigates to the verify UIN page

@@ -1,163 +1,135 @@
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { ConfirmationPage } from '../pages/driverRegistration/ConfirmationPage';
-import { useTranslation } from 'react-i18next';
+import { BrowserRouter } from 'react-router-dom';
+import '@testing-library/jest-dom';
 import { useNavigate } from 'react-router-dom';
-import { Stepper } from '../commans/Stepper';
-import { SuccessPopup } from '../components/SuccessPopup';
-
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
 
 jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
   useNavigate: jest.fn(),
 }));
 
-jest.mock('../commans/Stepper', () => ({
-  Stepper: jest.fn(() => <div data-testid="stepper">Stepper Component</div>),
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: any) => {
+      if (options?.driverName) return `Driver Name: ${options.driverName}`;
+      return key;
+    },
+  }),
 }));
 
-jest.mock('../components/SuccessPopup', () => ({
-  SuccessPopup: jest.fn(({ showSuccessPopup, setShowSuccessPopup }) => (
-    showSuccessPopup ? (
-      <div data-testid="success-popup">Success Popup</div>
-    ) : null
-  )),
+jest.mock('../../assets/confirmation_icon.png', () => 'mocked_confirmation_icon.png');
+
+jest.mock('../../components/SuccessPopup', () => ({
+  SuccessPopup: () => <div>SuccessPopup</div>,
 }));
 
-jest.mock('../../assets/confirmation_icon.png', () => 'confirmation_icon.png');
-jest.mock('../../assets/user_photo.png', () => 'user_photo.png');
-jest.mock('../../assets/Hide_Details.png', () => 'Hide_Details.png');
-jest.mock('../../assets/Show_Details.png', () => 'Show_Details.png');
-
-describe('ConfirmationPage Component', () => {
-  let mockNavigate: jest.Mock;
+describe('ConfirmationPage', () => {
+  const mockedNavigate = useNavigate() as jest.Mock;
 
   beforeEach(() => {
-    mockNavigate = jest.fn();
-    (useNavigate as jest.Mock).mockReturnValue(mockNavigate);
-    jest.useFakeTimers();
-    (Stepper as jest.Mock).mockClear();
-    (SuccessPopup as jest.Mock).mockClear();
+    localStorage.clear();
+    mockedNavigate.mockReset();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-    jest.useRealTimers();
+  const renderComponent = () =>
+    render(
+      <BrowserRouter>
+        <ConfirmationPage />
+      </BrowserRouter>
+    );
+
+  it('renders component with no localStorage data (empty case)', () => {
+    renderComponent();
+    expect(screen.getByTestId('confirmation-page')).toBeInTheDocument();
+    expect(screen.getByTestId('driver-summary')).toBeInTheDocument();
+    expect(screen.getByTestId('new-registration-btn')).toBeInTheDocument();
   });
 
-  test('renders confirmation page elements correctly', async () => {
-    render(<ConfirmationPage />);
+  it('renders component with valid localStorage data', () => {
+    localStorage.setItem(
+      'driverDetails',
+      JSON.stringify({
+        fullName: 'John Doe',
+        uin: 'UIN123',
+        gender: 'Male',
+        emailId: 'john@example.com',
+        phoneNumber: '1234567890',
+        city: 'New York',
+        driverLicenseNum: 'DL12345',
+        passportNum: 'P123456',
+        transportCompany: 'XYZ Logistics',
+      })
+    );
 
+    localStorage.setItem(
+      'driverAdditionalFiles',
+      JSON.stringify({
+        driverPicture: 'mocked_driver_picture.png',
+        cpcFile: 'mocked_cpc.pdf',
+      })
+    );
+
+    renderComponent();
     expect(screen.getByText('confirmationPage.registrationCompleted')).toBeInTheDocument();
     expect(screen.getByText('confirmationPage.SuccessFullySubmitText')).toBeInTheDocument();
-    expect(screen.getByTestId('stepper')).toBeInTheDocument();
-    expect(screen.getByAltText('confirmation_icon')).toBeInTheDocument();
-    expect(screen.getByAltText('user_photo')).toBeInTheDocument();
-    expect(screen.getByText('confirmationPage.driverSummary')).toBeInTheDocument();
+    expect(screen.getByText('Driver Name: John Doe')).toBeInTheDocument();
+    expect(screen.getByAltText('driver_user_icon')).toBeInTheDocument();
+    expect(screen.getByText('confirmationPage.fullName')).toBeInTheDocument();
   });
 
-  test('shows success popup on mount and hides after 5 seconds', async () => {
-    render(<ConfirmationPage />);
-
-    expect(screen.getByTestId('success-popup')).toBeInTheDocument();
-
-    await act(async () => {
-      jest.advanceTimersByTime(5000);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(screen.queryByTestId('success-popup')).not.toBeInTheDocument();
-    });
+  it('handles missing additionalInfo.driverPicture gracefully', () => {
+    localStorage.setItem(
+      'driverDetails',
+      JSON.stringify({
+        fullName: 'Jane Doe',
+      })
+    );
+    localStorage.setItem(
+      'driverAdditionalFiles',
+      JSON.stringify({
+        driverPicture: '', // Missing image
+        cpcFile: 'file.pdf',
+      })
+    );
+    renderComponent();
+    expect(screen.queryByAltText('driver_user_icon')).not.toBeInTheDocument();
   });
 
-  test('toggles driver summary details visibility', async () => {
-    render(<ConfirmationPage />);
-
-    const hideDetailsButton = screen.getByText('Hide Details');
-    expect(screen.getByText('Rajesh Singh')).toBeInTheDocument();
-    expect(screen.getByText('198765432123')).toBeInTheDocument();
-    expect(screen.getByText('myemail@gmail.com')).toBeInTheDocument();
-
-    await act(async () => {
-      fireEvent.click(hideDetailsButton);
-      jest.advanceTimersByTime(500);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('19********23')).toBeInTheDocument(); 
-      expect(screen.getByText('my*************om')).toBeInTheDocument();
-      expect(screen.getByText('Show Details')).toBeInTheDocument();
-    });
-
-    const showDetailsButton = screen.getByText('Show Details');
-    await act(async () => {
-      fireEvent.click(showDetailsButton);
-      jest.advanceTimersByTime(500);
-      jest.runAllTimers();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByText('Rajesh Singh')).toBeInTheDocument();
-      expect(screen.getByText('198765432123')).toBeInTheDocument();
-      expect(screen.getByText('myemail@gmail.com')).toBeInTheDocument();
-    });
+  it('handles missing driverAdditionalFiles in localStorage', () => {
+    localStorage.setItem(
+      'driverDetails',
+      JSON.stringify({
+        fullName: 'Alice',
+      })
+    );
+    renderComponent();
+    expect(screen.getByText('Driver Name: Alice')).toBeInTheDocument();
   });
 
-  test('displays driver summary items correctly', async () => {
-    render(<ConfirmationPage />);
+  it('handles invalid JSON in localStorage gracefully', () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    localStorage.setItem('driverDetails', '{invalid_json');
 
-    const items = [
-      'confirmationPage.fullName',
-      'confirmationPage.uin',
-      'confirmationPage.gender',
-      'confirmationPage.email',
-      'confirmationPage.phoneNumber',
-      'confirmationPage.city',
-      'confirmationPage.transportCompany',
-      'confirmationPage.licenseNum',
-      'confirmationPage.passportNumber',
-      'confirmationPage.cpcCertificate',
-    ];
+    renderComponent();
 
-    items.forEach((title) => {
-      expect(screen.getByText(title)).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Rajesh Singh')).toBeInTheDocument();
-    expect(screen.getByText('198765432123')).toBeInTheDocument();
-    expect(screen.getByText('Male')).toBeInTheDocument();
-    expect(screen.getByText('myemail@gmail.com')).toBeInTheDocument();
-    expect(screen.getByText('+91 9876543210')).toBeInTheDocument();
-    expect(screen.getByText('Chandigarh')).toBeInTheDocument();
-    expect(screen.getByText('TransGlobal Logistics Ltd.')).toBeInTheDocument();
-    expect(screen.getByText('DL-9876543210')).toBeInTheDocument();
-    expect(screen.getByText('Z7654321')).toBeInTheDocument();
-    expect(screen.getByText('File Uploaded')).toBeInTheDocument();
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    consoleErrorSpy.mockRestore();
   });
 
-  test('navigates to LandingPage on start new registration button click', async () => {
-    render(<ConfirmationPage />);
+  it('navigates to /landingPage on button click', () => {
+    renderComponent();
+    const button = screen.getByTestId('new-registration-btn');
+    fireEvent.click(button);
+    expect(mockedNavigate).toHaveBeenCalledWith('/landingPage');
+  });
 
-    const startNewButton = screen.getByText('confirmationPage.startNewRegistrationBtn');
-    await act(async () => {
-      fireEvent.click(startNewButton);
-      jest.advanceTimersByTime(500);
-      jest.runAllTimers();
-    });
+  it('renders SuccessPopup when showSuccessPopup is toggled', () => {
+    renderComponent();
 
-    await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/LandingPage');
-    });
+    const popupButton = screen.getByTestId('show-success-popup-btn');
+    fireEvent.click(popupButton);
+
+    expect(screen.getByText('SuccessPopup')).toBeInTheDocument(); // Based on component mock
   });
 });
-
-// Test1: Checks if the confirmation page shows all its main parts when it loads
-// Test2: Tests if a success popup appears when the page loads and disappears after 5 seconds
-// Test3: Checks if clicking buttons can hide or show the driver’s details
-// Test4: Verifies that all driver summary items are displayed with the right information
-// Test5: Tests if clicking the "Start New Registration" button takes you to the LandingPage

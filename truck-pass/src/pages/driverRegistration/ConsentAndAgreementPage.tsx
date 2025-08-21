@@ -2,7 +2,7 @@ import { useState } from "react";
 import consent_terms_icon from "../../assets/terms_icon.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Stepper } from "../../commans/Stepper";
+import { DriverRegistrationStepper } from "./DriverRegistrationStepper";
 
 export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = ({ }) => {
 
@@ -19,7 +19,7 @@ export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = (
 
     return (
         <div className="flex w-[63%] shadow-lg rounded-2xl place-self-center">
-            <Stepper
+            <DriverRegistrationStepper
                 consentStatus={getStartedBtn}
                 selectCompanyStatus={false}
                 uinVerificationStatus={false}
@@ -52,7 +52,7 @@ export const ConsentAndAgreementPage: React.FC<ConsentAndAgreementPageProps> = (
                     </div>
                 </div>
                 <button disabled={!checkBox} onClick={movetoSelectCompany}
-                    className={`${checkBox ? "bg-[#006DE7] cursor-pointer" : "bg-[#B0B0B0] cursor-default"} w-[54%] text-sm font-[600] place-self-end align-bottom py-2 text-center rounded-[5px] text-[#FFFFFF] `}>
+                    className={`${checkBox ? "bg-[#006DE7] cursor-pointer" : "bg-[#B0B0B0] cursor-default"} w-[54%] text-sm font-[600] place-self-end align-bottom py-2 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
                     {t('consentAndAgreementPage.getStarted')}
                 </button>
             </div>
