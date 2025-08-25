@@ -3,6 +3,7 @@ const clientMetadata = require('./clientMetadataMock.json');
 
 const client_metadata = JSON.stringify(clientMetadata);
 
+// For Pre-registered client, client metadata is known to the Wallet in advance of the authorization request
 const preRegisteredAuthorizationRequestDraft23 = {
     "client_id": "mock-client",
     "presentation_definition_uri": presentationDefinitionUri,
@@ -10,8 +11,7 @@ const preRegisteredAuthorizationRequestDraft23 = {
     "response_mode": "direct_post",
     "nonce": nonce,
     "state": state,
-    "response_uri": responseUri,
-    "client_metadata": client_metadata,
+    "response_uri": responseUri
 }
 
 const preRegisteredAuthorizationRequestDraft21 = {
