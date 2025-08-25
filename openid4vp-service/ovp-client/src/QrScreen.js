@@ -15,6 +15,7 @@ const QrScreen = () => {
     const [copied, setCopied] = useState(false);
     const [copiedResult, setCopiedResult] = useState(false);
     const [showInputData, setShowInputData] = useState(false);
+    const [actualAuthorizationRequestObject, setActualAuthorizationRequestObject] = useState(null);
 
 
     useEffect(() => {
@@ -24,6 +25,11 @@ const QrScreen = () => {
                 setQrCodeData(response.data.qrCodeData);
                 setQrData(response.data.qrData);
                 setInputData(response.data.inputData)
+
+                if (state.endpoint === "/verifier/generate-auth-request-by-reference-qr") {
+                    const response = await axios.get(`${BACKEND_URL}/verifier/get-auth-request-obj`);
+                    setActualAuthorizationRequestObject(response.data);
+                }
             } catch (err) {
                 console.error('Failed to fetch QR code:', err);
             }
@@ -61,8 +67,34 @@ const QrScreen = () => {
         setTimeout(() => setToast(false), 2000);
     };
 
+    const renderActualAuthRequestObject = () => {
+        return <>
+            {actualAuthorizationRequestObject && (
+                <div style={{flex: 1}}>
+                    <h2>Actual Authorization Request Object</h2>
+                    <div
+                        style={{
+                            background: '#f4f4f4',
+                            padding: '16px',
+                            borderRadius: '6px',
+                            fontSize: '14px',
+                            fontFamily: 'monospace',
+                            whiteSpace: 'pre-wrap',
+                            wordBreak: 'break-word',
+                            maxWidth: '100%',
+                            overflowX: 'auto'
+                        }}
+                    >
+                            <pre style={{margin: 0}}>
+                              {JSON.stringify(actualAuthorizationRequestObject, null, 2)}
+                            </pre>
+                    </div>
+                </div>
+            )}
+        </>;
+    }
     return (
-        <div style={{ padding: '40px' }}>
+        <div style={{padding: '40px'}}>
             <button
                 onClick={() => navigate('/')}
                 style={{
@@ -77,8 +109,8 @@ const QrScreen = () => {
             >
                 ← Back
             </button>
-            <h1 style={{ marginBottom: '20px' }}>Scan screen</h1>
-            <div style={{ display: 'flex' }}>
+            <h1 style={{marginBottom: '20px'}}>Scan screen</h1>
+            <div style={{display: 'flex'}}>
 
                 <div style={{flex: 1, marginRight: '40px', maxWidth: '50%'}}>
 
@@ -154,12 +186,13 @@ const QrScreen = () => {
                                 overflowX: 'auto'
                             }}
                         >
-                            <pre style={{ margin: 0 }}>
+                            <pre style={{margin: 0}}>
                               {JSON.stringify(inputData, null, 2)}
                             </pre>
                         </div>
                     )}
 
+                    {renderActualAuthRequestObject()}
 
                     {qrData && (
                         <div style={{position: 'relative', marginTop: '16px'}}>
@@ -227,10 +260,11 @@ const QrScreen = () => {
                     )}
                 </div>
 
+
                 <div style={{flex: 1, marginLeft: '40px'}}>
-                <h2>Scan Result</h2>
+                    <h2>Scan Result</h2>
                     {scanResult ? (
-                        <div style={{ position: 'relative' }}>
+                        <div style={{position: 'relative'}}>
                             {copiedResult && (
                                 <div
                                     style={{
@@ -285,7 +319,7 @@ const QrScreen = () => {
                                 >
                                     Copy
                                 </button>
-                                <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                                <pre style={{margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
                                     {JSON.stringify(prettyScanResult(scanResult), null, 2)}
                                 </pre>
                             </div>
