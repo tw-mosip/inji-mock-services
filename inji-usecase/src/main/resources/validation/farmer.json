@@ -1,0 +1,95 @@
+{
+    "fields": {
+        "id": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 50
+        },
+        "phone_number": {
+            "type": "string",
+            "regex": "^[0-9]{10}$"
+        },
+        "email": {
+            "regex": "^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$",
+            "type": "string"
+        },
+        "district": {
+            "type": "string"
+        },
+        "village": {
+            "type": "string"
+        },
+        "date_of_birth": {
+            "type": "date",
+            "regex": "[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}"
+        },
+        "gender": {
+            "type": "string",
+            "regex": "(Male|Female|Other)"
+        },
+        "state": {
+            "type": "string"
+        },
+        "pin_code": {
+            "type": "integer",
+            "minLength": 100000,
+            "maxLength": 999999
+        },
+        "address": {
+            "type": "string"
+        },
+        "civil_status": {
+            "type": "string"
+        },
+        "registration_date": {
+            "type": "date",
+            "regex": "[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}"
+        },
+        "education_level": {
+            "type": "string"
+        },
+        "employment_status": {
+            "type": "string"
+        },
+        "hh_income_type": {
+            "type": "string"
+        },
+        "total_land_area": {
+            "type": "integer"
+        },
+        "ownership_type": {
+            "type": "string"
+        },
+        "land_certificate": {
+            "type": "string"
+        },
+        "land_id": {
+            "type": "integer"
+        },
+        "primary_crop": {
+            "type": "string"
+        },
+        "collected_gc": {
+            "type": "string"
+        },
+        "season": {
+            "type": "string"
+        },
+        "secondary_crop": {
+            "type": "string"
+        },
+        "livestock_type": {
+            "type": "string"
+        },
+        "livestock_count": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "name",
+        "land_id"
+    ]
+}
