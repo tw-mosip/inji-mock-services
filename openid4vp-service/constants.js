@@ -13,6 +13,10 @@ const publicKeyId = "did:web:mosip.github.io:inji-mock-services:openid4vp-servic
 const nonce = crypto.randomBytes(16).toString('base64');
 const state = crypto.randomBytes(16).toString('base64');
 
+const ContentTypes = {
+    JWT: 'application/oauth-authz-req+jwt',
+};
+
 module.exports = {
     baseUrl,
     nonce,
@@ -24,5 +28,6 @@ module.exports = {
     didDocumentUrl,
     publicKeyId,
     clientId,
-    presentationDefinitionUri
+    presentationDefinitionUri,
+    ContentTypes
 };
