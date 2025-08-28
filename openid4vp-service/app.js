@@ -7,7 +7,7 @@ const {createJWT} = require("./jwt");
 const cors = require('cors');
 
 const app = express();
-const {requestUri, didDocumentUrl} = require("./constants");
+const {requestUri, didDocumentUrl, ContentTypes} = require("./constants");
 const {
     preRegisteredAuthorizationRequest,
     didAuthorizationRequest,
@@ -16,7 +16,7 @@ const {
     preRegisteredAuthorizationRequestDraft21,
     didAuthorizationRequestDraft21,
     redirectAuthorizationRequestDraft21,
-    authorizationRequestParamsDraft21
+    authorizationRequestParamsDraft21, finalAuthRequestMap, REQUEST_MODES, DRAFT_VERSIONS
 } = require("./inputData");
 const PORT = 3000;
 
@@ -41,9 +41,76 @@ function createUrlWithParams(params) {
         const encodedValue = encodeURIComponent(value.toString());
         paramStrings.push(`${encodedKey}=${encodedValue}`);
     }
-    
+
     return `${baseUrl}?${paramStrings.join('&')}`;
 }
+
+// API to generate QR codes for different client_id schemes and request modes
+// API - /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version> (default draft-23)
+// client_id_scheme = pre-registered, redirect_uri, did
+// request_mode = by_value, by_reference
+// draft_version = draft-21, draft-23 (default draft-23)
+app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
+    const {client_id_scheme, request_mode} = req.params;
+    const draftVersion = req.query.draft || 'draft-23';
+
+    let inputData = finalAuthRequestMap[client_id_scheme]?.[request_mode]?.[draftVersion];
+
+    if (!inputData) {
+        console.error('Error generating QR code:', "Provided combination is not supported - ", {
+            client_id_scheme,
+            request_mode,
+            draftVersion
+        });
+        res.status(400).send('Bad Request: Provided combination is not supported');
+    }
+
+    try {
+        const qrData = createUrlWithParams(inputData);
+        const qrCodeData = await QRCode.toDataURL(qrData);
+        res.json({qrCodeData, qrData, inputData});
+    } catch (error) {
+        console.error('Error generating QR code:', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// API for actual authorization request object
+// API - /verifier/get-auth-request-obj/<client_id_scheme>?draft=<draft_version> (default draft-23)
+// client_id_scheme = pre-registered, redirect_uri, did
+// draft_version = draft-21, draft-23 (default draft-23)
+
+app.get('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => {
+    let inputData = extractByReferenceInputData(req, res);
+
+    try {
+        const jwt = await createJWT(inputData)
+        res.contentType(ContentTypes.JWT)
+        res.send(jwt)
+    } catch (error) {
+        console.error('Error generating JWT :', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => {
+    console.log("Received request with request body:", req.body);
+
+    let inputData = extractByReferenceInputData(req, res);
+
+    try {
+        const walletNonce = req.body?.wallet_nonce;
+        const jwt = walletNonce
+            ? await createJWT({ ...inputData, wallet_nonce: walletNonce })
+            : await createJWT(didAuthorizationRequest);
+        res.contentType("application/oauth-authz-req+jwt");
+        res.send(jwt);
+
+    }  catch (error) {
+        console.error('Error generating JWT :', error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res) => {
     try {
@@ -147,3 +214,19 @@ app.get('/verifier/check-response', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+const extractByReferenceInputData = (req, res) => {
+    const {client_id_scheme} = req.params;
+    const draftVersion = req.query.draft || DRAFT_VERSIONS.DRAFT_23;
+
+    let inputData = finalAuthRequestMap[client_id_scheme]?.[REQUEST_MODES.BY_REFERENCE]?.[draftVersion];
+
+    if (!inputData) {
+        console.error('Error generating JWT :', "Provided combination is not supported - ", {
+            client_id_scheme,
+            draftVersion
+        });
+        res.status(400).send('Bad Request: Provided combination is not supported');
+    }
+    return inputData;
+}
