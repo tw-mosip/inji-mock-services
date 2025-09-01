@@ -241,7 +241,7 @@ const extractByReferenceInputData = (req) => {
         throw new Error(providedCombinationIsNotSupported);
     }
 
-    let inputData = finalAuthRequestMapElement?.[REQUEST_MODES.BY_REFERENCE]?.[draftVersion];
+    let inputData = finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion];
 
     if (!inputData) {
         console.error('Error generating JWT :', "Provided combination is not supported - ", {

@@ -13,8 +13,7 @@ const preRegisteredAuthorizationRequestDraft23 = {
     "response_mode": "direct_post.jwt",
     "nonce": nonce,
     "state": state,
-    "response_uri": responseUri,
-    "client_metadata": client_metadata,
+    "response_uri": responseUri
 }
 
 const preRegisteredAuthorizationRequestDraft21 = {
@@ -137,7 +136,7 @@ const finalAuthRequestMap = {
         [REQUEST_MODES.BY_VALUE]: {
             [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: didAuthorizationRequestDraft21,
-        }
+        },
     }
 }
 
