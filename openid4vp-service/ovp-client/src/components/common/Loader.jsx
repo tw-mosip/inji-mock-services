@@ -1,5 +1,5 @@
 import React from "react";
-import {Palette} from "../styles/palette";
+import {Palette} from "../../styles/palette";
 
 export const Loader: React.FC = () => {
     return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Home from './Home';
-import QrScreen from './QrScreen';
+import Home from './screen/Home';
+import QrScreen from './screen/QrScreen';
 
 function App() {
   return (

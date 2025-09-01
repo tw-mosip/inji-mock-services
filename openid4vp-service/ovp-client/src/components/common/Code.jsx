@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {font, Palette} from "../styles/palette";
+import {font, Palette} from "../../styles/palette";
 import Button from "./Button";
-import {handleCopy} from "../utility/util";
+import {handleCopy} from "../../utility/util";
 
 export function Code({value}) {
     const [copied, setCopied] = useState(false);
