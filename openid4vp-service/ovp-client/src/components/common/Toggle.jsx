@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Palette, backgroundStyle, font } from "../../styles/palette";
+import {Palette, backgroundStyle, font, buttonStyles} from "../../styles/palette";
 
 interface ToggleProps {
     options: [string, string];
@@ -26,7 +26,7 @@ const Toggle: React.FC<ToggleProps> = ({ options }) => {
                 background: Palette.surface,
                 fontFamily: font.primary,
                 marginBottom: 10,
-                maxWidth: 'fit-content'
+                maxWidth: 'fit-content',
             }}
         >
             {options.map((option) => {
@@ -38,11 +38,12 @@ const Toggle: React.FC<ToggleProps> = ({ options }) => {
                         onClick={() => handleToggle(option)}
                         className="flex-1 py-2 px-4 text-sm font-medium rounded-xl transition-all duration-300"
                         style={{
+                            border: `none`,
                             background: isActive
                                 ? backgroundStyle.primaryGradient
-                                : Palette.surface,
+                                : Palette.surfaceDark,
                             padding: '8px 16px',
-                            color: isActive ? Palette.headingText : Palette.invertedText,
+                            color: isActive ? Palette.primaryText : Palette.secondaryText,
                             boxShadow: isActive ? `0 3px 6px ${Palette.primaryShadow}` : "none",
                         }}
                     >

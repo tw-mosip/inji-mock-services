@@ -156,10 +156,12 @@ const QrScreen = () => {
 
     if (errorMessage) {
         return (
-            <div style={{padding: '20px 30px', color: font.primary}}>
+            <div style={{padding: '20px 30px'}}>
                 {header()}
-                {requestToggle()}
-                <Error message={errorMessage}/>
+                <div style={{paddingLeft: 40}}>
+                    {requestToggle()}
+                    <Error message={errorMessage}/>
+                </div>
             </div>
         )
     }
@@ -188,7 +190,7 @@ const QrScreen = () => {
                 <div style={{flex: 1}}>
                     {requestToggle()}
 
-                    <div style={{maxWidth: '50%'}}>
+                    <div style={{maxWidth: '100%'}}>
                         <div>
                             <a href={qrData} target="_blank" rel="noopener noreferrer">
                                 <Image src={qrCodeData} alt={"QR code"}/>

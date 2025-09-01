@@ -55,12 +55,24 @@ npm start # asks base url (localtunnel url or any remote url) and starts the ser
 | Authorization Response type                               | `vp_token`                                                                                                                                                                                                                                                                                                                                                         |
 | Supported Credential formats                              | `ldp_vc`, `mso_mdoc`                                                                                                                                                                                                                                                                                                                                               |
 
+### OpenID4VP Mock Service End-points
+
+1. Generate QR code with Verifier's Authorization Request
+   // API to generate QR codes for different client_id schemes and request modes
+   // API - /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version> (default draft-23)
+   // client_id_scheme = pre-registered, redirect_uri, did
+   // request_mode = by_value, by_reference
+   // draft_version = draft-21, draft-23 (default draft-23)
+
+- Endpont
+- 
+2. Get Authorization Request Object (for request_uri method)
 
 ### This exposes five end-points:
 
 - Refer to app.js file for the below end-points.
 
-### 1. Create QR code for Verifier's Authorization Request By Value
+### 1. (Deprecated) Create QR code for Verifier's Authorization Request By Value
 
 ```
 /verifier/generate-auth-request-by-value-<client_id_scheme>-qr
@@ -119,7 +131,7 @@ or
     8%22%5D%7D%7D%7D"
 ```
 
-### 2. Create QR code for Verifier's Authorization Request By Reference
+### 2. (Deprecated) Create QR code for Verifier's Authorization Request By Reference
 
 ```
 /verifier/generate-auth-request-by-reference-qr
@@ -137,7 +149,7 @@ or
 
 ```
 
-#### 3. Get Authorization Request Object
+#### 3. (Deprecated) Get Authorization Request Object
 
 ```
 /verifier/get-auth-request-obj:
