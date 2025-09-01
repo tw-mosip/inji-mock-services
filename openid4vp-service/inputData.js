@@ -1,4 +1,6 @@
-const {nonce, state, responseUri, baseUrl, didDocumentUrl, requestUri, clientId, presentationDefinitionUri} = require("./constants");
+const {nonce, state, responseUri, baseUrl, didDocumentUrl, requestUri, clientId, presentationDefinitionUri,
+    CLIENT_ID_SCHEMES, SUPPORT_TYPES, REQUEST_MODES, DRAFT_VERSIONS
+} = require("./constants");
 const clientMetadata = require('./clientMetadataMock.json');
 
 const client_metadata = JSON.stringify(clientMetadata);
@@ -8,10 +10,11 @@ const preRegisteredAuthorizationRequestDraft23 = {
     "client_id": "mock-client",
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
-    "response_mode": "direct_post",
+    "response_mode": "direct_post.jwt",
     "nonce": nonce,
     "state": state,
-    "response_uri": responseUri
+    "response_uri": responseUri,
+    "client_metadata": client_metadata,
 }
 
 const preRegisteredAuthorizationRequestDraft21 = {
@@ -42,7 +45,7 @@ const redirectAuthorizationRequestDrat21 = {
     "client_id_scheme": "redirect_uri",
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
-    "response_mode": "direct_post.jwt",
+    "response_mode": "direct_post",
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
@@ -53,7 +56,7 @@ const didAuthorizationRequestDraft23 = {
     "client_id": didDocumentUrl,
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
-    "response_mode": "direct_post",
+    "response_mode": "direct_post.jwt",
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
@@ -85,31 +88,18 @@ const authorizationRequestParamsDraft21 = {
     "request_uri_method": "post"
 }
 
-// enum for client_id_schemes
-const CLIENT_ID_SCHEMES = {
-    PRE_REGISTERED: "pre-registered",
-    REDIRECT_URI: "redirect_uri",
-    DID: "did"
+const didAuthorizationRequestParamsDraft23 = {
+    "client_id":didDocumentUrl,
+    "request_uri": requestUri,
+    "request_uri_method": "post"
 }
 
-// enum for draft versions
-const DRAFT_VERSIONS = {
-    DRAFT_21: "draft-21",
-    DRAFT_23: "draft-23"
+const didAuthorizationRequestParamsDraft21 = {
+    "client_id":didDocumentUrl,
+    "client_id_scheme": "did",
+    "request_uri": requestUri,
+    "request_uri_method": "post"
 }
-
-// enum for request modes
-const REQUEST_MODES = {
-    BY_VALUE: "by_value",
-    BY_REFERENCE: "by_reference"
-}
-
-// enum for support types
-const SUPPORT_TYPES = {
-    SUPPORTS_BY_VALUE: "supports_by_value",
-    SUPPORTS_BY_REFERENCE: "supports_by_reference"
-}
-
 
 // Final map of all combinations
 const finalAuthRequestMap = {
@@ -141,8 +131,8 @@ const finalAuthRequestMap = {
         [SUPPORT_TYPES.SUPPORTS_BY_REFERENCE]: true,
         [SUPPORT_TYPES.SUPPORTS_BY_VALUE]: false,
         [REQUEST_MODES.BY_REFERENCE]: {
-            [DRAFT_VERSIONS.DRAFT_23]: authorizationRequestParamsDraft23,
-            [DRAFT_VERSIONS.DRAFT_21]: authorizationRequestParamsDraft23,
+            [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestParamsDraft23,
+            [DRAFT_VERSIONS.DRAFT_21]: didAuthorizationRequestParamsDraft23,
         },
         [REQUEST_MODES.BY_VALUE]: {
             [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestDraft23,
@@ -161,10 +151,6 @@ module.exports = {
     redirectAuthorizationRequestDraft21: redirectAuthorizationRequestDrat21,
     authorizationRequestParamsDraft21: authorizationRequestParamsDraft21,
 
-    SUPPORT_TYPES,
-    REQUEST_MODES,
-    CLIENT_ID_SCHEMES,
-    DRAFT_VERSIONS,
     finalAuthRequestMap
 }
 
