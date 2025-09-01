@@ -41,6 +41,7 @@ const QrScreen = () => {
                 setActualAuthorizationRequestObject(response.data);
             }
         } catch (error) {
+            resetValues()
             console.error("Error fetching QR code data:", error);
             if (error?.response?.data) {
                 setErrorMessage(error.response.data);
@@ -62,6 +63,12 @@ const QrScreen = () => {
         document.title = 'Scan';
     }, []);
 
+    const resetValues = () => {
+        setErrorMessage(null)
+        setQrData(null)
+        setQrCodeData(null)
+        setActualAuthorizationRequestObject(null)
+    }
     const handleByValueAuthRequest = async () => {
         if (isByValue)
             return;
@@ -69,10 +76,7 @@ const QrScreen = () => {
         setIsByValue((prev) => !prev);
         setIsByReference(false);
 
-        setErrorMessage(null)
-        setQrData(null)
-        setQrCodeData(null)
-        setActualAuthorizationRequestObject(null)
+        resetValues();
 
         await fetchQrCodeData(state.name, REQUEST_MODES.BY_VALUE)
     }
@@ -84,10 +88,7 @@ const QrScreen = () => {
         setIsByReference((prev) => !prev);
         setIsByValue(false);
 
-        setErrorMessage(null)
-        setQrData(null)
-        setQrCodeData(null)
-        setActualAuthorizationRequestObject(null)
+        resetValues()
 
         await fetchQrCodeData(state.name, REQUEST_MODES.BY_REFERENCE)
     }
