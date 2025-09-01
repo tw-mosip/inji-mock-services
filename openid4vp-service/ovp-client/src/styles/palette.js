@@ -23,10 +23,10 @@ export const Palette = {
     codeBackground: '#000',       // Background for code blocks
 
     // **Status & Accent Colors**
-    success: '#00C853',             // Bright success green
+    success: '#ccf6cc',             // Bright success green
     warning: '#FFB020',             // Warm amber
     dangerLight: '#FFE3E3',         // Subtle red background
-    danger: '#FF3B30',              // Strong red for alerts
+    danger: '#fac5c5',              // Strong red for alerts
     info: '#00B0FF',                // Clean cyan accent
 
     // **Shadows & Overlays**

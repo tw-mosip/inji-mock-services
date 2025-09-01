@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import {BACKEND_URL} from "../../constants/mockui-constants";
-import {handleCopy} from "../../utility/util";
 import {prettyScanResult} from "../../utility/jsonHelper";
 import {Section} from "../common/Section";
 import {font, Palette} from "../../styles/palette";
@@ -9,7 +8,6 @@ import {font, Palette} from "../../styles/palette";
 // bundle scan result display with copy button +  auth result checker
 export function ScanResult() {
     const [scanResult, setScanResult] = useState(null);
-    const [copiedResult, setCopiedResult] = useState(false);
 
     useEffect(() => {
         setScanResult(null);
@@ -30,13 +28,6 @@ export function ScanResult() {
         return () => clearInterval(interval);
     }, []);
 
-    const handleScanResultCopy = () => {
-        handleCopy(
-            JSON.stringify(prettyScanResult(scanResult), null, 2),
-            setCopiedResult
-        )
-    }
-
     return <div style={{flex: 1}}>
         <div style={{
             display: "flex",
@@ -45,43 +36,12 @@ export function ScanResult() {
             marginBottom: "8px"
         }}>
             <h2 style={{margin: 0}}>Scan Result</h2>
-            {scanResult && (
-                <div style={{display: "flex", alignItems: "center", gap: "10px"}}>
-                    {copiedResult && (
-                        <div
-                            style={{
-                                padding: "6px 12px",
-                                backgroundColor: "#4caf50",
-                                color: "white",
-                                borderRadius: "4px",
-                                fontSize: "12px",
-                                boxShadow: "0 2px 6px rgba(0,0,0,0.15)",
-                            }}
-                        >
-                            Copied!
-                        </div>
-                    )}
-                    <button
-                        onClick={handleScanResultCopy}
-                        style={{
-                            padding: "6px 12px",
-                            fontSize: "12px",
-                            borderRadius: "4px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#eee",
-                            cursor: "pointer",
-                        }}
-                    >
-                        Copy
-                    </button>
-                </div>
-            )}
         </div>
 
         {scanResult ? (
             <div
                 style={{
-                    background: scanResult?.error ? "#ffe6e6" : "#e9ffe9",
+                    background: scanResult?.error ? Palette.danger : Palette.success,
                     padding: "16px",
                     borderRadius: "6px",
                     fontSize: "14px",
