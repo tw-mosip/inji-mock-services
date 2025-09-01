@@ -11,12 +11,6 @@ const Home = () => {
         document.title = 'Home';
     }, []);
 
-    // const endpoints = [
-    //     { name: "By value - Redirect", path: "/verifier/generate-auth-request-by-value-redirect-qr" },
-    //     { name: "By value - Pre-Registered", path: "/verifier/generate-auth-request-by-value-pre-registered-qr" },
-    //     { name: "By Reference", path: "/verifier/generate-auth-request-by-reference-qr" },
-    // ];
-
     const endpoints = [
         {
             name: CLIENT_ID_SCHEMES.PRE_REGISTERED
@@ -29,10 +23,6 @@ const Home = () => {
         }
     ]
 
-    // const handleClick = (endpointObj) => {
-    //     navigate('/qr', { state: { endpoint: endpointObj.path, name: endpointObj.name } });
-    // };
-
     const handleClick = (endpointObj) => {
         navigate('/qr', {state: {name: endpointObj.name}});
     };
@@ -43,7 +33,6 @@ const Home = () => {
             display: 'flex',
             flexDirection: 'column',
             gap: 3,
-            // justifyContent: 'center',
             alignItems: 'center',
             padding: 20,
             textAlign: 'start',
@@ -53,22 +42,31 @@ const Home = () => {
             fontSize: 'large'
         }}>
             <h1 style={{fontSize: 'xxx-large', marginBottom: -10}}>Inji Mock Services</h1>
-            <h1 style={{fontSize: 'xxx-large'}}>Mock Verifier</h1>
+            <h1 style={{fontSize: 'xxx-large'}}>Mock OpenID4VP Verifier</h1>
             <div style={{justifyContent: 'start', maxWidth: '800px', margin: '0 20px'}}>
                 <p style={{maxWidth: '600px'}}>
                     This is a mock verifier service for demonstration purposes.
                 </p>
-                <p>
-                    Supported Device flows:
-                    <ol>
-                        <li>Same device flow (Click the QR code to simulate same device flow)</li>
-                        <li>Cross device flow (Scan the rendered QR code from your Wallet application)</li>
+                <p style={{marginBottom: '15px'}}>
+                    <span style={{color: Palette.primaryText, fontWeight: 'bold', fontSize: 'large'}}>Supported Device flows:</span>
+                    <ol style={{
+                        marginTop: '10px',
+                        color: Palette.secondaryText,
+                        paddingLeft: '25px'
+                    }}>
+                        <li style={{marginBottom: '8px'}}>
+                            <span style={{color: Palette.primaryText}}>Same device flow</span> - Click the QR code to
+                            simulate same device flow
+                        </li>
+                        <li>
+                            <span style={{color: Palette.primaryText}}>Cross device flow</span> - Scan the rendered QR
+                            code from your Wallet application
+                        </li>
                     </ol>
                 </p>
             </div>
             <div>
-                <p>Please select a client id scheme to
-                    generate an authentication request QR code.</p>
+                <p>Please select a Client Id Scheme to generate an Authorization Request QR code:</p>
                 <div style={{
                     display: 'grid',
                     flexDirection: 'column',

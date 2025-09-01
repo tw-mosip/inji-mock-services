@@ -48,7 +48,7 @@ function ErrorMessage({
                 style={{
                     margin: 0,
                     fontSize: compact ? "12px" : "14px",
-                    color: Palette.invertedText,
+                    color: Palette.tertiaryText,
                     fontFamily: font.primary,
                 }}
             >

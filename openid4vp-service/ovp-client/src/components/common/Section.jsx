@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import Button from "./Button";
 import {Code} from "./Code";
+import {backgroundStyle, Palette} from "../../styles/palette";
 
 export function Section(props: { value : string }) {
     return <div
@@ -20,7 +21,7 @@ export function Section(props: { value : string }) {
     </div>;
 }
 
-export function AccordionSection({title, value, background = '#f4f4f4'}) {
+export function AccordionSection({title, value, background = Palette.surface}) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -28,7 +29,8 @@ export function AccordionSection({title, value, background = '#f4f4f4'}) {
             margin: '16px',
             marginLeft: '0px',
             borderRadius: '12px',
-            border: '2px solid black',
+            border: `3px solid ${Palette.surfaceDark}`,
+            background: Palette.surface
         }}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
