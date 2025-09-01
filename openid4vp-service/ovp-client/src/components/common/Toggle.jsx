@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { Palette, backgroundStyle, font } from "../styles/palette";
+import { Palette, backgroundStyle, font } from "../../styles/palette";
 
 interface ToggleProps {
     options: [string, string];

@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
-import Button from "./common/Button";
-import {Code} from "./common/Code";
+import Button from "./Button";
+import {Code} from "./Code";
 
 export function Section(props: { value : string }) {
     return <div

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {Palette, font} from "../styles/palette";
+import {Palette, font} from "../../styles/palette";
 import Button from "./Button";
 
 function ErrorMessage({

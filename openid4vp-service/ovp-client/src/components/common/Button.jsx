@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { Palette, font } from "../styles/palette";
+import { Palette, font } from "../../styles/palette";
 
 const styles = {
     base: {

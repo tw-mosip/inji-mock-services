@@ -1,15 +1,15 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import axios from 'axios';
-import {BACKEND_URL} from "./mockui-constants";
-import {AccordionSection} from "./components/Section";
-import {Loader} from "./components/Loader";
-import Toggle from "./components/Toggle";
-import {font} from "./styles/palette";
-import {DRAFT_VERSIONS, REQUEST_MODES} from "./constants/constants";
-import {ScanResult} from "./ScanResult";
-import {Image} from "./components/Image";
-import Error from "./components/Error";
+import {BACKEND_URL} from "../constants/mockui-constants";
+import {AccordionSection} from "../components/common/Section";
+import {Loader} from "../components/common/Loader";
+import Toggle from "../components/common/Toggle";
+import {font} from "../styles/palette";
+import {DRAFT_VERSIONS, REQUEST_MODES} from "../constants/constants";
+import {ScanResult} from "../components/scan/ScanResult";
+import {Image} from "../components/common/Image";
+import Error from "../components/common/Error";
 
 const QrScreen = () => {
     const {state} = useLocation();
