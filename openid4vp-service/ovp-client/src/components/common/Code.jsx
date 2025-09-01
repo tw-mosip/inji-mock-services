@@ -14,22 +14,24 @@ export function Code({value}) {
                     variant={"secondary"}>{copied ? "Copied" : "Copy"}</Button>
             </div>
             <pre
-                            style={{
-                                background: Palette.codeBackground,
-                                color: Palette.codeText,
-                                padding: "12px",
-                                borderRadius: "8px",
-                                overflowX: "auto",
-                                maxWidth: "100%",
-                                boxSizing: "border-box",
-                                whiteSpace: "pre-wrap",
-                                wordBreak: "break-word",
-                                marginTop: "0",
-                                fontStyle: font.code
-                            }}
-                        >
-                                {value}
-                            </pre>
+                style={{
+                    background: Palette.codeBackground,
+                    color: Palette.codeText,
+                    padding: "12px",
+                    borderRadius: "8px",
+                    overflowX: "auto",
+                    maxWidth: "100%",
+                    boxSizing: "border-box",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    marginTop: "0",
+                    fontStyle: font.code
+                }}
+            >
+                {typeof value === "string"
+                    ? value
+                    : JSON.stringify(value, null, 2)}
+            </pre>
         </div>
     );
 }
