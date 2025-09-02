@@ -1,7 +1,6 @@
-import React, {Fragment, useState} from 'react';
-import Button from "./Button";
+import React, {useState} from 'react';
 import {Code} from "./Code";
-import {backgroundStyle, Palette} from "../../styles/palette";
+import {Palette} from "../../styles/palette";
 
 export function Section(props: { value: string }) {
     return <div

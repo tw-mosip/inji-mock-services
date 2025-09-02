@@ -11,6 +11,35 @@ import {ScanResult} from "../components/scan/ScanResult";
 import {Image} from "../components/common/Image";
 import Error from "../components/common/Error";
 
+const styles = {
+    container: {
+        padding: '20px 30px',
+        color: font.primary,
+    },
+    content: {
+        paddingLeft: 40,
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 20,
+        justifyItems: 'flex-start',
+    },
+    // Media query styles for mobile
+    '@media (max-width: 768px)': {
+        container: {
+            padding: '10px 5px',
+        },
+        content: {
+            flexDirection: 'column',
+            paddingLeft: 0,
+            gap: 4,
+        },
+        header: {
+            flexDirection: 'column',
+            gap: '10px',
+            fontSize: 'large',
+        },
+    },
+};
 const QrScreen = () => {
     const {state} = useLocation();
     const navigate = useNavigate();
@@ -183,38 +212,23 @@ const QrScreen = () => {
     }
 
     return (
-        <div style={{padding: '20px 30px', color: font.primary}}>
+        <div style={styles.container}>
             {header()}
-            <div style={{
-                paddingLeft: 40,
-                display: 'flex',
-                flexDirection: 'row',
-                font: font.primary,
-                gap: 20,
-                justifyItems: 'flex-start'
-            }}>
-
+            <div style={styles.content}>
                 <div style={{flex: 1}}>
                     {requestToggle()}
-
                     <div style={{maxWidth: '100%'}}>
                         <div>
                             <a href={qrData} target="_blank" rel="noopener noreferrer">
                                 <Image src={qrCodeData} alt={"QR code"}/>
                             </a>
-
                             {downloadQRCode()}
-
-                            {
-                                inputData && (
-                                    <AccordionSection title={"Input Data"} value={JSON.stringify(inputData, null, 2)}/>
-                                )
-                            }
-
+                            {inputData && (
+                                <AccordionSection title={"Input Data"} value={JSON.stringify(inputData, null, 2)}/>
+                            )}
                             {qrData && (
                                 <AccordionSection title={"Payload"} value={qrData}/>
                             )}
-
                             {actualAuthorizationRequestObject && (
                                 <AccordionSection title={"Actual Authorization Request Object"}
                                                   value={actualAuthorizationRequestObject}/>
@@ -222,7 +236,6 @@ const QrScreen = () => {
                         </div>
                     </div>
                 </div>
-
                 <ScanResult/>
             </div>
         </div>
