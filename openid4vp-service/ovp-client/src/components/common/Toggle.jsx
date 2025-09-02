@@ -45,6 +45,7 @@ const Toggle: React.FC<ToggleProps> = ({ options }) => {
                             padding: '8px 16px',
                             color: isActive ? Palette.primaryText : Palette.secondaryText,
                             boxShadow: isActive ? `0 3px 6px ${Palette.primaryShadow}` : "none",
+                            cursor: 'pointer',
                         }}
                     >
                         {option.name}
