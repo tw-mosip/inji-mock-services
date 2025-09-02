@@ -90,40 +90,40 @@ const authorizationRequestParamsDraft21 = {
 
 const preRegisteredAuthorizationRequestParamsDraft23 = {
     "client_id": preRegisteredAuthorizationRequestDraft23.client_id,
-    "request_uri": requestUri,
+    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/pre-registered?draft=draft-23`,
     "request_uri_method": "post"
 }
 
 const preRegisteredAuthorizationRequestParamsDraft21 = {
     "client_id": preRegisteredAuthorizationRequestDraft21.client_id,
     "client_id_scheme": "did",
-    "request_uri": requestUri,
+    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/pre-registered?draft=draft-23`,
     "request_uri_method": "post"
 }
 
 const redirectUriAuthorizationRequestParamsDraft23 = {
     "client_id": redirectAuthorizationRequestDraft23.client_id,
-    "request_uri": requestUri,
+    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/redirect_uri?draft=draft-23`,
     "request_uri_method": "post"
 }
 
 const redirectUriAuthorizationRequestParamsDraft21 = {
     "client_id": redirectAuthorizationRequestDrat21.client_id,
     "client_id_scheme": "did",
-    "request_uri": requestUri,
+    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/redirect_uri?draft=draft-21`,
     "request_uri_method": "post"
 }
 
 const didAuthorizationRequestParamsDraft23 = {
     "client_id": didDocumentUrl,
-    "request_uri": requestUri,
+    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?draft=draft-23`,
     "request_uri_method": "post"
 }
 
 const didAuthorizationRequestParamsDraft21 = {
     "client_id": didDocumentUrl,
     "client_id_scheme": "did",
-    "request_uri": requestUri,
+    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?draft=draft-21`,
     "request_uri_method": "post"
 }
 
