@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {Fragment, useState} from 'react';
 import {Code} from "./Code";
 import {Palette} from "../../styles/palette";
 
@@ -20,7 +20,7 @@ export function Section(props: { value: string }) {
     </div>;
 }
 
-export function AccordionSection({title, value, background = Palette.surface}) {
+export function AccordionSection({title, value, background = Palette.surface, children}) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -50,7 +50,10 @@ export function AccordionSection({title, value, background = Palette.surface}) {
                 </span>
             </div>
             {isOpen && (
-                <Section value={value}/>
+                <div style={{padding: '0 16px 16px 16px'}}>
+                    {children && <Fragment>{children}</Fragment>}
+                    {value && <Section value={value}/>}
+                </div>
             )}
         </div>
     );

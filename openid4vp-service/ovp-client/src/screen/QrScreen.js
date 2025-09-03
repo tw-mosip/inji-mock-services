@@ -10,6 +10,7 @@ import {DRAFT_VERSIONS, REQUEST_MODES} from "../constants/constants";
 import {ScanResult} from "../components/scan/ScanResult";
 import {Image} from "../components/common/Image";
 import Error from "../components/common/Error";
+import {Code} from "../components/common/Code";
 
 const styles = {
     container: {
@@ -51,6 +52,29 @@ const QrScreen = () => {
     const [isByValue, setIsByValue] = useState(true);
     const [isByReference, setIsByReference] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [decodedJwt, setDecodedJwt] = useState(null);
+    const [isDecoded, setIsDecoded] = useState(false);
+
+    const handleDecodeJwt = () => {
+
+        const parts = actualAuthorizationRequestObject.split('.');
+        if (parts.length !== 3) {
+            setErrorMessage("Invalid JWT format");
+            return;
+        }
+
+        try {
+            // decode both header and payload
+            const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/').padEnd(parts[0].length + (4 - parts[0].length % 4) % 4, '=')));
+            const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/').padEnd(parts[1].length + (4 - parts[1].length % 4) % 4, '=')));
+            setDecodedJwt({header,payload});
+            setIsDecoded(true);
+        } catch (error) {
+            console.error("Error decoding JWT:", error);
+            setErrorMessage("Error decoding JWT: " + error.message);
+            setIsDecoded(false)
+        }
+    }
 
     const fetchQrCodeData = async (clientIdScheme: string, requestMode: string, draftVersion: string = DRAFT_VERSIONS.DRAFT_23) => {
         try {
@@ -73,6 +97,7 @@ const QrScreen = () => {
                         'ngrok-skip-browser-warning': 'true'
                     }
                 });
+
                 setActualAuthorizationRequestObject(response.data);
             }
         } catch (error) {
@@ -230,8 +255,23 @@ const QrScreen = () => {
                                 <AccordionSection title={"Payload"} value={qrData}/>
                             )}
                             {actualAuthorizationRequestObject && (
-                                <AccordionSection title={"Actual Authorization Request Object"}
-                                                  value={actualAuthorizationRequestObject}/>
+                                <AccordionSection title={"Actual Authorization Request Object"}>
+                                    <Toggle options={[
+                                        {
+                                            name: "Decoded",
+                                            selected: isDecoded,
+                                            onChange: handleDecodeJwt
+                                        }, {
+                                            name: "Encoded",
+                                            selected: !isDecoded,
+                                            onChange: () => setIsDecoded(false)
+                                        }
+                                    ]}/>
+                                    <div style={{marginTop: 10}}>
+                                        {isDecoded ? <Code value={decodedJwt}/> :
+                                            <Code value={actualAuthorizationRequestObject}/>}
+                                    </div>
+                                </AccordionSection>
                             )}
                         </div>
                     </div>

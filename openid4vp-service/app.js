@@ -68,6 +68,8 @@ app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) =>
     console.log("Received request with request body:", req.body);
     try {
         let inputData = extractByReferenceInputData(req);
+        // res.json(inputData)
+        // return
         const walletNonce = req.body?.wallet_nonce;
         const jwt = walletNonce
             ? await createJWT({...inputData, wallet_nonce: walletNonce})
