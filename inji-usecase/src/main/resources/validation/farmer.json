@@ -23,8 +23,7 @@
             "type": "string"
         },
         "date_of_birth": {
-            "type": "date",
-            "regex": "[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}"
+            "type": "date"
         },
         "gender": {
             "type": "string",
@@ -89,7 +88,6 @@
         }
     },
     "required": [
-        "name",
-        "land_id"
+        "name"
     ]
 }

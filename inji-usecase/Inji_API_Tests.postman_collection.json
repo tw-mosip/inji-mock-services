@@ -1,0 +1,177 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+		"name": "Inji Farmer API Tests",
+		"description": "A collection for testing the Inji Farmer Data API endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Farmer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// This test script will automatically save the ID of the created farmer",
+							"// to an environment variable for use in other requests.",
+							"if (pm.response.code === 200 || pm.response.code === 201) {",
+							"    try {",
+							"        var responseBody = pm.response.json();",
+							"        if (responseBody && responseBody.id) {",
+							"            pm.environment.set(\"farmerId\", responseBody.id);",
+							"            console.log(\"Saved farmerId: \" + responseBody.id);",
+							"        }",
+							"    } catch (e) {",
+							"        console.log(\"Could not parse response or find ID.\");",
+							"    }",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-source",
+						"value": "farmer",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Kaisher Kumar\",\n    \"phone_number\": \"9876543210\",\n    \"email\": \"kaisher.kumar@example.com\",\n    \"date_of_birth\": \"15-07-1985\",\n    \"gender\": \"Male\",\n    \"state\": \"Karnataka\",\n    \"district\": \"Tumkur\",\n    \"village\": \"Hosur\",\n    \"pin_code\": 456213,\n    \"address\": \"123, Main Street, Near Temple\",\n    \"civil_status\": \"Married\",\n    \"registration_date\": \"30-06-2025\",\n    \"education_level\": \"Secondary\",\n    \"employment_status\": \"Self-employed\",\n    \"hh_income_type\": \"Agriculture\",\n    \"total_land_area\": 50,\n    \"ownership_type\": \"Owned\",\n    \"land_certificate\": \"LC-2025-789\",\n    \"land_id\": 678231,\n    \"primary_crop\": \"Paddy\",\n    \"collected_gc\": \"Yes\",\n    \"season\": \"Kharif\",\n    \"secondary_crop\": \"Maize\",\n    \"livestock_type\": \"Cattle\",\n    \"livestock_count\": \"10\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/api/data",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"data"
+					]
+				},
+				"description": "Ingests data for a new farmer. The `x-source` header must be set to `farmer`."
+			},
+			"response": []
+		},
+		{
+			"name": "Get Data by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/data/{{farmerId}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"data",
+						"{{farmerId}}"
+					]
+				},
+				"description": "Retrieves data for a single entity by its ID. Assumes you have created a farmer and the `farmerId` environment variable is set."
+			},
+			"response": []
+		},
+		{
+			"name": "Search Data (Simple)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/data?filterKey=name&operation=cn&value=Kaisher Kumar",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"data"
+					],
+					"query": [
+						{
+							"key": "filterKey",
+							"value": "name"
+						},
+						{
+							"key": "operation",
+							"value": "cn"
+						},
+						{
+							"key": "value",
+							"value": "Kaisher Kumar"
+						}
+					]
+				},
+				"description": "Searches for farmers with an exact name match."
+			},
+			"response": []
+		},
+		{
+			"name": "Search Data (Complex - AND)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/data?filterKey=name&operation=cn&value=Kaisher&dataOption=all&filterKey=pin_code&operation=ne&value=123456",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"data"
+					],
+					"query": [
+						{
+							"key": "filterKey",
+							"value": "name"
+						},
+						{
+							"key": "operation",
+							"value": "cn"
+						},
+						{
+							"key": "value",
+							"value": "Kaisher"
+						},
+						{
+							"key": "dataOption",
+							"value": "all",
+							"description": "Use 'all' for AND logic, 'any' for OR logic"
+						},
+						{
+							"key": "filterKey",
+							"value": "pin_code"
+						},
+						{
+							"key": "operation",
+							"value": "ne"
+						},
+						{
+							"key": "value",
+							"value": "123456"
+						}
+					]
+				},
+				"description": "Searches for farmers where the name CONTAINS 'Kaisher' AND the pin_code is NOT EQUAL to 123456."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}

@@ -28,6 +28,8 @@ ProjectDir
 │   │   │           └── inji_usecase
 │   │   │               ├── InjiDataCreationApp.java
 │   │   │               ├── config
+│   │   │               │   ├── CorsConfig.java
+│   │   │               │   ├── JpaConfigHelper.java
 │   │   │               │   └── FarmerConfiguration.java
 │   │   │               ├── controller
 │   │   │               │   └── DataController.java
@@ -38,6 +40,7 @@ ProjectDir
 │   │   │               │   └── farmer
 │   │   │               │       └── FarmerEntity.java
 │   │   │               ├── mapper
+│   │   │               │   ├── Mapper
 │   │   │               │   ├── farmer
 │   │   │               │   │   └── FarmerMapper.java
 │   │   │               │   └── MappingUtils.java
@@ -52,9 +55,11 @@ ProjectDir
 │   │   │                   │   ├── SearchOperation.java
 │   │   │                   │   └── SpecificationBuilder.java
 │   │   │                   ├── repository
+│   │   │                   │   ├── AbstractRepositoryService.java
 │   │   │                   │   ├── FarmerRepositoryService.java
 │   │   │                   │   └── RepositoryService.java
 │   │   │                   └── validation
+│   │   │                       ├── AbstractValidationService.java
 │   │   │                       ├── FarmerValidationService.java
 │   │   │                       ├── ValidationService.java
 │   │   │                       ├── ValidationType.java
@@ -94,7 +99,7 @@ The implementation for the look up is under ```/src/main/java/com/mosip/inji_use
 
 ### ```GET /api/data```
 Reference used: https://medium.com/@cmmapada/advanced-search-and-filtering-using-spring-data-jpa-specification-and-criteria-api-b6e8f891f2bf
-The requests sent at ```GET /api/data/query``` goes through a multi-step process. The request body must contain a valid pre-defined key:value pair. An example is given below
+The requests sent at ```GET /api/data``` goes through a multi-step process. The request body must contain a valid pre-defined key:value pair. An example is given below
 ```
 http://localhost:8080/api/data?filterKey=name&operation=cn&value=z&dataOption=all&filterKey=pin_code&operation=eq&value=123456
 ```
@@ -141,6 +146,7 @@ The following files, folders have to modified/added for adding an use-case
 │   │   │       └── mosip
 │   │   │           └── inji_usecase
 │   │   │               ├── config
+│   │   │               │   ├── CorsConfig.java
 │   │   │               │   ├── FarmerConfiguration.java
 │   │   │               │   ├── JpaConfigHelper.java
 |   |   |               |   └── ExampleConfiguration.java             --Add your configuration here

@@ -76,7 +76,7 @@ public class Farmer {
     @Column(name = "land_certificate")
     private String land_certificate;
 
-    @Column(unique= true, nullable = false)
+    @Column(unique= true)
     private Integer land_id;
 
 
