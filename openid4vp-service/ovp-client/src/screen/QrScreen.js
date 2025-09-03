@@ -91,12 +91,16 @@ const QrScreen = () => {
             setInputData(inputDataValue)
 
             if (requestMode === REQUEST_MODES.BY_REFERENCE) {
-                console.log("Fetching actual authorization request object from ", inputDataValue["request_uri"])
-                const response = await axios.get(inputDataValue["request_uri"],{
+                const requestUri = inputDataValue["request_uri"];
+                console.log("Fetching actual authorization request object from ", requestUri)
+                const requestUriMethod = inputDataValue["request_uri_method"] ?? "get";
+                const response = await axios({
+                    method: requestUriMethod,
+                    url: requestUri,
                     headers: {
                         'ngrok-skip-browser-warning': 'true'
                     }
-                });
+                })
 
                 setActualAuthorizationRequestObject(response.data);
             }
