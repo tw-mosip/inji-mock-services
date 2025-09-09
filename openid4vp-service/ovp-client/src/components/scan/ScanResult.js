@@ -16,7 +16,11 @@ export function ScanResult() {
     useEffect(() => {
         const interval = setInterval(async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/verifier/vp-result`);
+                const response = await axios.get(`${BACKEND_URL}/verifier/vp-result`, {
+                    headers: {
+                        'ngrok-skip-browser-warning': 'true'
+                    }
+                });
                 if (response.data && response.data !== false) {
                     setScanResult(response.data);
                 }

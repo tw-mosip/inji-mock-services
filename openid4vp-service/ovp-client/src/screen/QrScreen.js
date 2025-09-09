@@ -79,7 +79,11 @@ const QrScreen = () => {
     const fetchQrCodeData = async (clientIdScheme: string, requestMode: string, draftVersion: string = DRAFT_VERSIONS.DRAFT_23) => {
         try {
             // /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version>
-            const response = await axios.get(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}`);
+            const response = await axios.get(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}`, {
+                headers: {
+                    'ngrok-skip-browser-warning': 'true'
+                }
+            });
 
             if (response.status !== 200) {
                 setErrorMessage("Error fetching QR code data");
