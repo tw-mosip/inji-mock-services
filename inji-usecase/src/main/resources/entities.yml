@@ -1,0 +1,135 @@
+entities:
+  - name: Driver
+    table_name: drivers
+    fields:
+      - name: id
+        type: integer
+        primary_key: true
+      - name: uin
+        type: string
+      - name: fullName
+        type: string
+      - name: phoneNumber
+        type: string
+      - name: gender
+        type: string
+      - name: driverEmailId
+        type: string
+      - name: city
+        type: string
+      - name: faceImagePath
+        type: string
+      - name: driverLicenseNumber
+        type: string0
+      - name: passportNumber
+        type: string
+  - name: Farmer
+    table_name: farmers
+    fields:
+      - name: id
+        type: integer
+        primary_key: true
+      - name: name
+        type: string
+      - name: phone_number
+        type: string
+      - name: email
+        type: string
+      - name: district
+        type: string
+      - name: village
+        type: string
+      - name: date_of_birth
+        type: date
+      - name: gender
+        type: string
+      - name: state
+        type: string
+      - name: pin_code
+        type: integer
+      - name: address
+        type: string
+      - name: civil_status
+        type: string
+      - name: registration_date
+        type: date
+      - name: education_level
+        type: string
+      - name: employment_status
+        type: string
+      - name: hh_income_type
+        type: string
+      - name: total_land_area
+        type: integer
+      - name: ownership_type
+        type: string
+      - name: land_certificate
+        type: string
+      - name: land_id
+        type: integer
+      - name: primary_crop
+        type: string
+      - name: collected_gc
+        type: string
+      - name: season
+        type: string
+      - name: secondary_crop
+        type: string
+      - name: livestock_type
+        type: string
+      - name: livestock_count
+        type: string
+  - name: TruckPass
+    table_name: truckpasses
+    fields:
+      - name: id
+        type: integer
+        primary_key: true
+      - name: driverUin
+        type: string
+      - name: driverName
+        type: string
+      - name: phoneNumber
+        type: string
+      - name: gender
+        type: string
+      - name: emailId
+        type: string
+      - name: city
+        type: string
+      - name: faceImagePath
+        type: string
+      - name: driverLicenseNumber
+        type: string
+      - name: passportNumber
+        type: string
+      - name: invoiceNumber
+        type: string
+      - name: cmrWaybill
+        type: string
+      - name: customsDocumentation
+        type: string
+      - name: weightCertificatePath
+        type: string
+      - name: vehicleType
+        type: string
+      - name: axleSize
+        type: string
+      - name: vehicleRegistrationDocsPath
+        type: string
+      - name: truckLicensePlate
+        type: string
+      - name: exporterName
+        type: string
+      - name: importerName
+        type: string
+      - name: entryExitPoint
+        type: string
+      - name: countryOrigin
+        type: string
+      - name: countryDestination
+        type: string
+      - name: dateDeparture
+        type: date
+      - name: dateReturn
+        type: date
