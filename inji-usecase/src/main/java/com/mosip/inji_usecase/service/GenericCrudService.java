@@ -1,7 +1,7 @@
 package com.mosip.inji_usecase.service;
 
 import com.mosip.inji_usecase.entity.EntityMetadata;
-import com.mosip.inji_usecase.entity.GenericEntity;
+import com.mosip.inji_usecase.entity.EntityData;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class GenericCrudService {
             throw new IllegalArgumentException("Invalid data for entity: " + entityName);
         }
 
-        GenericEntity entity = new GenericEntity();
+        EntityData entity = new EntityData();
         entity.setEntityType(entityName);
         entity.setData(data);
 
@@ -49,18 +49,18 @@ public class GenericCrudService {
     }
 
     @Transactional(readOnly = true)
-    public List<GenericEntity> readAll(String entityName) {
-        return entityManager.createQuery("SELECT e FROM GenericEntity e WHERE e.entityType = :entityType", GenericEntity.class)
+    public List<EntityData> readAll(String entityName) {
+        return entityManager.createQuery("SELECT e FROM GenericEntity e WHERE e.entityType = :entityType", EntityData.class)
                 .setParameter("entityType", entityName)
                 .getResultList();
     }
 
     @Transactional(readOnly = true)
-    public GenericEntity read(String entityName, String id) {
+    public EntityData read(String entityName, String id) {
         try {
             return entityManager.createQuery(
                             "SELECT e FROM GenericEntity e WHERE e.entityType = :entityType and e.id = :id",
-                            GenericEntity.class)
+                            EntityData.class)
                     .setParameter("entityType", entityName)
                     .setParameter("id", id)
                     .getSingleResult();
@@ -74,7 +74,7 @@ public class GenericCrudService {
         if (!entityMetadata.validate(entityName, data)) {
             throw new IllegalArgumentException("Invalid data for entity: " + entityName);
         }
-        GenericEntity entity = entityManager.find(GenericEntity.class, id);
+        EntityData entity = entityManager.find(EntityData.class, id);
         if (entity != null && entity.getEntityType().equals(entityName)) {
             entity.setData(data);
             entityManager.merge(entity);
@@ -85,7 +85,7 @@ public class GenericCrudService {
 
     @Transactional
     public boolean delete(String entityName, String id) {
-        GenericEntity entity = entityManager.find(GenericEntity.class, id);
+        EntityData entity = entityManager.find(EntityData.class, id);
         if (entity != null && entity.getEntityType().equals(entityName)) {
             entityManager.remove(entity);
             return true;

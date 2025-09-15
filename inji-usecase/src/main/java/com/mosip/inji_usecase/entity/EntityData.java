@@ -11,12 +11,12 @@ import org.hibernate.type.SqlTypes;
 import java.util.Map;
 
 @Entity
-@Table(name = "generic_entities")
+@Table(name = "entity_data")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class GenericEntity {
+public class EntityData {
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
