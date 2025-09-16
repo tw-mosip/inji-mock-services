@@ -14,18 +14,27 @@
 	<name>inji_usecase</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+    <licenses>
+        <license>
+            <name>MPL 2.0</name>
+            <url>https://www.mozilla.org/en-US/MPL/2.0/</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Mosip</name>
+            <email>mosip.emailnotifier@gmail.com</email>
+            <organization>io.mosip</organization>
+            <organizationUrl>https://github.com/mosip/inji-web</organizationUrl>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git://github.com/mosip/inji-mock-services.git</connection>
+        <developerConnection>scm:git:ssh://github.com:mosip/inji-mock-services.git</developerConnection>
+        <url>https://github.com/mosip/inji-mock-services</url>
+        <tag>HEAD</tag>
+    </scm>
 	<properties>
 		<java.version>21</java.version>
 	</properties>
