@@ -21,6 +21,7 @@ on:
       - MOSIP*
       - release*
       - INJICERT*
+      - truckpass
 
 jobs:
   build-maven-inji-usecase:
