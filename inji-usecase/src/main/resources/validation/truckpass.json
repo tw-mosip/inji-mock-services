@@ -1,0 +1,119 @@
+{
+  "fields": {
+    "id": {
+      "type": "integer"
+    },
+    "driverUin": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 20
+    },
+    "driverName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "phoneNumber": {
+      "type": "string",
+      "regex": "^[0-9]{10}$"
+    },
+    "gender": {
+      "type": "string",
+      "regex": "(Male|Female|Other)"
+    },
+    "emailId": {
+      "type": "string",
+      "regex": "^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$"
+    },
+    "city": {
+      "type": "string"
+    },
+    "faceImagePath": {
+      "type": "string"
+    },
+    "driverLicenseNumber": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 20
+    },
+    "passportNumber": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 15
+    },
+    "invoiceNumber": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50
+    },
+    "cmrWaybill": {
+      "type": "string"
+    },
+    "customsDocumentation": {
+      "type": "string"
+    },
+    "weightCertificatePath": {
+      "type": "string"
+    },
+    "vehicleType": {
+      "type": "string"
+    },
+    "axleSize": {
+      "type": "string"
+    },
+    "vehicleRegistrationDocsPath": {
+      "type": "string"
+    },
+    "truckLicensePlate": {
+      "type": "string",
+      "minLength": 6,
+      "maxLength": 15
+    },
+    "exporterName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 100
+    },
+    "importerName": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 100
+    },
+    "entryExitPoint": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 50
+    },
+    "countryOrigin": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 50
+    },
+    "countryDestination": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 50
+    },
+    "dateDeparture": {
+      "type": "date",
+      "regex": "[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}"
+    },
+    "dateReturn": {
+      "type": "date",
+      "regex": "[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}"
+    }
+
+  },
+  "required": [
+    "driverUin",
+    "driverName",
+    "invoiceNumber",
+    "vehicleType",
+    "truckLicensePlate",
+    "exporterName",
+    "importerName",
+    "entryExitPoint",
+    "countryOrigin",
+    "countryDestination"
+  ]
+}

@@ -8,7 +8,6 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -19,34 +18,31 @@ import jakarta.persistence.EntityManagerFactory;
 @Configuration
 @PropertySource({ "classpath:database.properties" })
 @EnableJpaRepositories(
-        basePackages="com.mosip.inji_usecase.repository.farmer",
-        entityManagerFactoryRef="farmerEntityManager",
-        transactionManagerRef="farmerTransactionManager")
-public class FarmerConfiguration {
+        basePackages="com.mosip.inji_usecase.repository.truckpass",
+        entityManagerFactoryRef="truckpassEntityManager",
+        transactionManagerRef="truckpassTransactionManager")
+public class TruckPassConfiguration {
 
     @Bean
-    @Primary  // Add this
-    @ConfigurationProperties(prefix = "spring.farmer-datasource")
-    public DataSource farmerDataSource() {
+    @ConfigurationProperties(prefix = "spring.truckpass-datasource")
+    public DataSource truckpassDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    @Primary  // Add this
-    public LocalContainerEntityManagerFactoryBean farmerEntityManager(
-            @Qualifier("farmerDataSource") DataSource dataSource,
+    public LocalContainerEntityManagerFactoryBean truckpassEntityManager(
+            @Qualifier("truckpassDataSource") DataSource dataSource,
             EntityManagerFactoryBuilder builder) {
         return JpaConfigHelper.createEntityManagerFactory(
                 builder,
                 dataSource,
-                "com.mosip.inji_usecase.entity.farmer",
-                "farmer");
+                "com.mosip.inji_usecase.entity.truckpass",
+                "truckpass");
     }
 
     @Bean
-    @Primary  // Add this
-    public PlatformTransactionManager farmerTransactionManager(
-            @Qualifier("farmerEntityManager") EntityManagerFactory emf) {
+    public PlatformTransactionManager truckpassTransactionManager(
+            @Qualifier("truckpassEntityManager") EntityManagerFactory emf) {
         return JpaConfigHelper.createTransactionManager(emf);
     }
 }

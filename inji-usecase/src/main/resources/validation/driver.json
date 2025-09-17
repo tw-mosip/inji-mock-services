@@ -1,0 +1,49 @@
+{
+  "fields": {
+    "id": {
+      "type": "integer"
+    },
+    "uin": {
+      "type": "string",
+      "minLength": 10,
+      "maxLength": 20
+    },
+    "fullName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 100
+    },
+    "phoneNumber": {
+      "type": "string",
+      "regex": "^[0-9]{10}$"
+    },
+    "gender": {
+      "type": "string",
+      "regex": "(Male|Female|Other)"
+    },
+    "driverEmailId": {
+      "type": "string",
+      "regex": "^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$"
+    },
+    "city": {
+      "type": "string"
+    },
+    "faceImagePath": {
+      "type": "string"
+    },
+    "driverLicenseNumber": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 20
+    },
+    "passportNumber": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 15
+    }
+  },
+  "required": [
+    "uin",
+    "fullName"
+  ]
+}
