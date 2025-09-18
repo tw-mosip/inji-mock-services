@@ -73,7 +73,7 @@ app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) =>
         const walletNonce = req.body?.wallet_nonce;
         const jwt = walletNonce
             ? await createJWT({...inputData, wallet_nonce: walletNonce})
-            : await createJWT(didAuthorizationRequest);
+            : await createJWT(inputData);
         res.contentType(ContentTypes.JWT);
         res.send(jwt);
 
