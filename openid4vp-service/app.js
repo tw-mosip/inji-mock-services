@@ -19,6 +19,7 @@ const {
     authorizationRequestParamsDraft21,
     finalAuthRequestMap
 } = require("./inputData");
+const crypto = require("crypto");
 const PORT = 3000;
 
 let responseReceived = false;
@@ -96,6 +97,7 @@ app.get('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => 
 
 app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => {
     try {
+        console.log("Received request with request body:", req);
         const {client_id_scheme} = req.params;
         const draftVersion = req.query.draft;
         
@@ -252,7 +254,7 @@ app.post('/verifier/get-auth-request-obj', async (req, res) => {
 });
 
 // End of older APIs
-
+let responseCode = null;
 app.get('/verifier/presentation_definition_uri', async (req, res) => {
     res.send(presentationDefinition);
 });
@@ -264,10 +266,28 @@ app.post('/verifier/vp-response', (req, res) => {
     responseReceived = true;
     latestVpResult = req.body;
 
-    res.status(200).json({
+    // Create a random response code
+    responseCode = crypto.randomBytes(16).toString('base64');
+    console.log("received the response successfully")
+    console.log("asking for a redirect...")
+
+    const response = {
+        redirect_uri: `${baseUrl}/verifier/callback#${responseCode}`,
         message: `Verifiable presentation received successfully.`,
-    });
+    };
+    res.status(200).json(response);
 });
+
+app.get('/verifier/callback', async (req, res) => {
+    // extract response code from URL fragment
+    const responseCodeFromUrl = req.originalUrl.split('#')[1];
+    if (responseCode && responseCodeFromUrl === responseCode) {
+        responseCode = null; // reset response code after successful match
+        res.render("success", {message: "✅ All set! Transaction completed successfully. 🎉"});
+    } else {
+        res.render("error", {message: "❌ Invalid or expired response code. ⏰"});
+    }
+})
 
 
 app.get('/verifier/vp-result', (req, res) => {

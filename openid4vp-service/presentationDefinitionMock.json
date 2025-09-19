@@ -10,6 +10,24 @@
   },
   "input_descriptors": [
     {
+      "id": "sdjwt-vc-any",
+      "name": "Any SD-JWT VC",
+      "purpose": "Accept any Verifiable Credential in SD-JWT format.",
+      "format": {
+        "vc+sd-jwt": {
+          "sd-jwt_alg_values": [
+            "ES256",
+            "EdDSA",
+            "RS256",
+            "ES256K"
+          ]
+        }
+      },
+      "constraints": {
+
+      }
+    },
+    {
       "id": "id card credential",
       "format": {
         "ldp_vc": {
