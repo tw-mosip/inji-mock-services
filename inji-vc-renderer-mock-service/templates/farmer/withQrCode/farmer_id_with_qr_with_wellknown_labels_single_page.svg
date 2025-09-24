@@ -181,12 +181,6 @@
 <path d="M0 472H349.963L365 466H0V472Z" fill="#D7B173"/>
 </g>
 <defs>
-<pattern id="pattern1_821_400" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image1_821_400" transform="translate(-0.00328947) scale(0.00328947)"/>
-</pattern>
-<pattern id="pattern2_821_400" patternContentUnits="objectBoundingBox" width="1" height="1">
-<use xlink:href="#image0_821_400" transform="matrix(0.0006966 0 0 0.000976562 -0.0349887 0)"/>
-</pattern>
 <linearGradient id="paint0_linear_821_400" x1="170" y1="0" x2="170" y2="234" gradientUnits="userSpaceOnUse">
 <stop stop-color="#B6D584"/>
 <stop offset="1" stop-color="#D7E9BF"/>
