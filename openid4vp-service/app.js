@@ -264,8 +264,10 @@ app.post('/verifier/vp-response', (req, res) => {
     responseReceived = true;
     latestVpResult = req.body;
 
+    const fullUrl = req.protocol + '://' + req.get('host');
     res.status(200).json({
         message: `Verifiable presentation received successfully.`,
+        redirect_uri: fullUrl
     });
 });
 
