@@ -1,5 +1,4 @@
 import React, { useEffect, useState, type FormEvent } from 'react';
-import help_icon from "../../assets/help_icon.png";
 import registering_process from "../../assets/registering_process.gif";
 // import { QRCodeVerification } from "@mosip/react-inji-verify-sdk";
 import poweredby_inji_icon from "../../assets/poweredby_inji_icon.png";
