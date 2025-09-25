@@ -255,14 +255,14 @@ export const SearchDriver = () => {
 };
 
 interface DriverList {
-  id: number;
+ id?: number;
   fullName: string;
   gender?: string;
   uin?: string;
   phoneNumber?: string;
-  emailId: string;
-  city: string
-  passportNumber: string;
-  driverLicenseNumber: string;
+  emailId?: string;
+  city?: string
+  passportNumber?: string;
+  driverLicenseNumber?: string;
   faceImagePath?: string
 };

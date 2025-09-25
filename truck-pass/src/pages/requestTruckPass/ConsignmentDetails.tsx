@@ -3,9 +3,7 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import cubeIcon from '../../assets/cube_icon.png';
-import helpIcon from '../../assets/help_icon.png';
 import { CertificateUploadingSection } from '../../components/CertificateUploadSection';
-import { base64ToFile } from '../../commans/AppUtilities';
 import Tooltip from '../../components/Tooltip';
 
 export const ConsignmentDetails = () => {

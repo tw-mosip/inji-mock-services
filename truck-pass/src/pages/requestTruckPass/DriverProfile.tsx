@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import magnifierIcon from '../../assets/magnifier_icon.png';
 import userPhoto from '../../assets/user_photo.png';
 import { TruckpassRequestStepper } from './TruckpassRequestStepper'
@@ -10,6 +10,15 @@ export const DriverProfile = () => {
   const { t } = useTranslation('');
   const navigate = useNavigate();
   const [driverProfileStatus, setDriverProfileStatus] = useState(false);
+  const [driverInformation, setDriverInformation] = useState<DriverInfo | null>(null);
+
+  useEffect(() => {
+    const data = localStorage.getItem('selectedDriver');
+    if (data) {
+      const storedData = JSON.parse(data);
+      setDriverInformation(storedData)
+    }
+  }, []);
 
   const backToSearchDriver = () => {
     setDriverProfileStatus(false);
@@ -47,35 +56,35 @@ export const DriverProfile = () => {
         <div className='flex flex-wrap justify-between gap-x-4'>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.fullName')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>Rajesh Singh</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.fullName}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2  my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.gender')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>Male</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.gender}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.uin')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>43643534646</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.uin}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.phoneNumber')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>+91 9876543211</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.phoneNumber}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.emailID')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>myemail@gmail.com</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.emailId}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.city')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>Bangalore</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.city}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.driverLicenseNum')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>DL-283762391</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.driverLicenseNumber}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.passportNum')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>NP-27321</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.passportNumber}</p>
           </div>
         </div>
 
@@ -93,3 +102,16 @@ export const DriverProfile = () => {
     </div>
   )
 }
+
+interface DriverInfo {
+  id?: number;
+  fullName: string;
+  gender?: string;
+  uin?: string;
+  phoneNumber?: string;
+  emailId?: string;
+  city?: string
+  passportNumber?: string;
+  driverLicenseNumber?: string;
+  faceImagePath?: string
+};

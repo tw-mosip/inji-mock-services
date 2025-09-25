@@ -106,5 +106,3 @@ interface CustomWindow extends Window {
     MOCK_RELYING_PARTY_SERVER_URL: string;
   };
 }
-
-

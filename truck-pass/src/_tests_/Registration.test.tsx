@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { Registration } from '../pages/driverRegistration/Registration';
 import * as reactRouter from 'react-router-dom';
-import * as relyingPartyService from '../services/relyingPartyService';
+import relyingPartyService from '../services/relyingPartyService';
 
 // Mock i18n
 jest.mock('react-i18next', () => ({
@@ -30,7 +30,7 @@ jest.mock('../../components/CertificateUploadSection', () => ({
 }));
 
 jest.mock('../../components/ErrorPopup', () => ({
-  ErrorPopup: (props: any) => {
+  ErrorPopup: () => {
     return <div data-testid="error-popup">ErrorPopup visible</div>;
   },
 }));

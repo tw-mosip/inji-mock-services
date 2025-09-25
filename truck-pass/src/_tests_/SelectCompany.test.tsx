@@ -1,7 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { SelectCompany } from '../pages/driverRegistration/SelectCompany';
-import * as reactRouter from 'react-router-dom';
-import * as relyingPartyService from '../services/relyingPartyService';
+import relyingPartyService from '../services/relyingPartyService';
 
 // Mocks
 jest.mock('react-i18next', () => ({
@@ -20,7 +19,7 @@ describe('SelectCompany Component', () => {
   const mockNavigate = jest.fn();
 
   beforeEach(() => {
-    jest.spyOn(reactRouter, 'useNavigate').mockReturnValue(mockNavigate);
+    jest.spyOn(require('react-router-dom'), 'useNavigate').mockReturnValue(mockNavigate);
   });
 
   afterEach(() => {

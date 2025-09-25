@@ -263,7 +263,16 @@ export const ReviewPage = () => {
 }
 
 interface DriverInfo {
-
+  id?: number;
+  fullName: string;
+  gender?: string;
+  uin?: string;
+  phoneNumber?: string;
+  emailId?: string;
+  city?: string
+  passportNumber?: string;
+  driverLicenseNumber?: string;
+  faceImagePath?: string
 };
 
 interface ConsigmentDetailsInfo {
