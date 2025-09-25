@@ -116,7 +116,7 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
                 onClick={handleFileInputClick}
               />
             </div>
-            <div className={`${!driverRegistrationCpc ? 'text-center w-[55%]' : ''}`}>
+            <div className={`text-center ${!driverRegistrationCpc && 'w-[55%]'}`}>
               <p className="text-[13px] text-[#475467]">
                 <span itemType='file' className="text-[13px] text-[#006DE7] font-semibold cursor-pointer" onClick={handleFileInputClick}>
                   {clickableText}

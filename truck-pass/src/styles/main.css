@@ -10,7 +10,7 @@
 .SignInWithEsignet-module_standardOutline__la5Rh {
     background-color: #006DE7 !important;
     height: 40px !important;
-    width:39% !important;
+    width: 39% !important;
     border: #FFFFFF1F !important;
 }
 
@@ -19,4 +19,20 @@
     text-align: 'center' !important;
     padding-left: 14% !important;
     font-size: 12px !important;
+}
+
+/* Autofill background + border + text color fix */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+    -webkit-text-fill-color: #181D27 !important;
+    border: 1px solid #D1D5DB !important;
+}
+
+input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
+}
+
+input:-webkit-autofill[aria-invalid="true"] {
+    border: 2px solid #EF4444 !important;
+    -webkit-box-shadow: 0 0 0 1000px #FFFFFF inset !important;
 }

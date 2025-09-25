@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import line_pattern_left from "../../assets/Line_Pattern_Left.png";
-import line_pattern_right from "../../assets/Line_Pattern_Right.png";
-import driver_user_icon from "../../assets/driver_user_icon.png";
-import request_truck_pass_icon from "../../assets/request_truck_pass_icon.png";
-import application_submit_icon from "../../assets/application_submit_icon.png";
-import verfication_icon from "../../assets/verfication_icon.png";
-import approval_issuance_icon from "../../assets/approval_issuance_icon.png";
-import truck_icon from "../../assets/truck_icon.png";
+import line_pattern_left from "../assets/Line_Pattern_Left.png";
+import line_pattern_right from "../assets/Line_Pattern_Right.png";
+import driver_user_icon from "../assets/driver_user_icon.png";
+import request_truck_pass_icon from "../assets/request_truck_pass_icon.png";
+import application_submit_icon from "../assets/application_submit_icon.png";
+import verfication_icon from "../assets/verfication_icon.png";
+import approval_issuance_icon from "../assets/approval_issuance_icon.png";
+import truck_icon from "../assets/truck_icon.png";
 import { useTranslation } from "react-i18next";
 
 
@@ -21,7 +21,7 @@ const LandingPage = () => {
   }
 
   const moveToRequestTruckPass = () => {
-    navigate('/requestTruckpassProcess/requestedPassesDashboard');
+    navigate('/requestTruckpassProcess/loginPage');
 
   }
 

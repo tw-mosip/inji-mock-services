@@ -4,37 +4,52 @@ import help_icon from "../../assets/help_icon.png";
 import { useNavigate } from 'react-router-dom';
 import relyingPartyService from '../../services/relyingPartyService';
 import { DriverRegistrationStepper } from './DriverRegistrationStepper';
+import Tooltip from '../../components/Tooltip';
 
 
 export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
 
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const [searchTerm, setSearchTerm] = useState('');
+
+    const [query, setQuery] = useState("");
     const [companies, setCompanies] = useState<Company[]>([]);
+    const [loading, setLoading] = useState(false);
+
+    const [searchTerm, setSearchTerm] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     const [isSearchFocused, setIsSearchFocused] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
     const [selectionPageContinueBtn, setSelectionPageContinueBtn] = useState(false);
 
 
-    const { get_companiesList } = {
+    const { search_company } = {
         ...relyingPartyService,
     };
 
     useEffect(() => {
         const fetchCompanies = async () => {
+            if (query.trim().length < 2) {
+                setCompanies([]);
+                return;
+            }
+            setLoading(true);
             try {
-                const list = await get_companiesList();
-                if (list) {
-                    setCompanies(list);
+                const filteredList = await search_company(query);
+                if (filteredList) {
+                    setCompanies(filteredList);
                 }
-            } catch {
+            } catch (error) {
                 console.log("Getting failed to fetch the companies");
+                setCompanies([]);
+            } finally {
+                setLoading(false);
             }
         };
-        fetchCompanies();
-    }, [])
+
+        const timeout = setTimeout(fetchCompanies, 400);
+        return () => clearTimeout(timeout);
+    }, [query]);
 
 
     const moveToVerifyUinPage = () => {
@@ -43,12 +58,12 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
     }
 
     const filteredCompanies = companies.filter(company =>
-        company.companyName.toLowerCase().includes(searchTerm.toLowerCase())
+        company.company_name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleCompanySelect = (company: Company) => {
         setSelectedCompany(company);
-        setSearchTerm(company.companyName);
+        setSearchTerm(company.company_name);
         setShowDropdown(false);
         setIsSearchFocused(false);
         const companySelected = company;
@@ -62,7 +77,7 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
-        setSearchTerm(value);
+        setQuery(value);
         if (!value) {
             setSelectedCompany(null);
         }
@@ -95,23 +110,24 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
                     <div className="relative mb-6">
                         <label htmlFor="company-search" className="flex items-center text-[13px] font-medium text-gray-700 mb-2">
                             {t('selectCompany.searchTransportCompany')}
-                            <img src={help_icon} className='h-3 cursor-pointer px-1' />
+                        <Tooltip helpText={t('selectCompany.searchCompanyTooltip')} />
                         </label>
                         <div className="relative">
                             <input
                                 id="company-search"
                                 type="text"
-                                value={searchTerm}
+                                value={query}
                                 onChange={handleSearchChange}
                                 onFocus={handleSearchFocus}
                                 onBlur={handleSearchBlur}
-                                placeholder="Start typing to search companies"
+                                placeholder={t('selectCompany.searchCompanies')}
                                 className="w-full p-2.5 border border-[#D5D7DA] rounded-lg text-sm outline-none focus:shadow-sm focus:shadow-[#D5D7DA] transition-all"
                             />
                         </div>
 
-                        {/* Dropdown */}
-                        {showDropdown && (searchTerm || isSearchFocused) && filteredCompanies.length > 0 && (
+                        {/* Filtered Companies List Dropdown*/}
+                        {loading && <p className="text-sm text-gray-500 mt-2">{t('selectCompany.loading')}</p>}
+                        {!loading && showDropdown && (query || isSearchFocused) && filteredCompanies.length > 0 && (
                             <div className="absolute z-10 w-full mt-3 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                                 {filteredCompanies.map((company) => (
                                     <button
@@ -121,7 +137,7 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
                                         className="w-full p-3 text-left hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0 focus:outline-none focus:bg-gray-50"
                                     >
                                         <div className="text-sm font-medium text-gray-900">
-                                            {company.companyName}
+                                            {company.company_name}
                                         </div>
                                     </button>
                                 ))}
@@ -131,27 +147,27 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
 
                     {/* Selected Company Details */}
                     {selectedCompany && (
-                        <div className={`${selectedCompany.registrationStatus === 'Active' ? "bg-[#EFFDF5] border-green-200" : "bg-[#ee9595] border-red-200"} border  rounded-lg p-4 mb-4`}>
-                            <h4 className={`text-base font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"} mb-3`}>{t('selectCompany.companyDetails')}</h4>
+                        <div className={`${selectedCompany.registration_status === 'Active' ? "bg-[#EFFDF5] border-green-200" : "bg-[#ee9595] border-red-200"} border  rounded-lg p-4 mb-4`}>
+                            <h4 className={`text-base font-semibold ${selectedCompany.registration_status === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"} mb-3`}>{t('selectCompany.companyDetails')}</h4>
                             <div>
                                 <div>
-                                    <span className={`${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"} text-[12px] font-semibold`}>{t('selectCompany.selected')}</span>
-                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.companyName}</span>
+                                    <span className={`${selectedCompany.registration_status === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"} text-[12px] font-semibold`}>{t('selectCompany.selected')}</span>
+                                    <span className={`text-[12px] ${selectedCompany.registration_status === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.company_name}</span>
                                 </div>
                                 <div>
-                                    <span className={`text-[12px] font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.licenseStatus')}</span>
-                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registrationStatus === 'Active' ? t('selectCompany.activeText') : t('selectCompany.inActiveText')}</span>
+                                    <span className={`text-[12px] font-semibold ${selectedCompany.registration_status === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.licenseStatus')}</span>
+                                    <span className={`text-[12px] ${selectedCompany.registration_status === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registration_status === 'Active' ? t('selectCompany.activeText') : t('selectCompany.inActiveText')}</span>
                                 </div>
                                 <div>
-                                    <span className={`text-[12px] font-semibold ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.registrationType')}</span>
-                                    <span className={`text-[12px] ${selectedCompany.registrationStatus === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registrationType}</span>
+                                    <span className={`text-[12px] font-semibold ${selectedCompany.registration_status === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{t('selectCompany.registrationType')}</span>
+                                    <span className={`text-[12px] ${selectedCompany.registration_status === 'Active' ? " text-[#007F41]" : "text-[#ea1e14]"}`}>{selectedCompany.registration_type}</span>
                                 </div>
                             </div>
                         </div>
                     )}
                 </div>
-                <button disabled={!selectedCompany || selectedCompany.registrationStatus === 'Inactive'} onClick={() => moveToVerifyUinPage()}
-                    className={`${selectedCompany && selectedCompany.registrationStatus === 'Active' ? "bg-[#006DE7] cursor-pointer" : "bg-[#B0B0B0] focus:shadow-md cursor-default"}} w-[21%] text-xs font-[600] place-self-end align-bottom py-2.5 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
+                <button disabled={!selectedCompany || selectedCompany.registration_status === 'Inactive'} onClick={() => moveToVerifyUinPage()}
+                    className={`${selectedCompany && selectedCompany.registration_status === 'Active' ? "bg-[#006DE7] cursor-pointer" : "bg-[#B0B0B0] focus:shadow-md cursor-default"}} w-[21%] text-xs font-[600] place-self-end align-bottom py-2.5 text-center rounded-[5px] text-[#FFFFFF] cursor-pointer`}>
                     {t('commans.continue')}
                 </button>
             </div>
@@ -160,10 +176,11 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
 }
 
 interface Company {
-    registrationType: string;
-    registrationStatus: string;
-    companyName: string;
     id: string;
+    company_name: string;
+    registration_type: string;
+    registration_status: string;
+    registered_email: string;
     name: string;
     licenseStatus: string;
 }

@@ -5,119 +5,113 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import helpIcon from '../../assets/help_icon.png';
 import vehicleIcon from '../../assets/truck_icon.png';
 import { CertificateUploadingSection } from '../../components/CertificateUploadSection';
+import { DropDownSelection } from '../../components/DropDownSelection';
+import Tooltip from '../../components/Tooltip';
 
 export const VehicleDetails = () => {
   const { t } = useTranslation('');
   const navigate = useNavigate();
-  const [vehicleType, setVehicleType] = useState('');
-  const [vehicleTypeErrorMsg, setVehicleTypeErrorMsg] = useState('');
-  const [axleSize, setAxleSize] = useState('');
-  const [axleSizeErrorMsg, setAxleSizeErrorMsg] = useState('');
+  const [selectedVehicleType, setSelectedVehicleType] = useState<any>(null);
+  const [selectedAxleSize, setSelectedAxleSize] = useState<any>(null);
   const [truckLicensePlate, setTruckLicensePlate] = useState('');
   const [truckLicensePlateErrorMsg, setTruckLicensePlateErrorMsg] = useState('');
   const [vehicleRegDocumentUploading, setVehicleRegDocumentUploading] = useState(false);
   const [vehicleRegDocumentUploaded, setVehicleRegDocumentUploaded] = useState(false);
   const [vehicleRegDocumentData, setVehicleRegDocumentData] = useState<string | null>(null);
   const [vehicleRegDocUploadErrorMsg, setvehicleRegDocErrorMsg] = useState('')
+  const [vehicleDetailsStatus, setVehicleDetailsStatus] = useState(false);
 
-  const vehicleTypes = ['Light Commercial Vehicle', 'Medium Commercial Vehicle', 'Heavy Commercial Vehicle', 'Trailer', 'Container Truck'];
-  const axleSizes = ['2 axle', '3 axle', '4 axle', '5 axle', '6+ axle'];
-
-  const handleVehicleType = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setVehicleType(e.target.value);
-  };
-
-  const handleAxleSize = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setAxleSize(e.target.value);
-  };
+  const vehicleTypes = [
+    { id: 0, type: 'Light Commercial Vehicle' },
+    { id: 1, type: 'Medium Commercial Vehicle' },
+    { id: 2, type: 'Heavy Commercial Vehicle' },
+    { id: 3, type: 'Trailer' },
+    { id: 4, type: 'Container Truck' }
+  ];
+  const axleSizes = [
+    { id: 0, size: '2 axle', },
+    { id: 1, size: '3 axle' },
+    { id: 2, size: '4 axle' },
+    { id: 3, size: '5 axle' },
+    { id: 4, size: '6+ axle' }
+  ];
 
   const handleTruckLicensePlate = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setTruckLicensePlate(e.target.value);
   };
 
   const backToConsignmentDetails = () => {
+    setVehicleDetailsStatus(false);
     navigate('/requestTruckpassProcess/consignmentDetails');
   }
 
   const moveToJourneyDetails = () => {
-    if (!vehicleType || !axleSize || !truckLicensePlate.includes('-')) {
-      if (!vehicleType) {
-        setVehicleTypeErrorMsg(t('*Please select any Vehicle Type'));
-      }
-      else { setVehicleTypeErrorMsg('') }
-      if (!axleSize) {
-        setAxleSizeErrorMsg(t('*Please select any Axle Size'));
-      }
-      else { setAxleSizeErrorMsg('') }
+    if (!selectedVehicleType || !selectedAxleSize || !truckLicensePlate.includes('-')) {
       if (!truckLicensePlate.includes('-')) {
-        setTruckLicensePlateErrorMsg(t("*Truck License Plate  must include a '-' (e.g., INV-2024-001)."));
+        setTruckLicensePlateErrorMsg(t('vehicleDetails.truckNumberErrorMsg'));
       }
       else { setTruckLicensePlateErrorMsg('') }
       return;
     };
+    const vehicleDetails = {
+      vehicleType: selectedVehicleType?.type,
+      axleSize: selectedAxleSize?.size,
+      truckLicensePlate: truckLicensePlate,
+      vehicleRegistrationDocument: vehicleRegDocumentData || ''
+    }
+    localStorage.setItem('vehicleDetails', JSON.stringify(vehicleDetails))
+    setVehicleDetailsStatus(true);
     navigate('/requestTruckpassProcess/journeyDetails');
   }
 
-
   return (
     <div className='flex flex-col gap-y-10 bg-transparent font-inter'>
-      <TruckpassRequestStepper />
+      <TruckpassRequestStepper
+        searchDriverStatus={true}
+        driverProfileStatus={true}
+        consignmentDetailsStatus={true}
+        vehicleDetailsStatus={vehicleDetailsStatus}
+        journeyDetailsStatus={false}
+        reviewAndSubmitStatus={false}
+      />
       <div className='bg-[#FFFFFF] h-auto px-8 py-3 rounded-lg shadow-md space-y-4'>
         <div className='flex space-x-3 items-center'>
           <img src={vehicleIcon} className='h-6' />
-          <h1 className='font-[600] text-[18px]'>{t('Vehicle Details')}</h1>
+          <h1 className='font-[600] text-[18px]'>{t('vehicleDetails.header')}</h1>
         </div>
 
         <div className='flex flex-wrap justify-between'>
-          <div className='flex flex-col w-[570px] mb-6'>
-            <label htmlFor='vehicle-type' className='flex items-center'>
-              <p className='text-sm text-[#414651]'>{t('Vehicle Type')}<span className='text-[#006DE7]'> *</span> </p>
-              <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+          <div className="relative w-[48%]">
+            <label className='flex items-center mb-2'>
+              <p className='text-sm text-[#414651]'>{t('vehicleDetails.vehicleType')}<span className='text-[#006DE7]'> *</span> </p>
+              <Tooltip helpText={t('consignmentDetails.vehicleTypeTooltip')} />
             </label>
-            <select
-              id="vehicle-type"
-              name="vehicle-type"
-              value={vehicleType}
-              onChange={handleVehicleType}
-              className={`${!vehicleType ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${vehicleTypeErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
-            >
-              <option value="" disabled>{t('Select Vehicle Type')}</option>
-              {vehicleTypes.map((type) => (
-                <option key={type} value={type} className='text-[#000000] text-[15px] bg-[#FFFFFF]' onClick={() => setVehicleType(type)}>
-                  {type}
-                </option>
-              ))}
-            </select>
-            {vehicleTypeErrorMsg && <p className='text-xs text-[#D92D20]'>{vehicleTypeErrorMsg}</p>}
+            <DropDownSelection
+              selectingVehicleType={true}
+              data={vehicleTypes}
+              setItemSelected={setSelectedVehicleType}
+              placeHolder={t('vehicleDetails.selectVehicleType')}
+            />
           </div>
 
-          <div className='flex flex-col w-[570px] mb-6'>
-            <label htmlFor='axle-size' className='flex items-center'>
-              <p className='text-sm text-[#414651]'>{t('Axle Size')}<span className='text-[#006DE7]'> *</span> </p>
-              <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+          <div className="relative w-[48%]">
+            <label className='flex items-center mb-2'>
+              <p className='text-sm text-[#414651]'>{t('vehicleDetails.axleSize')}<span className='text-[#006DE7]'> *</span> </p>
+              <Tooltip helpText={t('consignmentDetails.axleSizeTooltip')} />
             </label>
-            <select
-              id="axle-size"
-              name="axle-size"
-              value={axleSize}
-              onChange={handleAxleSize}
-              className={`${!axleSize ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${axleSizeErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
-            >
-              <option value="" disabled>{t('Select axle size')}</option>
-              {axleSizes.map((axleSize) => (
-                <option key={axleSize} value={axleSize} className='text-[#000000] text-[15px] bg-[#FFFFFF]' onClick={() => setAxleSize(axleSize)}>
-                  {axleSize}
-                </option>
-              ))}
-            </select>
-            {axleSizeErrorMsg && <p className='text-xs text-[#D92D20]'>{axleSizeErrorMsg}</p>}
+            <DropDownSelection
+              selectingAxelSize={true}
+              data={axleSizes}
+              setItemSelected={setSelectedAxleSize}
+              placeHolder={t('vehicleDetails.selectAxleSize')}
+            />
           </div>
         </div>
 
         <div className='flex flex-col w-full mb-6'>
           <label className='flex items-center'>
-            <p className='text-sm text-[#414651]'>{t('Truck License Plate')}<span className='text-[#006DE7]'> *</span> </p>
-            <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+            <p className='text-sm text-[#414651]'>{t('vehicleDetails.truckLicensePlate')}<span className='text-[#006DE7]'> *</span> </p>
+              <Tooltip helpText={t('consignmentDetails.truckLicensePlateTooltip')} />
           </label>
           <input
             type='text'
@@ -131,14 +125,15 @@ export const VehicleDetails = () => {
 
         <div className='flex flex-col w-full'>
           <label className='flex items-center mb-3'>
-            <p className='text-sm text-[#414651]'>{t('Vehicle Registration Documents ')}</p>
+            <p className='text-sm text-[#414651]'>{t('vehicleDetails.vehicleRegistrationDocuments')}</p>
             <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+              <Tooltip helpText={t('consignmentDetails.vehicleRegistrationDocTooltip')} />
           </label>
           <CertificateUploadingSection
             vehicleRegistrationDocument={true}
             showUploadingBlock={vehicleRegDocumentUploading}
             setShowUploadingBlock={setVehicleRegDocumentUploading}
-            clickableText={t('Upload registration document')}
+            clickableText={t('vehicleDetails.uploadRegistrationDocument')}
             setFileUploaded={setVehicleRegDocumentUploaded}
             setDataInFile={setVehicleRegDocumentData}
             fileUploadErrorMsg={vehicleRegDocUploadErrorMsg}
@@ -151,8 +146,8 @@ export const VehicleDetails = () => {
           >
             {t('commans.goBack')}
           </button>
-          <button disabled={!vehicleType || !axleSize || !truckLicensePlate || !vehicleRegDocumentUploaded} onClick={() => moveToJourneyDetails()}
-            className={`${(vehicleType && axleSize && truckLicensePlate && vehicleRegDocumentUploaded) ? "bg-[#006DE7] cursor-pointer" : "bg-[#C2C2C2] cursor-default"} 
+          <button disabled={!selectedVehicleType || !selectedAxleSize || !truckLicensePlate || !vehicleRegDocumentUploaded} onClick={() => moveToJourneyDetails()}
+            className={`${(selectedVehicleType && selectedAxleSize && truckLicensePlate && vehicleRegDocumentUploaded) ? "bg-[#006DE7] cursor-pointer" : "bg-[#C2C2C2] cursor-default"} 
              w-[183px] h-[42px] text-sm font-[600] py-2.5 text-center rounded-[5px] text-white`}
           >
             {t('commans.continue')}
