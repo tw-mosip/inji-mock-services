@@ -276,7 +276,7 @@ app.post('/verifier/vp-response', (req, res) => {
     console.log("asking for a redirect...")
 
     const response = {
-        redirect_uri: `${baseUrl}/verifier/callback#${responseCode}`,
+        redirect_uri: `${baseUrl}/verifier/callback#response_code=${responseCode}`,
         message: `Verifiable presentation received successfully.`,
     };
     res.status(200).json(response);
