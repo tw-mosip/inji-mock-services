@@ -169,15 +169,15 @@
 <rect x="-15" y="59" width="179" height="179" fill="#B49959" fill-opacity="0.2"/>
 </g>
 <rect x="15.5" y="59.5" width="69" height="98.2405" rx="4.81646" stroke="#7FAA72"/>
-<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="182.636">{{/credential_definition/credentialSubject/phoneNumber/display/0/name}}</tspan></text>
+<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="182.636">Phone Number</tspan></text>
 <text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="12" font-weight="600" letter-spacing="0em"><tspan x="101" y="198.864">{{/credentialSubject/phoneNumber}}</tspan></text>
-<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="228" y="182.636">{{/credential_definition/credentialSubject/dateOfBirth/display/0/name}}</tspan></text>
+<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="228" y="182.636">Date of Birth</tspan></text>
 <text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="12" font-weight="600" letter-spacing="0em"><tspan x="228" y="196.864">{{/credentialSubject/dateOfBirth}}</tspan></text>
-<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="143.636">{{/credential_definition/credentialSubject/gender/display/0/name}}</tspan></text>
+<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="143.636">Gender</tspan></text>
 <text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="12" font-weight="600" letter-spacing="0em"><tspan x="101" y="157.864">{{/credentialSubject/gender}}</tspan></text>
-<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="105.636">{{/credential_definition/credentialSubject/farmerId/display/0/name}}</tspan></text>
+<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="105.636">Farmer ID</tspan></text>
 <text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="12" font-weight="600" letter-spacing="0em"><tspan x="101" y="121.864">{{/credentialSubject/farmerId}}</tspan></text>
-<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="68.6364">{{/credential_definition/credentialSubject/fullName/display/0/name}}</tspan></text>
+<text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="10" letter-spacing="0em"><tspan x="101" y="68.6364">Full Name</tspan></text>
 <text fill="#04060B" xml:space="preserve" style="white-space: pre" font-family="Inter" font-size="12" font-weight="600" letter-spacing="0em"><tspan x="101" y="84.8636">{{/credentialSubject/fullName}}</tspan></text>
 <path d="M0 234H333.663L348 228H0V234Z" fill="#284F1C"/>
 </g>
