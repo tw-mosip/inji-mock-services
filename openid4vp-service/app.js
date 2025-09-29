@@ -258,7 +258,7 @@ app.post('/verifier/get-auth-request-obj', async (req, res) => {
 });
 
 // End of older APIs
-let responseCode = null;
+let responseCode = "Qaioewrhbfwd=="; // Initialize with a dummy value
 app.get('/verifier/presentation_definition_uri', async (req, res) => {
     res.send(presentationDefinition);
 });
@@ -271,7 +271,6 @@ app.post('/verifier/vp-response', (req, res) => {
     latestVpResult = req.body;
 
     // Create a random response code
-    responseCode = crypto.randomBytes(16).toString('base64');
     console.log("received the response successfully")
     console.log("asking for a redirect...")
 
