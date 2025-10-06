@@ -14,7 +14,8 @@ const preRegisteredAuthorizationRequestDraft23 = {
     "response_mode": "direct_post.jwt",
     "nonce": nonce,
     "state": state,
-    "response_uri": responseUri
+    "response_uri": responseUri,
+    "client_metadata": client_metadata,
 }
 
 const preRegisteredAuthorizationRequestDraft21 = {

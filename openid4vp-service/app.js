@@ -7,7 +7,7 @@ const {createJWT} = require("./jwt");
 const cors = require('cors');
 
 const app = express();
-const {ContentTypes, REQUEST_MODES, DRAFT_VERSIONS, SUPPORT_TYPES} = require("./constants");
+const {ContentTypes, REQUEST_MODES, DRAFT_VERSIONS, SUPPORT_TYPES, baseUrl, jwkSet} = require("./constants");
 const {
     preRegisteredAuthorizationRequest,
     didAuthorizationRequest,
@@ -98,6 +98,8 @@ app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) =>
     try {
         const {client_id_scheme} = req.params;
         const draftVersion = req.query.draft;
+
+        console.log("Received request with request body:", req.body);
         
         if (!draftVersion) {
             res.status(400).send('Bad Request: draft parameter is required');
@@ -182,6 +184,10 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 });
+
+app.get('/.well-known/jwks.json', async (req, res) => {
+    res.json(jwkSet);
+})
 
 // Older APIs
 
