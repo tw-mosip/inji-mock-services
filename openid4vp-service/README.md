@@ -201,6 +201,12 @@ or
 - It just receives the Verifiable Presentation response in the request body and returns
   the response but doesn't perform any validations on the received data.
 
+#### 8. Hosted public keys of the Verifier
+
+- The public keys used by the Verifier for signing JWTs are exposed at the endpoint `/.well-known/jwks.json`.
+- This endpoint returns a JWKS (JSON Web Key Set) containing the public keys in standard format, which can be used by clients and wallets to verify signatures.
+- Example usage: Fetch the JWKS from <base-url>/.well-known/jwks.json` to validate the Verifier's JWTs.
+
 
 ## Client id schemes supported
 
