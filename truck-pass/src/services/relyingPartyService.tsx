@@ -6,8 +6,7 @@ const baseUrl: string =
     : window?._env_?.MOCK_RELYING_PARTY_SERVER_URL;
 
 const fetchUserInfoEndPoint = "/fetchUserInfo";
-const COMPANIES_API_URL = "http://localhost:8080/api";                 //Will be adjust for frontend URL Later
-const DRIVER_REGISTRATION_URL_ = "http://localhost:8080/api";
+const API_URL = "http://localhost:8080/api";
 
 // API Call: /fetchUserInfo
 const post_fetchUserInfo = async (
@@ -34,7 +33,13 @@ const post_fetchUserInfo = async (
 
 //API Call to fetch Companies Details
 const get_companiesList = async (): Promise<any> => {
-  const response = await axios.get(COMPANIES_API_URL + '/companies');
+  const response = await axios.get(API_URL + '/companies');
+  return response.data;
+}
+
+//API Call to fetch Companies Details
+const search_company = async (query: string): Promise<any> => {
+  const response = await axios.get(API_URL + `/companies/search`, { params: { text: query } });
   return response.data;
 }
 
@@ -46,7 +51,7 @@ const post_driver_registration = async (path: string, registrationData: any): Pr
       formData.append(key, registrationData[key]);
     }
   }
-  const response = await axios.post(DRIVER_REGISTRATION_URL_ + path, formData, {
+  const response = await axios.post(API_URL + path, formData, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -54,10 +59,44 @@ const post_driver_registration = async (path: string, registrationData: any): Pr
   return response.data;
 };
 
+//API Call to Search and get Driver Information with Name/UIN
+const get_driver_information = async (key: string, value: string) => {
+  const response = await axios.get(API_URL + "/data", {
+    params: {
+      filterKey: key,
+      operation: "cn",
+      value: value,
+      dataOption: "all",
+    },
+  });
+  return response;
+};
+
+//API Call to POST the driver details for New Registeration of Driver
+const post_driver_details = async (payload: any): Promise<any> => {
+  const formData = new FormData();
+  for (const key in payload) {
+    if (payload[key] !== undefined && payload[key] !== null) {
+      formData.append(key, payload[key]);
+    }
+  }
+  const response = await axios.post(API_URL + "/data", payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "x-source": "truckpass",
+      },
+    });
+  return response;
+};
+
 const relyingPartyService = {
   post_fetchUserInfo,
   get_companiesList,
+  search_company,
   post_driver_registration,
+  get_driver_information,
+  post_driver_details
 };
 
 export default relyingPartyService;
@@ -67,5 +106,3 @@ interface CustomWindow extends Window {
     MOCK_RELYING_PARTY_SERVER_URL: string;
   };
 }
-
-

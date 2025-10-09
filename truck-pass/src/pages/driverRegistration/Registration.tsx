@@ -1,5 +1,4 @@
 import React, { useEffect, useState, type FormEvent } from 'react';
-import help_icon from "../../assets/help_icon.png";
 import registering_process from "../../assets/registering_process.gif";
 // import { QRCodeVerification } from "@mosip/react-inji-verify-sdk";
 import poweredby_inji_icon from "../../assets/poweredby_inji_icon.png";
@@ -9,6 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import relyingPartyService from '../../services/relyingPartyService';
 import { ErrorPopup } from '../../components/ErrorPopup';
 import { DriverRegistrationStepper } from './DriverRegistrationStepper';
+import { base64ToFile } from '../../commans/AppUtilities';
+import Tooltip from '../../components/Tooltip';
 
 
 export const Registration: React.FC<RegistrationProps> = ({ }) => {
@@ -46,7 +47,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                 const information = JSON.parse(data);
                 setDriverInfo(information);
             } catch (e) {
-                console.error("Invalid driverInformation JSON:", e);
+                console.error("Invalid Information JSON:", e);
             }
         }
         if (selectedCompany) {
@@ -86,27 +87,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         }, 3000);
     };
 
-    const base64ToFile = (base64Data: string, filename: string): File => {
-        const [metadata, base64String] = base64Data.split(',');
-        const mimeMatch = metadata.match(/data:(.*);base64/);
-
-        if (!mimeMatch) {
-            throw new Error('Invalid base64 string format');
-        }
-
-        const mimeType = mimeMatch[1];
-        const byteString = atob(base64String);
-        const ab = new ArrayBuffer(byteString.length);
-        const ia = new Uint8Array(ab);
-
-        for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-        }
-
-        const blob = new Blob([ab], { type: mimeType });
-        return new File([blob], filename, { type: mimeType });
-    }
-
     const RegistrationLoader = () => {
         return (
             <div className={`flex flex-col bg-[#FFFFFF] pt-16 pb-9 w-full px-6 rounded-br-2xl rounded-tr-2xl justify-center font-inter`}>
@@ -123,28 +103,28 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         e.preventDefault();
 
         if (!driverLicenceNum.includes('-')) {
-            setLicenceNumErrorMsg("Driving License number must include a '-' (e.g., DL-1234567890).");
+            setLicenceNumErrorMsg(t('registration.drivingLicenseErrorMsg'));
             return;
         }
 
         const driverRegistrationFormData = {
-            fullName: driverInfo?.name ?? '',
+            full_name: driverInfo?.name ?? '',
             uin: '198765432123',
             gender: driverInfo?.gender ?? '',
             emailId: driverInfo?.email ?? '',
-            phoneNumber: driverInfo?.phone_number ?? '',
+            phone_number: driverInfo?.phone_number ?? '',
             city: driverInfo?.address?.locality ?? '',
-            driverLicenseNum: driverLicenceNum,
-            passportNum: passportNum,
+            drivers_license_number: driverLicenceNum,
+            passport_number: passportNum,
             transportCompany: selectedCompany?.companyName,
-            driverPhoto: driverInfo?.picture ? base64ToFile(driverInfo.picture, 'driverPhoto.jpeg') : '',
-            cpcFile: fileData ? base64ToFile(fileData, 'CPC-Certificate.pdf') : '',
+            face_image: driverInfo?.picture ? base64ToFile(driverInfo.picture, 'driverPhoto.jpeg') : '',
+            cpc_certificate: fileData ? base64ToFile(fileData, 'CPC-Certificate.pdf') : '',
         };
 
         try {
             setRegistrationScreen(false);
             setRegistrationSubmitBtn(true);
-            const response = await post_driver_registration('/driverRegister', driverRegistrationFormData);
+            const response = await post_driver_registration('/drivers/register', driverRegistrationFormData);
             if (response) {
                 const driverAdditionalFiles = {
                     driverPicture: driverInfo?.picture,
@@ -230,13 +210,14 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                     </label>
                                     <input type='text' disabled value={driverInfo?.phone_number ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
-                                <div className='space-y-1'>
-                                    <label className='flex items-center'>
-                                        <p className='text-sm'>{t('registration.city')} </p>
-                                    </label>
-                                    <input type='text' disabled value={driverInfo?.address?.locality ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
-                                </div>
-
+                                {driverInfo?.address?.locality &&
+                                    (<div className='space-y-1'>
+                                        <label className='flex items-center'>
+                                            <p className='text-sm'>{t('registration.city')} </p>
+                                        </label>
+                                        <input type='text' disabled value={driverInfo?.address?.locality ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                    </div>)
+                                }
                                 <div className='py-3 space-y-6'>
                                     <div className='space-y-1.5'>
                                         <h1 className='text-2xl font-[600]'>{t('registration.additionalInfo')}</h1>
@@ -246,7 +227,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                     <div className='space-y-3'>
                                         <label className='flex items-center'>
                                             <p className='text-xs text-[#414651]'>{t('registration.driverLicenseNum')}<span className='text-[#006DE7]'>*</span> </p>
-                                            <img src={help_icon} alt='help_icon' className='h-3 cursor-pointer' />
+                                            <Tooltip helpText={t('registration.driverLicenseTooltip')} />
                                         </label>
 
                                         <div className='flex gap-x-10'>
@@ -316,7 +297,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                         <div className='space-y-1 py-4'>
                                             <label className='flex items-center'>
                                                 <p className='text-sm'>{t('registration.passportNum')}</p>
-                                                <img src={help_icon} alt='help_icon' className='h-3.5 cursor-pointer' />
+                                                <Tooltip helpText={t('registration.paassportNumTooltip')} />
                                             </label>
                                             <input
                                                 type='text'
@@ -329,7 +310,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                         </div>
                                         <label className='flex items-center'>
                                             <p className='text-sm text-[#414651]'>{t('registration.cpc')}<span className='text-[#006DE7]'>*</span> </p>
-                                            <img src={help_icon} alt='help_icon' className='h-3.5 cursor-pointer' />
+                                            <Tooltip helpText={t('registration.cpcTooltip')} />
                                         </label>
                                         <CertificateUploadingSection
                                             driverRegistrationCpc={true}

@@ -3,57 +3,57 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import locationIcon from '../../assets/location_icon.png';
-import helpIcon from '../../assets/help_icon.png';
+import { DropDownSelection } from '../../components/DropDownSelection';
+import Tooltip from '../../components/Tooltip';
 
 export const JourneyDetails = () => {
 
   const { t } = useTranslation('');
   const navigate = useNavigate();
 
-  const [countryOfOrigin, setCountryOfOrigin] = useState('');
+  const [countryOfOrigin, setCountryOfOrigin] = useState<any>(null);
   const [exporterCompany, setExporterCompany] = useState('');
   const [departureDate, setDepartureDate] = useState('');
-  const [departureCrossingPoint, setDepartureCrossingPoint] = useState('');
+  const [departureCrossingPoint, setDepartureCrossingPoint] = useState<any>(null);
 
-  const [countryOfDestination, setCountryOfDestination] = useState('');
+  const [countryOfDestination, setCountryOfDestination] = useState<any>(null);
   const [importerCompany, setImporterCompany] = useState('');
   const [arrivalDate, setArrivalDate] = useState('');
-  const [arrivalCrossingPoint, setArrivalCrossingPoint] = useState('');
+  const [arrivalCrossingPoint, setArrivalCrossingPoint] = useState<any>(null);
 
-  const [countryOfOriginErrorMsg, setCountryOfOriginErrorMsg] = useState('');
   const [exporterCompanyErrorMsg, setExporterCompanyErrorMsg] = useState('');
   const [departureDateErrorMsg, setDepartureDateErrorMsg] = useState('');
-  const [departureCrossingPointErrorMsg, setDepartureCrossingPointErrorMsg] = useState('');
 
-  const [countryOfDestinationErrorMsg, setCountryOfDestinationErrorMsg] = useState('');
   const [importerCompanyErrorMsg, setImporterCompanyErrorMsg] = useState('');
-  const [arrivalDateErrorMsg, setArrivalDateErrorMsg] = useState('');
-  const [arrivalCrossingPointErrorMsg, setArrivalCrossingPointErrorMsg] = useState('');
 
+  const [journeyDetailsStatus, setJourneyDetailsStatus] = useState(false);
+  const [arrivalBeforeDepartureError, setArrivalBeforeDepartureError] = useState("");
 
-  const originCountriesList = ['India', 'China', 'Pakistan', 'Bangladesh', 'Afghanistan', 'Nepal'];
-  const destinationCountriesList = ['India', 'China', 'Pakistan', 'Bangladesh', 'Afghanistan', 'Nepal'];
-  const departurBordereCrossingPoints = ['Attari(Punjab)', 'Nathu La Pass (India-China)', 'Benapole (West Bengal)', 'Durand Line (Afghanistan)', 'Kakarbhitta (Nepal)']
-  const arrivalBorderCrossingPoints = ['Petrapole', 'Attari', 'Raxaul', 'Moreh', 'Kakarvitta', 'Heishantou'];
-
-  const handleCountryOfOrigin = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setCountryOfOrigin(e.target.value);
-  };
+  const originCountriesList = [
+    { id: 0, country: 'India' }, { id: 1, country: 'China' }, { id: 2, country: 'Pakistan' }, { id: 3, country: 'Bangladesh' }, { id: 4, country: 'Afghanistan' }, { id: 5, country: 'Nepal' }
+  ];
+  const departurBordereCrossingPoints = [
+    { id: 0, departurePoint: 'Attari(Punjab)' }, { id: 1, departurePoint: 'Nathu La Pass (India-China)' }, { id: 2, departurePoint: 'Benapole (West Bengal)' }, { id: 3, departurePoint: 'Durand Line (Afghanistan)' }, { id: 4, departurePoint: 'Kakarbhitta (Nepal)' }
+  ];
+  const destinationCountriesList = [
+    { id: 0, country: 'India' }, { id: 1, country: 'China' }, { id: 2, country: 'Pakistan' }, { id: 3, country: 'Bangladesh' }, { id: 4, country: 'Afghanistan' }, { id: 5, country: 'Nepal' }
+  ];
+  const arrivalBorderCrossingPoints = [
+    { id: 0, arrivalPoint: 'Petrapole' }, { id: 1, arrivalPoint: 'Attari' }, { id: 2, arrivalPoint: 'Raxaul' }, { id: 3, arrivalPoint: 'Moreh' }, { id: 4, arrivalPoint: 'Kakarvitta' }, { id: 5, arrivalPoint: 'Heishantou' },
+  ];
 
   const handleExporterCompany = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setExporterCompany(e.target.value);
   };
 
   const handleDepartureDate = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setDepartureDate(e.target.value);
-  };
-
-  const handleDepartureCrossingPoint = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setDepartureCrossingPoint(e.target.value);
-  };
-
-  const handleCountryOfDestination = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setCountryOfDestination(e.target.value);
+    const selectedDepartureDate = e.target.value as string;
+    setDepartureDate(selectedDepartureDate);
+    if (arrivalDate && new Date(arrivalDate) < new Date(selectedDepartureDate)) {
+      setArrivalBeforeDepartureError('Arrival date cannot be before departure date');
+    } else {
+      setArrivalBeforeDepartureError('');
+    }
   };
 
   const handleImporterCompany = (e: { target: { value: React.SetStateAction<string>; }; }) => {
@@ -61,108 +61,97 @@ export const JourneyDetails = () => {
   };
 
   const handleArrivalDate = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+    const selectedArrivalDate = e.target.value as string;
+    setArrivalDate(selectedArrivalDate);
+    if (departureDate && new Date(selectedArrivalDate) < new Date(departureDate)) {
+      setArrivalBeforeDepartureError('Arrival date cannot be before departure date');
+    } else {
+      setArrivalBeforeDepartureError('');
+    }
     setArrivalDate(e.target.value);
   };
 
-  const handleArrivalCrossingPoint = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setArrivalCrossingPoint(e.target.value);
-  };
-
-
   const backToVehicleDetails = () => {
+    setJourneyDetailsStatus(false);
     navigate('/requestTruckpassProcess/vehicleDetails');
   }
 
   const moveToReviewPage = () => {
     if (!countryOfOrigin || !exporterCompany || !departureDate || !departureCrossingPoint || !countryOfDestination || !importerCompany || !arrivalDate || !arrivalCrossingPoint) {
 
-      if (!countryOfOrigin) {
-        setCountryOfOriginErrorMsg(t('*Please select origin country in the dropdown'));
-      }
-      else { setCountryOfOriginErrorMsg('') }
-
       if (!exporterCompany) {
-        setExporterCompanyErrorMsg(t('*Please enter the exporter company'));
+        setExporterCompanyErrorMsg(t('journeyDetails.exportCompanyErrorMsg'));
       }
       else { setExporterCompanyErrorMsg('') }
 
       if (!departureDate) {
-        setDepartureDateErrorMsg(t('*Please select the departure date'));
+        setDepartureDateErrorMsg(t('journeyDetails.departureDateErrorMsg'));
       }
       else { setDepartureDateErrorMsg('') }
 
-      if (!departureCrossingPoint) {
-        setDepartureCrossingPointErrorMsg(t('*Please select departure crossing point in the dropdown'));
-      }
-      else { setDepartureCrossingPointErrorMsg('') }
-
-      if (!countryOfDestination) {
-        setCountryOfDestinationErrorMsg(t('*Please select destination country in the dropdown'));
-      }
-      else { setCountryOfDestinationErrorMsg('') }
-
       if (!importerCompany) {
-        setImporterCompanyErrorMsg(t('*Please enter the importer company'));
+        setImporterCompanyErrorMsg(t('journeyDetails.importCompanyErrorMsg'));
       }
       else { setImporterCompanyErrorMsg('') }
 
-      if (!arrivalDate) {
-        setArrivalDateErrorMsg(t('*Please select the departure date'));
-      }
-      else { setArrivalDateErrorMsg('') }
-
-      if (!arrivalCrossingPoint) {
-        setArrivalCrossingPointErrorMsg(t('*Please select arrival crossing point in the dropdown'));
-      }
-      else { setArrivalCrossingPointErrorMsg('') }
-
       return;
     };
+
+    const journeyDetails = {
+      originCountry: countryOfOrigin?.country,
+      exporterCompany: exporterCompany,
+      dateOfDeparture: departureDate,
+      borderOfDeparture: departureCrossingPoint?.departurePoint,
+      destinationCountry: countryOfDestination?.country,
+      importerCompany: importerCompany,
+      dateOfArrival: arrivalDate,
+      borderOfArrival: arrivalCrossingPoint?.arrivalPoint,
+    }
+    localStorage.setItem('journeyDetails', JSON.stringify(journeyDetails));
+    setJourneyDetailsStatus(false);
     navigate('/requestTruckpassProcess/reviewPage');
   }
 
   return (
     <div className='flex flex-col gap-y-10 bg-transparent font-inter'>
-      <TruckpassRequestStepper />
+      <TruckpassRequestStepper
+        searchDriverStatus={true}
+        driverProfileStatus={true}
+        consignmentDetailsStatus={true}
+        vehicleDetailsStatus={true}
+        journeyDetailsStatus={journeyDetailsStatus}
+        reviewAndSubmitStatus={false}
+      />
       <div className='bg-[#FFFFFF] h-auto px-8 py-3 rounded-lg shadow-md space-y-4'>
         <div className='flex space-x-3 items-center'>
           <img src={locationIcon} className='h-6' />
-          <h1 className='font-[600] text-[18px]'>{t('Journey Details')}</h1>
+          <h1 className='font-[600] text-[18px]'>{t('journeyDetails.header')}</h1>
         </div>
         <div className='flex flex-col gap-y-6 mt-[2.5%]'>
           <>
-            <h1 className='font-[600] text-[15px] mb-2'>{t('Depature Details')}</h1>
+            <h1 className='font-[600] text-[15px] mb-2'>{t('journeyDetails.depatureDetails')}</h1>
             <div className="flex flex-wrap justify-between">
               <div className='flex flex-col w-[570px] mb-6'>
-                <label htmlFor='origin-country' className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Country of Origin')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                <label htmlFor='origin-country' className='flex items-center mb-2'>
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.countryOfOrigin')}<span className='text-[#006DE7]'> *</span> </p>
+                  <Tooltip helpText={t('consignmentDetails.countryOfOriginTooltip')} />
                 </label>
-                <select
-                  id="origin-country"
-                  name="origin-country"
-                  value={countryOfOrigin}
-                  onChange={handleCountryOfOrigin}
-                  className={`${!countryOfOrigin ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${countryOfOriginErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
-                >
-                  <option value="" disabled>{t('Select Country')}</option>
-                  {originCountriesList.map((country) => (
-                    <option key={country} value={country} className='text-[#000000] text-[15px] bg-[#FFFFFF]' onClick={() => setCountryOfOrigin(country)}>
-                      {country}
-                    </option>
-                  ))}
-                </select>
-                {countryOfOriginErrorMsg && <p className='text-xs text-[#D92D20]'>{countryOfOriginErrorMsg}</p>}
+                <DropDownSelection
+                  selectingOriginCountry={true}
+                  data={originCountriesList}
+                  setItemSelected={setCountryOfOrigin}
+                  placeHolder={t('journeyDetails.selectCountry')}
+                />
               </div>
 
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Exporter Company')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.exporterCompany')}<span className='text-[#006DE7]'> *</span> </p>
+                 <Tooltip helpText={t('consignmentDetails.exporterCompanyTooltip')} />
                 </label>
                 <input
                   type='text'
-                  placeholder='e.g,ABC Trading Co'
+                  placeholder={t('journeyDetails.exporterPlaceHolder')}
                   value={exporterCompany}
                   onChange={handleExporterCompany}
                   className={`${!exporterCompany ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${exporterCompanyErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
@@ -172,8 +161,8 @@ export const JourneyDetails = () => {
 
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Planned Departure Date')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.plannedDepartureDate')}<span className='text-[#006DE7]'> *</span> </p>
+                 <Tooltip helpText={t('consignmentDetails.departureDateTooltip')} />
                 </label>
                 <input
                   type='date'
@@ -185,60 +174,42 @@ export const JourneyDetails = () => {
               </div>
 
               <div className='flex flex-col w-[570px] mb-6'>
-                <label htmlFor='departure-crossing-point' className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Border Crossing Point')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                <label htmlFor='departure-crossing-point' className='flex items-center mb-2'>
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.borderCrossingPoint')}<span className='text-[#006DE7]'> *</span> </p>
+                 <Tooltip helpText={t('consignmentDetails.originCrossingPointTooltip')} />
                 </label>
-                <select
-                  id="departure-crossing-point"
-                  name="departure-crossing-point"
-                  value={departureCrossingPoint}
-                  onChange={handleDepartureCrossingPoint}
-                  className={`${!departureCrossingPoint ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${departureCrossingPointErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
-                >
-                  <option value="" disabled>{t('Select Border Crossing')}</option>
-                  {departurBordereCrossingPoints.map((departureCrossPoint) => (
-                    <option key={departureCrossPoint} value={departureCrossPoint} className='text-[#000000] text-[15px] bg-[#FFFFFF]' onClick={() => setDepartureCrossingPoint(departureCrossPoint)}>
-                      {departureCrossPoint}
-                    </option>
-                  ))}
-                </select>
-                {departureCrossingPointErrorMsg && <p className='text-xs text-[#D92D20]'>{departureCrossingPointErrorMsg}</p>}
+                <DropDownSelection
+                  selectOriginBorder={true}
+                  data={departurBordereCrossingPoints}
+                  setItemSelected={setDepartureCrossingPoint}
+                  placeHolder={t('journeyDetails.selectBorderCrossing')}
+                />
               </div>
             </div>
           </>
           <>
-            <h1 className='font-[600] text-[15px] mb-2'>{t('Arrival Details')}</h1>
+            <h1 className='font-[600] text-[15px] mb-2'>{t('journeyDetails.arrivalDetails')}</h1>
             <div className="flex flex-wrap justify-between">
               <div className='flex flex-col w-[570px] mb-6'>
-                <label htmlFor='destination-country' className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Country of Destination')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                <label htmlFor='destination-country' className='flex items-center mb-2'>
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.countryOfDestination')}<span className='text-[#006DE7]'> *</span> </p>
+                 <Tooltip helpText={t('consignmentDetails.countryOfDestinationTooltip')} />
                 </label>
-                <select
-                  id="destination-country"
-                  name="destination-country"
-                  value={countryOfDestination}
-                  onChange={handleCountryOfDestination}
-                  className={`${!countryOfDestination ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${countryOfDestinationErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
-                >
-                  <option value="" disabled>{t('Select Country')}</option>
-                  {destinationCountriesList.map((country) => (
-                    <option key={country} value={country} className='text-[#000000] text-[15px] bg-[#FFFFFF]' onClick={() => setCountryOfDestination(country)}>
-                      {country}
-                    </option>
-                  ))}
-                </select>
-                {countryOfDestinationErrorMsg && <p className='text-xs text-[#D92D20]'>{countryOfDestinationErrorMsg}</p>}
+                <DropDownSelection
+                  selectingDestinationCountry={true}
+                  data={destinationCountriesList}
+                  setItemSelected={setCountryOfDestination}
+                  placeHolder={t('journeyDetails.selectCountry')}
+                />
               </div>
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Importer Company')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.importerCompany')}<span className='text-[#006DE7]'> *</span> </p>
+                 <Tooltip helpText={t('consignmentDetails.importerCompanyTooltip')} />
                 </label>
                 <input
                   type='text'
-                  placeholder='e.g,ABC Imports Ltd.'
+                  placeholder={t('journeyDetails.importerPlaceHolder')}
                   value={importerCompany}
                   onChange={handleImporterCompany}
                   className={`${!importerCompany ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${importerCompanyErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
@@ -248,38 +219,29 @@ export const JourneyDetails = () => {
 
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Expected Arrival Date ')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.expectedArrivalDate')}<span className='text-[#006DE7]'> *</span> </p>
+                 <Tooltip helpText={t('consignmentDetails.expectedArrivalDateTooltip')} />
                 </label>
                 <input
                   type='date'
                   value={arrivalDate}
                   onChange={handleArrivalDate}
-                  className={`${!arrivalDate ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${arrivalDateErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
+                  className={`${!arrivalDate ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${arrivalBeforeDepartureError ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
                 />
-                {arrivalDateErrorMsg && <p className='text-xs text-[#D92D20]'>{arrivalDateErrorMsg}</p>}
+                {arrivalBeforeDepartureError && <p className='text-xs text-[#D92D20]'>{arrivalBeforeDepartureError}</p>}
               </div>
 
               <div className='flex flex-col w-[570px] mb-6'>
-                <label htmlFor='arrival-crossing-point' className='flex items-center'>
-                  <p className='text-sm text-[#414651]'>{t('Border Crossing Point ')}<span className='text-[#006DE7]'> *</span> </p>
-                  <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+                <label htmlFor='arrival-crossing-point' className='flex items-center mb-2'>
+                  <p className='text-sm text-[#414651]'>{t('journeyDetails.borderCrossingPoint')}<span className='text-[#006DE7]'> *</span> </p>
+                 <Tooltip helpText={t('consignmentDetails.destinationCrossingPointTooltip')} />
                 </label>
-                <select
-                  id="arrival-crossing-point"
-                  name="arrival-crossing-point"
-                  value={arrivalCrossingPoint}
-                  onChange={handleArrivalCrossingPoint}
-                  className={`${!arrivalCrossingPoint ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${arrivalCrossingPointErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
-                >
-                  <option value="" disabled>{t('Select Border Crossing')}</option>
-                  {arrivalBorderCrossingPoints.map((country) => (
-                    <option key={country} value={country} className='text-[#000000] text-[15px] bg-[#FFFFFF]' onClick={() => setArrivalCrossingPoint(country)}>
-                      {country}
-                    </option>
-                  ))}
-                </select>
-                {arrivalCrossingPointErrorMsg && <p className='text-xs text-[#D92D20]'>{arrivalCrossingPointErrorMsg}</p>}
+                <DropDownSelection
+                  selectDestinationBorder={true}
+                  data={arrivalBorderCrossingPoints}
+                  setItemSelected={setArrivalCrossingPoint}
+                  placeHolder={t('journeyDetails.selectBorderCrossing')}
+                />
               </div>
             </div>
           </>
@@ -290,8 +252,8 @@ export const JourneyDetails = () => {
           >
             {t('commans.goBack')}
           </button>
-          <button disabled={!countryOfOrigin || !exporterCompany || !departureDate || !departureCrossingPoint || !countryOfDestination || !importerCompany || !arrivalDate || !arrivalCrossingPoint} onClick={() => moveToReviewPage()}
-            className={`${(countryOfOrigin && exporterCompany && departureDate && departureCrossingPoint && countryOfDestination && importerCompany && arrivalDate && arrivalCrossingPoint) ? 'bg-[#006DE7] cursor-pointer' : 'bg-[#C2C2C2]'}
+          <button disabled={!countryOfOrigin || !exporterCompany || !departureDate || !departureCrossingPoint || !countryOfDestination || !importerCompany || !arrivalDate || !!arrivalBeforeDepartureError || !arrivalCrossingPoint} onClick={() => moveToReviewPage()}
+            className={`${(countryOfOrigin && exporterCompany && departureDate && departureCrossingPoint && countryOfDestination && importerCompany && arrivalDate && arrivalCrossingPoint && !arrivalBeforeDepartureError) ? 'bg-[#006DE7] cursor-pointer' : 'bg-[#C2C2C2]'}
             w-[183px] h-[42px] text-sm font-[600] py-2.5 text-center rounded-[5px] text-white cursor-pointer`}
           >
             {t('commans.continue')}

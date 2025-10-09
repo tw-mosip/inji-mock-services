@@ -3,8 +3,8 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import cubeIcon from '../../assets/cube_icon.png';
-import helpIcon from '../../assets/help_icon.png';
 import { CertificateUploadingSection } from '../../components/CertificateUploadSection';
+import Tooltip from '../../components/Tooltip';
 
 export const ConsignmentDetails = () => {
 
@@ -23,8 +23,8 @@ export const ConsignmentDetails = () => {
   const [showCustomDocumentUploading, setCustomDocumentUploading] = useState(false);
   const [customDocumentUploaded, setCustomDocumentUploaded] = useState(false);
   const [customDocumentData, setCustomDocumentData] = useState<string | null>(null);
-  const [customDocUploadErrorMsg, setCustomDocUploadErrorMsg] = useState('')
-
+  const [customDocUploadErrorMsg, setCustomDocUploadErrorMsg] = useState('');
+  const [consignmentDetailsStatus, setConsignmentDetailsStatus] = useState(false);
 
   const handleInVoiceNumber = (e: { target: { value: React.SetStateAction<string>; }; }) => {
     setInvoiceNumber(e.target.value);
@@ -35,6 +35,7 @@ export const ConsignmentDetails = () => {
   };
 
   const backToDriverProfile = () => {
+    setConsignmentDetailsStatus(false);
     navigate('/requestTruckpassProcess/driverProfile');
   }
 
@@ -50,13 +51,27 @@ export const ConsignmentDetails = () => {
       else { setWaybillNumErrorMsg('') }
       return;
     };
-
+    const consignmentDetails = {
+      inVoiceNumber: inVoiceNumber,
+      waybillNumber: waybillNumber,
+      weightCertificate: weightCertificateData || '',
+      customDocument: customDocumentData || ''
+    }
+    localStorage.setItem('consignmentDetails', JSON.stringify(consignmentDetails))
+    setConsignmentDetailsStatus(true);
     navigate('/requestTruckpassProcess/vehicleDetails');
   }
 
   return (
     <div className='flex flex-col gap-y-10 bg-transparent font-inter'>
-      <TruckpassRequestStepper />
+      <TruckpassRequestStepper
+        searchDriverStatus={true}
+        driverProfileStatus={true}
+        consignmentDetailsStatus={consignmentDetailsStatus}
+        vehicleDetailsStatus={false}
+        journeyDetailsStatus={false}
+        reviewAndSubmitStatus={false}
+      />
       <div className='bg-[#FFFFFF] h-auto px-8 py-3 rounded-lg shadow-md space-y-4'>
         <div className='flex space-x-3 items-center'>
           <img src={cubeIcon} className='h-4.5' />
@@ -66,14 +81,14 @@ export const ConsignmentDetails = () => {
           <div className='flex flex-col w-[570px] mb-6'>
             <label className='flex items-center'>
               <p className='text-sm text-[#414651]'>{t('consignmentDetails.inVoiceNumber')}<span className='text-[#006DE7]'> *</span> </p>
-              <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+              <Tooltip helpText={t('consignmentDetails.inVoiceNumTooltip')} />
             </label>
             <input
               type='text'
               placeholder={t('consignmentDetails.inVoiceNumPlaceHolder')}
               value={inVoiceNumber}
               onChange={handleInVoiceNumber}
-              className={`${!inVoiceNumber ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${invoiceNumErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
+              className={`${!inVoiceNumber ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-2 mt-2 border ${invoiceNumErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
             />
             {invoiceNumErrorMsg && <p className='text-xs text-[#D92D20]'>{invoiceNumErrorMsg}</p>}
           </div>
@@ -81,14 +96,14 @@ export const ConsignmentDetails = () => {
           <div className='flex flex-col w-[570px] mb-6'>
             <label className='flex items-center'>
               <p className='text-sm text-[#414651]'>{t('consignmentDetails.waybillNumber')}<span className='text-[#006DE7]'> *</span> </p>
-              <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+              <Tooltip helpText={t('consignmentDetails.waybillNumTooltip')} />
             </label>
             <input
               type='text'
               placeholder={t('consignmentDetails.waybillNumPlaceHolder')}
               value={waybillNumber}
               onChange={handleWaybillNumber}
-              className={`${!waybillNumber ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-1.5 mt-2 border ${waybillNumErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
+              className={`${!waybillNumber ? 'bg-[#FAFAFA] text-[#717680]' : 'bg-[#FFFFFF]'} text-[15px] p-2 mt-2 border ${waybillNumErrorMsg ? 'border-[#FDA29B]' : 'border-[#D5D7DA]'} rounded-md outline-none`}
             />
             {waybillNumErrorMsg && <p className='text-xs text-[#D92D20]'>{waybillNumErrorMsg}</p>}
           </div>
@@ -96,7 +111,7 @@ export const ConsignmentDetails = () => {
           <div className='flex flex-col w-[570px]'>
             <label className='flex items-center mb-3'>
               <p className='text-sm text-[#414651]'>{t('consignmentDetails.weightCertificate')}</p>
-              <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+              <Tooltip helpText={t('consignmentDetails.weightCertTooltip')} />
             </label>
             <CertificateUploadingSection
               showUploadingBlock={showWeightCertficateUploading}
@@ -112,7 +127,7 @@ export const ConsignmentDetails = () => {
           <div className='flex flex-col w-[570px]'>
             <label className='flex items-center mb-3'>
               <p className='text-sm text-[#414651]'>{t('consignmentDetails.customsDocuments')}</p>
-              <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
+              <Tooltip helpText={t('consignmentDetails.customsDocTooltip')} />
             </label>
             <CertificateUploadingSection
               showUploadingBlock={showCustomDocumentUploading}

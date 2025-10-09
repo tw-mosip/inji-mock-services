@@ -8,8 +8,6 @@ import sortUpIcon from '../../assets/sort_up_icon.png';
 import sortDownIcon from '../../assets/sort_down_icon.png';
 import { useNavigate } from 'react-router-dom';
 
-
-
 export const Dashboard: React.FC<DashboardProps> = ({ }) => {
 
     const { t } = useTranslation();
@@ -30,7 +28,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
         { id: '5', title: t('dashBoard.date') }
     ];
 
-    const tableBody = [
+    const listOfTruckPassRequests = [
         { requestId: 'TP-2024-001', driverName: 'John Smith', licenceNumber: 'ABC-123', status: 'approved', date: '20-08-2025' },
         { requestId: 'TP-2024-002', driverName: 'Srikar dube', licenceNumber: 'XYZ-234', status: 'pending', date: '12-05-2025' },
         { requestId: 'TP-2024-003', driverName: 'Anand Kumar', licenceNumber: 'PQR-345', status: 'underReview', date: '06-6-2025' },
@@ -53,7 +51,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
     };
 
     const newTruckPassRequest = () => {
-        navigate('/requestTruckpassProcess/driverProfile');
+        navigate('/requestTruckpassProcess/searchDriver');
     };
 
 
@@ -66,7 +64,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
                 </button>
             </div>
 
-            <div className='flex justify-between my-9 px-20'>
+            <div className='flex justify-between my-9 px-20 hidden'>
                 {metricItems.map((item, id) => {
                     return (
                         <div key={id} className='flex bg-[#FFFFFF] p-3 space-x-3 h-[90px] w-[270px] border border-[#DEDEDE] rounded-xl'>
@@ -82,7 +80,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
 
             <div className="bg-[url('../assets/landingpage_bg.png')] w-full px-20">
                 <div className='flex bg-[#FFFFFF] px-6 h-[69px] items-center bottom border border-[#DEDEDE] rounded-t-[8px]'>
-                    <p className='font-semibold text-[16px] text-[#181D27]'>Request Truck Pass Requests</p>
+                    <p className='font-semibold text-[16px] text-[#181D27]'>{t('dashBoard.requestTruckPass')}</p>
                 </div>
                 <table>
                     <thead>
@@ -102,13 +100,13 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {tableBody.map((request, id) => {
+                        {listOfTruckPassRequests.map((request, id) => {
                             const currentStatus = statusBg(request.status) ?? { label: '', statusClass: '', pointerBg: '' };
                             const { label, statusClass, pointerBg } = currentStatus;
 
                             return (
                                 <tr key={id}
-                                    className={`bg-[#FFFFFF] border-t border-[#E5EBFA] text-[0.8rem] break-words h-[54px] text-[#191919] cursor-pointer"}`}>
+                                    className={`bg-[#FFFFFF] border-t border-[#E5EBFA] text-[0.8rem] break-words h-[54px] text-[#191919] cursor-pointer`}>
                                     <td className={`px-6 font-[600]`}>{request.requestId}</td>
                                     <td className={`px-6 w-[360px]`}>{request.driverName}</td>
                                     <td className={`px-6`}>{request.licenceNumber}</td>
