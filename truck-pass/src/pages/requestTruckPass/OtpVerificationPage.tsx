@@ -98,7 +98,7 @@ const OtpVerificationPage: React.FC = () => {
   };
 
   // Back to login
-  const handleBack = () => navigate('requestTruckpassProcess/loginPage');
+  const handleBack = () => navigate('/requestTruckpassProcess/loginPage');
 
   const isFormValid = otp.every(digit => digit !== '');
 
@@ -154,7 +154,7 @@ const OtpVerificationPage: React.FC = () => {
               </div>
             </form>
 
-            <div className="text-center mt-4">
+            <div className="text-center mt-4 hidden">
               <span className="text-sm" style={{ color: '#181D27', opacity: 0.7 }}>
                 {t('otpVerification.notReciveEmail')}
               </span>

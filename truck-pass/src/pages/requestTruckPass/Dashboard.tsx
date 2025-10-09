@@ -64,7 +64,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
                 </button>
             </div>
 
-            <div className='flex justify-between my-9 px-20'>
+            <div className='flex justify-between my-9 px-20 hidden'>
                 {metricItems.map((item, id) => {
                     return (
                         <div key={id} className='flex bg-[#FFFFFF] p-3 space-x-3 h-[90px] w-[270px] border border-[#DEDEDE] rounded-xl'>
