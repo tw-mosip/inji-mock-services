@@ -134,7 +134,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label htmlFor='origin-country' className='flex items-center mb-2'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.countryOfOrigin')}<span className='text-[#006DE7]'> *</span> </p>
-                  <Tooltip helpText={t('consignmentDetails.countryOfOriginTooltip')} />
+                  <Tooltip helpText={t('journeyDetails.countryOfOriginTooltip')} />
                 </label>
                 <DropDownSelection
                   selectingOriginCountry={true}
@@ -147,7 +147,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.exporterCompany')}<span className='text-[#006DE7]'> *</span> </p>
-                 <Tooltip helpText={t('consignmentDetails.exporterCompanyTooltip')} />
+                 <Tooltip helpText={t('journeyDetails.exporterCompanyTooltip')} />
                 </label>
                 <input
                   type='text'
@@ -162,7 +162,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.plannedDepartureDate')}<span className='text-[#006DE7]'> *</span> </p>
-                 <Tooltip helpText={t('consignmentDetails.departureDateTooltip')} />
+                 <Tooltip helpText={t('journeyDetails.departureDateTooltip')} />
                 </label>
                 <input
                   type='date'
@@ -176,7 +176,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label htmlFor='departure-crossing-point' className='flex items-center mb-2'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.borderCrossingPoint')}<span className='text-[#006DE7]'> *</span> </p>
-                 <Tooltip helpText={t('consignmentDetails.originCrossingPointTooltip')} />
+                 <Tooltip helpText={t('journeyDetails.originCrossingPointTooltip')} />
                 </label>
                 <DropDownSelection
                   selectOriginBorder={true}
@@ -193,7 +193,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label htmlFor='destination-country' className='flex items-center mb-2'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.countryOfDestination')}<span className='text-[#006DE7]'> *</span> </p>
-                 <Tooltip helpText={t('consignmentDetails.countryOfDestinationTooltip')} />
+                 <Tooltip helpText={t('journeyDetails.countryOfDestinationTooltip')} />
                 </label>
                 <DropDownSelection
                   selectingDestinationCountry={true}
@@ -205,7 +205,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.importerCompany')}<span className='text-[#006DE7]'> *</span> </p>
-                 <Tooltip helpText={t('consignmentDetails.importerCompanyTooltip')} />
+                 <Tooltip helpText={t('journeyDetails.importerCompanyTooltip')} />
                 </label>
                 <input
                   type='text'
@@ -220,7 +220,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label className='flex items-center'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.expectedArrivalDate')}<span className='text-[#006DE7]'> *</span> </p>
-                 <Tooltip helpText={t('consignmentDetails.expectedArrivalDateTooltip')} />
+                 <Tooltip helpText={t('journeyDetails.expectedArrivalDateTooltip')} />
                 </label>
                 <input
                   type='date'
@@ -234,7 +234,7 @@ export const JourneyDetails = () => {
               <div className='flex flex-col w-[570px] mb-6'>
                 <label htmlFor='arrival-crossing-point' className='flex items-center mb-2'>
                   <p className='text-sm text-[#414651]'>{t('journeyDetails.borderCrossingPoint')}<span className='text-[#006DE7]'> *</span> </p>
-                 <Tooltip helpText={t('consignmentDetails.destinationCrossingPointTooltip')} />
+                 <Tooltip helpText={t('journeyDetails.destinationCrossingPointTooltip')} />
                 </label>
                 <DropDownSelection
                   selectDestinationBorder={true}

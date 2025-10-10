@@ -106,8 +106,8 @@ export const DriverProfile = () => {
 interface DriverInfo {
   id?: number;
   fullName: string;
-  gender?: string;
   uin?: string;
+  gender?: string;
   phoneNumber?: string;
   emailId?: string;
   city?: string

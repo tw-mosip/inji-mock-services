@@ -181,13 +181,12 @@
         "licenseNum": "License Number: ",
         "noResultsFound": "No results found",
         "searchBtn": "Search",
-        "searchByUinToolTip": "Here get the Driver information by entering their already provided UIN",
+        "searchByUinToolTip": "Here get the Driver information by entering their already provided 12-digit UIN",
         "searchByNameToolTip": "Here get the Driver information through their name that when registered",
         "enterDriverUin": "Enter Driver’s Unique Identification Number (UIN) ",
         "uinPlaceHolder": "Enter 12-digit UIN",
         "uinErrorMsg1": "Invalid UIN. Please verify and try again.",
-        "uinErrorMsg2": "UIN should not be empty",
-        "nameErrorMsg": "Driver not found. Please verify UIN or name and try again."
+        "uinErrorMsg2": "Driver not found. Please verify UIN or name and try again."
     },
     "driverProfilePage": {
         "header": "Driver Profile Summary",
