@@ -72,21 +72,24 @@ export const ReviewPage = () => {
       dateReturn: journeyDetails?.dateOfArrival,
     };
 
-    try {
-      const response = await post_driver_details(payload);
+    // try {
+    //   const response = await post_driver_details(payload);
 
-      if (response.status === 200 || response.status === 201) {
-        setReviewAndSubmitStatus(false);
-        setShowSuccessScreen(true);
-      } else {
-        console.error('Submission failed:', response.status, response.statusText);
-      }
-    } catch (error: any) {
-      console.error('Error during submission:', error.message);
-      if (error.response) {
-        console.error('Server response:', error.response.data);
-      }
-    }
+    //   if (response.status === 200 || response.status === 201) {
+    //     setReviewAndSubmitStatus(false);
+    //     setShowSuccessScreen(true);
+    //   } else {
+    //     console.error('Submission failed:', response.status, response.statusText);
+    //   }
+    // } catch (error: any) {
+    //   console.error('Error during submission:', error.message);
+    //   if (error.response) {
+    //     console.error('Server response:', error.response.data);
+    //   }
+    // }
+
+    setReviewAndSubmitStatus(false);
+    setShowSuccessScreen(true);
   };
 
   const submitAnotherApplication = () => {
@@ -134,7 +137,7 @@ export const ReviewPage = () => {
               <div className='h-auto border-0 border-t-[#cac0c0] rounded-xl shadow-md p-6'>
                 <div className="flex flex-col gap-y-4">
                   <h1 className='font-[600] text-[15px]'>{t('reviewPage.driverInformation')}</h1>
-                  <div className='flex flex-row gap-x-[350px]'>
+                  <div className='flex flex-row gap-x-[370px]'>
                     <div className='flex flex-col space-y-4'>
                       <p className='text-[14px]'>
                         <span className='font-[600]'>{t('reviewPage.fullName')}</span>{driverInformation?.fullName}
@@ -161,7 +164,7 @@ export const ReviewPage = () => {
               <div className='h-auto border-0 border-t-[#cac0c0] rounded-xl shadow-md p-6'>
                 <div className="flex flex-col gap-y-4">
                   <h1 className='font-[600] text-[15px]'>{t('reviewPage.consignmentDetails')}</h1>
-                  <div className='flex flex-row gap-x-[335px]'>
+                  <div className='flex flex-row gap-x-[370px]'>
                     <div className='flex flex-col space-y-4'>
                       <p className='text-[14px]'>
                         <span className='font-[600]'>{t('reviewPage.inVoiceNum')}</span>{consignmentDetails?.inVoiceNumber}
@@ -185,7 +188,7 @@ export const ReviewPage = () => {
               <div className='h-auto border-0 border-t-[#cac0c0] rounded-xl shadow-md p-6'>
                 <div className="flex flex-col gap-y-4">
                   <h1 className='font-[600] text-[15px]'>{t('reviewPage.vehicleDetails')}</h1>
-                  <div className='flex flex-row gap-x-[330px]'>
+                  <div className='flex flex-row gap-x-[370px]'>
                     <div className='flex flex-col space-y-4'>
                       <p className='text-[14px]'>
                         <span className='font-[600]'>{t('reviewPage.type')}</span>{vehicleDetails?.vehicleType}

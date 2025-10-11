@@ -109,7 +109,7 @@ export const ConsignmentDetails = () => {
           </div>
 
           <div className='flex flex-col w-[570px]'>
-            <label className='flex items-center mb-3'>
+            <label className='flex gap-x-1 items-center mb-3'>
               <p className='text-sm text-[#414651]'>{t('consignmentDetails.weightCertificate')}</p>
               <Tooltip helpText={t('consignmentDetails.weightCertTooltip')} />
             </label>
@@ -125,7 +125,7 @@ export const ConsignmentDetails = () => {
           </div>
 
           <div className='flex flex-col w-[570px]'>
-            <label className='flex items-center mb-3'>
+            <label className='flex gap-x-1 items-center mb-3'>
               <p className='text-sm text-[#414651]'>{t('consignmentDetails.customsDocuments')}</p>
               <Tooltip helpText={t('consignmentDetails.customsDocTooltip')} />
             </label>

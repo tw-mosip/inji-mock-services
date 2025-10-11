@@ -46,13 +46,6 @@ export const VehicleDetails = () => {
   }
 
   const moveToJourneyDetails = () => {
-    if (!selectedVehicleType || !selectedAxleSize || !truckLicensePlate.includes('-')) {
-      if (!truckLicensePlate.includes('-')) {
-        setTruckLicensePlateErrorMsg(t('vehicleDetails.truckNumberErrorMsg'));
-      }
-      else { setTruckLicensePlateErrorMsg('') }
-      return;
-    };
     const vehicleDetails = {
       vehicleType: selectedVehicleType?.type,
       axleSize: selectedAxleSize?.size,
@@ -84,7 +77,7 @@ export const VehicleDetails = () => {
           <div className="relative w-[48%]">
             <label className='flex items-center mb-2'>
               <p className='text-sm text-[#414651]'>{t('vehicleDetails.vehicleType')}<span className='text-[#006DE7]'> *</span> </p>
-              <Tooltip helpText={t('consignmentDetails.vehicleTypeTooltip')} />
+              <Tooltip helpText={t('vehicleDetails.vehicleTypeTooltip')} />
             </label>
             <DropDownSelection
               selectingVehicleType={true}
@@ -97,7 +90,7 @@ export const VehicleDetails = () => {
           <div className="relative w-[48%]">
             <label className='flex items-center mb-2'>
               <p className='text-sm text-[#414651]'>{t('vehicleDetails.axleSize')}<span className='text-[#006DE7]'> *</span> </p>
-              <Tooltip helpText={t('consignmentDetails.axleSizeTooltip')} />
+              <Tooltip helpText={t('vehicleDetails.axleSizeTooltip')} />
             </label>
             <DropDownSelection
               selectingAxelSize={true}
@@ -111,7 +104,7 @@ export const VehicleDetails = () => {
         <div className='flex flex-col w-full mb-6'>
           <label className='flex items-center'>
             <p className='text-sm text-[#414651]'>{t('vehicleDetails.truckLicensePlate')}<span className='text-[#006DE7]'> *</span> </p>
-              <Tooltip helpText={t('consignmentDetails.truckLicensePlateTooltip')} />
+            <Tooltip helpText={t('vehicleDetails.truckLicensePlateTooltip')} />
           </label>
           <input
             type='text'
@@ -124,10 +117,9 @@ export const VehicleDetails = () => {
         </div>
 
         <div className='flex flex-col w-full'>
-          <label className='flex items-center mb-3'>
+          <label className='flex gap-x-1 items-center mb-3'>
             <p className='text-sm text-[#414651]'>{t('vehicleDetails.vehicleRegistrationDocuments')}</p>
-            <img src={helpIcon} alt='help_icon' className='h-3 cursor-pointer px-1' />
-              <Tooltip helpText={t('consignmentDetails.vehicleRegistrationDocTooltip')} />
+            <Tooltip helpText={t('vehicleDetails.vehicleRegistrationDocTooltip')} />
           </label>
           <CertificateUploadingSection
             vehicleRegistrationDocument={true}

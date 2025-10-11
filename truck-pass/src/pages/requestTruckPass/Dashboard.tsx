@@ -57,14 +57,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
 
     return (
         <div className="flex flex-col pt-9 font-inter h-auto bg-[#ECF5FF]">
-            <div className='flex justify-between items-center px-20'>
+            <div className='flex justify-between items-center px-20 mb-4'>
                 <h1 className='font-[600] text-[23px] text-[#27181a]'>{t('dashBoard.myDashBoard')}</h1>
                 <button onClick={() => newTruckPassRequest()} className='bg-[#006DE7] font-medium text-[13px] px-3.5 py-2.5 text-[#FFFFFF] border rounded-md cursor-pointer hover:border-[#006DE9] hover:shadow-lg'>
                     {t('dashBoard.newTruckPassRequest')}
                 </button>
             </div>
 
-            <div className='flex justify-between my-9 px-20 hidden'>
+            {/* <div className='flex justify-between my-9 px-20'>
                 {metricItems.map((item, id) => {
                     return (
                         <div key={id} className='flex bg-[#FFFFFF] p-3 space-x-3 h-[90px] w-[270px] border border-[#DEDEDE] rounded-xl'>
@@ -76,7 +76,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
                         </div>
                     )
                 })}
-            </div>
+            </div> */}
 
             <div className="bg-[url('../assets/landingpage_bg.png')] w-full px-20">
                 <div className='flex bg-[#FFFFFF] px-6 h-[69px] items-center bottom border border-[#DEDEDE] rounded-t-[8px]'>
