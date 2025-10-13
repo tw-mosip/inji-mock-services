@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.mosip.inji_usecase.service.GenericCrudService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,46 @@ public class DataController {
 
     private final Map<String, ValidationService> validationServices;
     private final Map<String, RepositoryService> repositoryServices;
+
+    private final GenericCrudService service;
+
+
+    /**
+     * Creates a new entity record.
+     * @param entityName
+     * @param data
+     * @return
+     */
+    @PostMapping("api/data/{entityName}")
+    public ResponseEntity<Void> create(@PathVariable String entityName, @RequestBody Map<String, Object> data) {
+        service.create(entityName, data);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/api/data")
+    public ResponseEntity<?> ingestData(
+            @RequestHeader(name = "x-source") String dataSource,
+            @RequestBody Map<String, Object> data)
+    {
+        ValidationService validationService = validationServices.get(dataSource + "ValidationService");
+        RepositoryService repositoryService = repositoryServices.get(dataSource + "RepositoryService");
+
+        if(validationService == null){
+            return ResponseEntity.badRequest().body("Unknown data source: " + dataSource);
+        }
+
+        try{
+
+            validationService.validate(data);
+            repositoryService.save(data);
+            return ResponseEntity.ok().build();
+
+        }catch (IllegalArgumentException e) {
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("VALIDATION ERROR:: '" + e.getMessage() + "'");
+
+        }
+    }
 
     @GetMapping("/api/data/{id}")
     public ResponseEntity<?> retrieveDataById(@PathVariable("id") Long id) {
@@ -85,30 +126,4 @@ public class DataController {
             return ResponseEntity.ok(result);
 
     }
-
-    @PostMapping("/api/data")
-    public ResponseEntity<?> ingestData(
-        @RequestHeader(name = "x-source") String dataSource,
-        @RequestBody Map<String, Object> data) 
-    {
-        ValidationService validationService = validationServices.get(dataSource + "ValidationService");
-        RepositoryService repositoryService = repositoryServices.get(dataSource + "RepositoryService");
-        
-        if(validationService == null){
-            return ResponseEntity.badRequest().body("Unknown data source: " + dataSource);
-        }
-
-        try{
-
-            validationService.validate(data);
-            repositoryService.save(data);
-            return ResponseEntity.ok().build();
-
-        }catch (IllegalArgumentException e) {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("VALIDATION ERROR:: '" + e.getMessage() + "'");
-
-        }
-    }
-
 }
