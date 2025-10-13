@@ -1,4 +1,4 @@
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { VerifyUIN } from "../pages/driverRegistration/VerifyUIN";
 import { BrowserRouter } from "react-router-dom";
 import { I18nextProvider } from "react-i18next";

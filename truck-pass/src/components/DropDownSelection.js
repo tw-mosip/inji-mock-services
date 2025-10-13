@@ -1,0 +1,27 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import selectionDropDown from "../assets/selection_Dropdown_icon.png";
+import { useTranslation } from "react-i18next";
+import { useState } from "react";
+export const DropDownSelection = ({ data, setItemSelected, placeHolder, selectingDriverName, selectingVehicleType, selectingAxelSize, selectingOriginCountry, selectingDestinationCountry, selectOriginBorder, selectDestinationBorder }) => {
+    const { t } = useTranslation("");
+    const [open, setOpen] = useState(false);
+    const [selected, setSelected] = useState(null);
+    const [errorMsg, seterrorMsg] = useState("");
+    const selectedItem = (item) => {
+        setSelected(item);
+        setItemSelected(item);
+        setOpen(false);
+        seterrorMsg("");
+    };
+    return (_jsxs("div", { className: "relative", children: [_jsxs("div", { onClick: () => setOpen(!open), className: `flex items-center justify-between border border-[#D5D7DA] text-sm ${selected ? 'text-[#1a1a1b]' : 'text-[#717680]'} rounded-md px-3 py-2 cursor-pointer bg-[#FFFFFF]`, children: [selected
+                        ? (selected.fullName || selected.type || selected.size || selected.country || selected.departurePoint || selected.arrivalPoint)
+                        : placeHolder, _jsx("img", { src: selectionDropDown, className: `h-4 w-4 ${open ? "rotate-180 duration-500" : "duration-500"}` })] }), open && ((selectingDriverName) && (_jsx("div", { className: "absolute mt-1 w-full bg-white border border-[#D5D7DA] rounded-md shadow-lg z-10 max-h-40 overflow-auto duration-700", children: data.map((driver) => (_jsxs("div", { onClick: () => {
+                        selectedItem(driver);
+                    }, className: "px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between", children: [_jsx("span", { className: "text-base text-[#181D27] font-[500] w-[280px] break-words", children: driver.fullName }), _jsxs("span", { className: "text-base text-gray-500 font-[500]", children: [t('searchDriver.uin'), " ", driver.uin, " "] }), _jsxs("span", { className: "text-base text-gray-500 font-[500]", children: [t('searchDriver.licenseNum'), driver.driverLicenseNumber, " "] })] }, driver.id))) }))
+                || (selectingVehicleType) && (_jsx("div", { className: "absolute mt-1 w-full bg-white border border-[#D5D7DA] rounded-md shadow-lg z-10 max-h-40 overflow-auto duration-700", children: data.map((vehicle) => (_jsx("div", { onClick: () => selectedItem(vehicle), className: "px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between", children: _jsx("span", { className: "text-base text-[#181D27] font-[500] w-[280px] break-words", children: vehicle.type }) }, vehicle.id))) }))
+                || (selectingAxelSize) && (_jsx("div", { className: "absolute mt-1 w-full bg-white border border-[#D5D7DA] rounded-md shadow-lg z-10 max-h-40 overflow-auto duration-700", children: data.map((axel) => (_jsx("div", { onClick: () => selectedItem(axel), className: "px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between", children: _jsx("span", { className: "text-base text-[#181D27] font-[500] w-[280px] break-words", children: axel.size }) }, axel.id))) }))
+                || (selectingOriginCountry) && (_jsx("div", { className: "absolute mt-1 w-full bg-white border border-[#D5D7DA] rounded-md shadow-lg z-10 max-h-40 overflow-auto duration-700", children: data.map((country) => (_jsx("div", { onClick: () => selectedItem(country), className: "px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between", children: _jsx("span", { className: "text-base text-[#181D27] font-[500] w-[280px] break-words", children: country.country }) }, country.id))) }))
+                || (selectingDestinationCountry) && (_jsx("div", { className: "absolute mt-1 w-full bg-white border border-[#D5D7DA] rounded-md shadow-lg z-10 max-h-40 overflow-auto duration-700", children: data.map((country) => (_jsx("div", { onClick: () => selectedItem(country), className: "px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between", children: _jsx("span", { className: "text-base text-[#181D27] font-[500] w-[280px] break-words", children: country.country }) }, country.id))) }))
+                || (selectOriginBorder) && (_jsx("div", { className: "absolute mt-1 w-full bg-white border border-[#D5D7DA] rounded-md shadow-lg z-10 max-h-40 overflow-auto duration-700", children: data.map((borderPoint) => (_jsx("div", { onClick: () => selectedItem(borderPoint), className: "px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between", children: _jsx("span", { className: "text-base text-[#181D27] font-[500] w-[280px] break-words", children: borderPoint.departurePoint }) }, borderPoint.id))) }))
+                || (selectDestinationBorder) && (_jsx("div", { className: "absolute mt-1 w-full bg-white border border-[#D5D7DA] rounded-md shadow-lg z-10 max-h-40 overflow-auto duration-700", children: data.map((borderPoint) => (_jsx("div", { onClick: () => selectedItem(borderPoint), className: "px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between", children: _jsx("span", { className: "text-base text-[#181D27] font-[500] w-[280px] break-words", children: borderPoint.arrivalPoint }) }, borderPoint.id))) }))), errorMsg && (_jsx("p", { className: "text-xs text-[#D92D20] mt-1", children: errorMsg }))] }));
+};

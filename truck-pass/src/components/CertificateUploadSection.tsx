@@ -18,7 +18,9 @@ export const CertificateUploadingSection: React.FC<CertificateUploadingSectionPr
 }) => {
 
   const [fileName, setFileName] = useState('');
+  // @ts-expect-error ignore unused variable error
   const [uploading, setUploading] = useState(false);
+  // @ts-expect-error ignore unused variable error
   const [removeLastUploadData, setRemoveLastUploadData] = useState(true);
   const [progress, setProgress] = useState(0);
   const [fileSize, setFileSize] = useState(0);
