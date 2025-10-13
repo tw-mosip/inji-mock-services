@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import truckpass_title from "../assets/truck_pass_title.png";
 import globe_icon from "../assets/globe_icon.png";
-import dropdown_icon from "../assets/Dropdown_icon.png";
+import dropdown_icon from "../assets/dropdown_icon.png";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 
