@@ -4,6 +4,12 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  assetsInclude: [
+    '**/*.png',
+    '**/*.jpg',
+    '**/*.jpeg',
+    '**/*.svg',
+  ],
   server: {
     port: 5000
   }
