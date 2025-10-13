@@ -36,17 +36,6 @@ jobs:
       GPG_SECRET: ${{ secrets.GPG_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
-  build-truckpass-ui:
-    uses: mosip/kattu/.github/workflows/npm-build.yml@develop
-    with:
-      SERVICE_LOCATION: truck-pass
-      BUILD_ARTIFACT: truckpass-ui
-      NPM_BUILD_TYPE: 'BOB'
-      NODE_VERSION: "18.x"
-      ZIP_DIR: "build"
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
-
   build-dockers:
     needs: build-maven-inji-usecase
     strategy:
