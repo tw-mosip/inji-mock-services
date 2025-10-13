@@ -1,16 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import relyingPartyService from '../../services/relyingPartyService';
-import { DriverRegistrationStepper } from './DriverRegistrationStepper';
+import React, {useState} from 'react';
+import {useTranslation} from 'react-i18next';
+import {useNavigate} from 'react-router-dom';
+import {DriverRegistrationStepper} from './DriverRegistrationStepper';
 import Tooltip from '../../components/Tooltip';
 
 
-export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
+export const SelectCompany: React.FC = () => {
 
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const [loading, setLoading] = useState(false);
+    const loading = false;
     const [searchTerm, setSearchTerm] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
     const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
@@ -69,8 +68,7 @@ export const SelectCompany: React.FC<SelectCompanyProps> = ({ }) => {
         setSelectedCompany(company);
         setSearchTerm(company.company_name);
         setShowDropdown(false);
-        const companySelected = company;
-        localStorage.setItem('companySelected', JSON.stringify(companySelected));
+        localStorage.setItem('companySelected', JSON.stringify(company));
     };
 
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,8 +177,4 @@ interface Company {
     registered_email?: string;
     name?: string;
     license_status?: string;
-}
-
-interface SelectCompanyProps {
-
 }

@@ -15,8 +15,9 @@ const setup = (props = {}) =>
       setShowUploadingBlock={mockSetShowUploadingBlock}
       setFileUploaded={mockSetFileUploaded}
       setDataInFile={mockSetDataInFile}
-      cpcUploadErrorMsg=""
-      setCpcUploadErrorMsg={mockSetCpcUploadErrorMsg}
+      clickableText={'Browse'}
+      fileUploadErrorMsg=""
+      setFileUploadErrorMsg={mockSetCpcUploadErrorMsg}
       {...props}
     />
   );

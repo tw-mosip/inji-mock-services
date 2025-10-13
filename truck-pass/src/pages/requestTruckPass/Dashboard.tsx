@@ -1,24 +1,24 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import clockIcon from '../../assets/clock_icon.png';
-import approvedIcon from '../../assets/approved_icon.png';
-import pendingReviewIcon from '../../assets/pending_review_icon.png';
-import trucksNumIcon from '../../assets/trucks_number_icon.png';
+// import clockIcon from '../../assets/clock_icon.png';
+// import approvedIcon from '../../assets/approved_icon.png';
+// import pendingReviewIcon from '../../assets/pending_review_icon.png';
+// import trucksNumIcon from '../../assets/trucks_number_icon.png';
 import sortUpIcon from '../../assets/sort_up_icon.png';
 import sortDownIcon from '../../assets/sort_down_icon.png';
 import { useNavigate } from 'react-router-dom';
 
-export const Dashboard: React.FC<DashboardProps> = ({ }) => {
+export const Dashboard: React.FC = () => {
 
     const { t } = useTranslation();
     const navigate = useNavigate();
 
-    const metricItems = [
-        { icon: clockIcon, itemName: t('dashBoard.activeRequest'), count: '10' },
-        { icon: approvedIcon, itemName: t('dashBoard.approvedPasses'), count: '70' },
-        { icon: pendingReviewIcon, itemName: t('dashBoard.pendingReview'), count: '8' },
-        { icon: trucksNumIcon, itemName: t('dashBoard.totalTrucks'), count: '45' }
-    ]
+    // const metricItems = [
+    //     { icon: clockIcon, itemName: t('dashBoard.activeRequest'), count: '10' },
+    //     { icon: approvedIcon, itemName: t('dashBoard.approvedPasses'), count: '70' },
+    //     { icon: pendingReviewIcon, itemName: t('dashBoard.pendingReview'), count: '8' },
+    //     { icon: trucksNumIcon, itemName: t('dashBoard.totalTrucks'), count: '45' }
+    // ]
 
     const tableHeaders = [
         { id: '1', title: t('dashBoard.requestId') },
@@ -130,8 +130,4 @@ export const Dashboard: React.FC<DashboardProps> = ({ }) => {
             {/* Footer */}
         </div>
     )
-}
-
-interface DashboardProps {
-
 };

@@ -2,8 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import DriverRegistrationProcess from '../pages/driverRegistration/DriverRegistrationProcess';
-import { useTranslation } from 'react-i18next';
-import { DriverRegistrationFlow } from '../shared/DriverRegistrationFlow';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({

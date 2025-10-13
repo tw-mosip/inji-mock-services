@@ -1,0 +1,21 @@
+declare const clientDetails: {
+    nonce: string;
+    state: string;
+    clientId: EnvConfig;
+    scopeUserProfile: string;
+    scopeRegistration: string;
+    response_type: string;
+    redirect_uri_userprofile: string;
+    redirect_uri_registration: string;
+    display: string;
+    prompt: string;
+    acr_values: EnvConfig;
+    claims_locales: string;
+    max_age: EnvConfig;
+    grant_type: string;
+    uibaseUrl: EnvConfig;
+    authorizeEndpoint: string;
+    userProfileClaims: string;
+    registrationClaims: string;
+};
+export default clientDetails;
