@@ -4,6 +4,11 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  build: {
+    // Change the output directory
+    outDir: 'build', // default is 'dist'
+    emptyOutDir: true, // cleans folder before build
+  },
   assetsInclude: [
     '**/*.png',
     '**/*.jpg',
