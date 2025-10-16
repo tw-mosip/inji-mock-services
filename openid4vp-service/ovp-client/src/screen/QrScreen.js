@@ -1,7 +1,7 @@
 import React, {Fragment, useEffect, useState, useCallback} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import axios from 'axios';
-import {BACKEND_URL} from "../constants/mockui-constants";
+import {BACKEND_URL, INJIWEB_URL} from "../constants/mockui-constants";
 import {AccordionSection} from "../components/common/Section";
 import {Loader} from "../components/common/Loader";
 import Toggle from "../components/common/Toggle";
@@ -11,6 +11,7 @@ import {ScanResult} from "../components/scan/ScanResult";
 import {Image} from "../components/common/Image";
 import Error from "../components/common/Error";
 import {Code} from "../components/common/Code";
+import Button from "../components/common/Button";
 
 const styles = {
     container: {
@@ -207,6 +208,20 @@ const QrScreen = () => {
         </a>;
     }
 
+    const handleOpenInjiWeb = () => {
+        let encodedRequest = '';
+        
+        if (actualAuthorizationRequestObject) {
+            // For "By Reference" mode, use the fetched authorization request object
+            encodedRequest = actualAuthorizationRequestObject;
+        } else if (qrData) {
+            // For "By Value" mode, use the qrData (URL string) as the authorization request
+            encodedRequest = qrData;
+        }
+        
+        window.open(`${INJIWEB_URL}?authorizationRequestUrl=${encodedRequest}`, '_blank');
+    }
+
     const header = () => {
         const currentDraft = isDraft23 ? 'draft-23' : 'draft-21';
         const title = `${state?.name || 'QR Code Image'} - ${currentDraft}`;
@@ -302,7 +317,19 @@ const QrScreen = () => {
                             <a href={qrData} target="_blank" rel="noopener noreferrer">
                                 <Image src={qrCodeData} alt={"QR code"}/>
                             </a>
-                            {downloadQRCode()}
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px', alignItems: 'center' }}>
+                                {downloadQRCode()}
+                                <Button
+                                    onClick={handleOpenInjiWeb}
+                                    variant={"primary"}
+                                    style={{
+                                        padding: '8px 16px',
+                                        fontSize: '14px',
+                                    }}
+                                >
+                                Open InjiWeb
+                                </Button>
+                            </div>
                             {inputData && (
                                 <AccordionSection title={"Input Data"} value={JSON.stringify(inputData, null, 2)}/>
                             )}

@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {CLIENT_ID_SCHEMES, DRAFT_VERSIONS} from "../constants/constants";
+import {INJIWEB_URL} from "../constants/mockui-constants";
 import Button from "../components/common/Button";
 import {backgroundStyle, Palette, font} from "../styles/palette";
 
@@ -86,6 +87,11 @@ const Home = () => {
         });
     };
 
+    const handleOpenInjiWeb = () => {
+        const qrData = endpoints.map(e => e.name).join(',');
+        window.open(`${INJIWEB_URL}?qrData=${qrData}`, '_blank');
+    };
+
     return (
         <div style={styles.container}>
             <h1 style={styles.title}>Inji Mock Services</h1>
@@ -128,6 +134,17 @@ const Home = () => {
                             </Button>
                         </div>
                     ))}
+                    
+                    <div style={{ display: 'flex', alignItems: 'baseline', marginTop: '20px'}}>
+                        <span role="img" aria-label="emoji" style={styles.emoji}>🌐</span>
+                        <Button
+                            onClick={handleOpenInjiWeb}
+                            variant={"primary"}
+                            style={styles.button}
+                        >
+                            Open InjiWeb Application
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>
