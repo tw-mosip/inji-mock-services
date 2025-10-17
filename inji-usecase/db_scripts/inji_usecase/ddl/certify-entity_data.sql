@@ -7,17 +7,16 @@
 -- Schema       : certify
 -- Purpose      : Stores structured entity-related data as JSONB, typed by entity_type.
 
-CREATE TABLE entity_data (
-    id character varying(255) NOT NULL,
-    entity_type character varying(255),
-    data jsonb,
+CREATE TABLE certify.entity_data (
+    id character varying(255) NOT NULL,               -- Primary key for the entity
+    entity_type character varying(255),               -- Type/classification of the entity
+    data jsonb,                                       -- JSONB-formatted data
 
-    cr_by character varying(256),
-    cr_dtimes timestamp,
-    upd_by character varying(256),
-    upd_dtimes timestamp,
-    is_deleted boolean DEFAULT FALSE,
-    del_dtimes timestamp,
+    created_at timestamp DEFAULT now(),               -- Timestamp when the record was created
+    updated_at timestamp DEFAULT now(),               -- Timestamp of the most recent update
+
+    is_deleted boolean DEFAULT FALSE,                 -- Flag for soft deletion
+    deleted_at timestamp,                             -- Timestamp when the record was soft deleted
 
     CONSTRAINT pk_entity_data_id PRIMARY KEY (id)
 );
@@ -28,9 +27,8 @@ COMMENT ON COLUMN certify.entity_data.id IS 'Entity ID: Unique identifier for th
 COMMENT ON COLUMN certify.entity_data.entity_type IS 'Entity Type: Type/classification of the entity (e.g., farmer, organization)';
 COMMENT ON COLUMN certify.entity_data.data IS 'Entity Data: JSONB-formatted dynamic data for the given entity';
 
-COMMENT ON COLUMN certify.entity_data.cr_by IS 'Created By: ID or name of the user who created the record';
-COMMENT ON COLUMN certify.entity_data.cr_dtimes IS 'Created DateTimestamp: Date and time when the record was created';
-COMMENT ON COLUMN certify.entity_data.upd_by IS 'Updated By: ID or name of the user who last updated the record';
-COMMENT ON COLUMN certify.entity_data.upd_dtimes IS 'Updated DateTimestamp: Date and time of the most recent update';
-COMMENT ON COLUMN certify.entity_data.is_deleted IS 'Is Deleted: Soft-delete flag (TRUE if record is logically deleted)';
-COMMENT ON COLUMN certify.entity_data.del_dtimes IS 'Deleted DateTimestamp: Timestamp when the record was soft deleted';
+COMMENT ON COLUMN certify.entity_data.created_at IS 'Created At: Timestamp when the record was created';
+COMMENT ON COLUMN certify.entity_data.updated_at IS 'Updated At: Timestamp of the most recent update';
+
+COMMENT ON COLUMN certify.entity_data.is_deleted IS 'Is Deleted: Soft-delete flag (TRUE if the record is logically deleted)';
+COMMENT ON COLUMN certify.entity_data.deleted_at IS 'Deleted At: Timestamp when the record was soft deleted';
