@@ -143,13 +143,15 @@ app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) =>
 });
 
 // API to generate QR codes for different client_id schemes and request modes
-// API - /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version> 
+// API - /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version>&signed=true|false
 // client_id_scheme = pre-registered, redirect_uri, did
 // request_mode = by_value, by_reference
-// draft_version = draft-21, draft-23 
+// draft_version = draft-21, draft-23 (default draft-23)
+// signed = true|false (default false) - whether the request should be signed or not (only applicable for by_value mode)
 app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
     const {client_id_scheme, request_mode} = req.params;
     const draftVersion = req.query.draft;
+    const signed = req.query.signed === 'true';
 
     if (!draftVersion) {
         res.status(400).send('Bad Request: draft parameter is required');
@@ -173,6 +175,12 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
         });
         res.status(400).send(providedCombinationIsNotSupported);
         return
+    }
+
+    if (signed) {
+        const clientId = inputData.client_id;
+        const request = await createJWT(inputData);
+        inputData = {client_id: clientId, request};
     }
 
     try {
@@ -276,20 +284,14 @@ app.post('/verifier/vp-response', (req, res) => {
 
     const response = {
         redirect_uri: `${baseUrl}/verifier/callback#response_code=${responseCode}`,
-        message: `Verifiable presentation received successfully.`,
+        message: `Verifiable presentation is not right`,
     };
+    console.log("Response to be sent:", response);
     res.status(200).json(response);
 });
 
 app.get('/verifier/callback', async (req, res) => {
-    // extract response code from URL fragment
-    const responseCodeFromUrl = req.originalUrl.split('#')[1];
-    if (responseCode && responseCodeFromUrl === responseCode) {
-        responseCode = null; // reset response code after successful match
-        res.render("success", {message: "✅ All set! Transaction completed successfully. 🎉"});
-    } else {
-        res.render("error", {message: "❌ Invalid or expired response code. ⏰"});
-    }
+    res.render("success", {message: "✅ All set! Transaction completed successfully. 🎉"});
 })
 
 

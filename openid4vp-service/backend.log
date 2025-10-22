@@ -1,0 +1,7 @@
+
+> verifiermockserverforvp@1.0.0 start
+> node app.js
+
+Server is running on http://localhost:3000
+Received request with request body: undefined
+Received request with request body: undefined

@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState, useCallback} from 'react';
+import React, {Fragment, useCallback, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import {BACKEND_URL, INJIWEB_URL} from "../constants/mockui-constants";
@@ -12,6 +12,8 @@ import {Image} from "../components/common/Image";
 import Error from "../components/common/Error";
 import {Code} from "../components/common/Code";
 import Button from "../components/common/Button";
+import CheckBox from "../components/common/checkBox";
+import DecoderEncoderView from '../components/DecoderEncoderView';
 
 const styles = {
     container: {
@@ -55,51 +57,30 @@ const QrScreen = () => {
     const [isDraft23, setIsDraft23] = useState(true);
     const [isDraft21, setIsDraft21] = useState(false);
     const [errorMessage, setErrorMessage] = useState(null);
-    const [decodedJwt, setDecodedJwt] = useState(null);
-    const [isDecoded, setIsDecoded] = useState(false);
+    const [isRequestSigned, setIsRequestSigned] = useState(false);
 
-    const handleDecodeJwt = () => {
-
-        const parts = actualAuthorizationRequestObject.split('.');
-        if (parts.length !== 3) {
-            setErrorMessage("Invalid JWT format");
-            return;
-        }
-
-        try {
-            // decode both header and payload
-            const header = JSON.parse(atob(parts[0].replace(/-/g, '+').replace(/_/g, '/').padEnd(parts[0].length + (4 - parts[0].length % 4) % 4, '=')));
-            const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/').padEnd(parts[1].length + (4 - parts[1].length % 4) % 4, '=')));
-            setDecodedJwt({header,payload});
-            setIsDecoded(true);
-        } catch (error) {
-            setErrorMessage("Error decoding JWT: " + error.message);
-            setIsDecoded(false)
-        }
-    }
-
-    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion) => {
+    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion, isRequestSigned = false) => {
         try {
             // /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version>
-            const response = await axios.get(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}`, {
+            const qrResponse = await axios.get(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}&signed=${isRequestSigned}`, {
                 headers: {
                     'ngrok-skip-browser-warning': 'true'
                 }
             });
 
-            if (response.status !== 200) {
+            if (qrResponse.status !== 200) {
                 setErrorMessage("Error fetching QR code data");
             }
 
-            setQrCodeData(response.data.qrCodeData);
-            setQrData(response.data.qrData);
-            const inputDataValue = response.data.inputData;
+            setQrCodeData(qrResponse.data.qrCodeData);
+            setQrData(qrResponse.data.qrData);
+            const inputDataValue = qrResponse.data.inputData;
             setInputData(inputDataValue)
 
             if (requestMode === REQUEST_MODES.BY_REFERENCE) {
-                const requestUri = inputDataValue["request_uri"];
-                const requestUriMethod = inputDataValue["request_uri_method"] ?? "get";
-                const response = await axios({
+                const requestUri = inputDataValue?.request_uri;
+                const requestUriMethod = inputDataValue?.request_uri_method ?? "get";
+                const uriResponse = await axios({
                     method: requestUriMethod,
                     url: requestUri,
                     headers: {
@@ -107,11 +88,11 @@ const QrScreen = () => {
                     }
                 })
 
-                setActualAuthorizationRequestObject(response.data);
+                setActualAuthorizationRequestObject(uriResponse.data);
             }
         } catch (error) {
             resetValues()
-             console.error("Error fetching QR code data:", error);
+            console.error("Error fetching QR code data:", error);
             if (error?.response?.data) {
                 setErrorMessage(error.response.data);
             } else {
@@ -122,11 +103,11 @@ const QrScreen = () => {
 
     useEffect(() => {
         const fetchQr = async () => {
-            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, isDraft23 ? DRAFT_VERSIONS.DRAFT_23 : DRAFT_VERSIONS.DRAFT_21);
+            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, isDraft23 ? DRAFT_VERSIONS.DRAFT_23 : DRAFT_VERSIONS.DRAFT_21, isRequestSigned);
         };
 
         void fetchQr();
-    }, [state, isByValue, isByReference, isDraft23, isDraft21, fetchQrCodeData]);
+    }, [state, isByValue, isByReference, isDraft23, isDraft21, fetchQrCodeData, isRequestSigned]);
 
     useEffect(() => {
         document.title = 'Scan';
@@ -137,56 +118,23 @@ const QrScreen = () => {
         setQrData(null)
         setQrCodeData(null)
         setActualAuthorizationRequestObject(null)
-        setDecodedJwt(null)
-        setIsDecoded(false)
-    }
-    const handleByValueAuthRequest = async () => {
-        if (isByValue)
-            return;
-
-        setIsByValue((prev) => !prev);
-        setIsByReference(false);
-
-        resetValues();
-
-        await fetchQrCodeData(state.name, REQUEST_MODES.BY_VALUE, isDraft23 ? DRAFT_VERSIONS.DRAFT_23 : DRAFT_VERSIONS.DRAFT_21)
     }
 
-    const handleByReferenceAuthRequest = async () => {
-        if (isByReference)
-            return;
-
-        setIsByReference((prev) => !prev);
-        setIsByValue(false);
-
-        resetValues()
-
-        await fetchQrCodeData(state.name, REQUEST_MODES.BY_REFERENCE, isDraft23 ? DRAFT_VERSIONS.DRAFT_23 : DRAFT_VERSIONS.DRAFT_21)
-    }
-
-    const handleDraft23AuthRequest = async () => {
-        if (isDraft23)
-            return;
-
-        setIsDraft23((prev) => !prev);
-        setIsDraft21(false);
-
-        resetValues();
-
-        await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, DRAFT_VERSIONS.DRAFT_23)
-    }
-
-    const handleDraft21AuthRequest = async () => {
-        if (isDraft21)
-            return;
-
-        setIsDraft21((prev) => !prev);
-        setIsDraft23(false);
-
-        resetValues();
-
-        await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, DRAFT_VERSIONS.DRAFT_21)
-    }
+    const handleToggle = async (type: "requestMode" | "draftVersion", value) => {
+        if (type === 'requestMode') {
+            if ((value === REQUEST_MODES.BY_VALUE && isByValue) || (value === REQUEST_MODES.BY_REFERENCE && isByReference)) return;
+            setIsByValue(value === REQUEST_MODES.BY_VALUE);
+            setIsByReference(value === REQUEST_MODES.BY_REFERENCE);
+            resetValues();
+            await fetchQrCodeData(state.name, value, isDraft23 ? DRAFT_VERSIONS.DRAFT_23 : DRAFT_VERSIONS.DRAFT_21);
+        } else if (type === 'draftVersion') {
+            if ((value === DRAFT_VERSIONS.DRAFT_23 && isDraft23) || (value === DRAFT_VERSIONS.DRAFT_21 && isDraft21)) return;
+            setIsDraft23(value === DRAFT_VERSIONS.DRAFT_23);
+            setIsDraft21(value === DRAFT_VERSIONS.DRAFT_21);
+            resetValues();
+            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, value);
+        }
+    };
 
     const downloadQRCode = () => {
         return <a
@@ -210,7 +158,7 @@ const QrScreen = () => {
 
     const handleOpenInjiWeb = () => {
         let encodedRequest = '';
-        
+
         if (actualAuthorizationRequestObject) {
             // For "By Reference" mode, use the fetched authorization request object
             encodedRequest = actualAuthorizationRequestObject;
@@ -218,7 +166,7 @@ const QrScreen = () => {
             // For "By Value" mode, use the qrData (URL string) as the authorization request
             encodedRequest = qrData;
         }
-        
+
         window.open(`${INJIWEB_URL}?authorizationRequestUrl=${encodedRequest}`, '_blank');
     }
 
@@ -251,38 +199,52 @@ const QrScreen = () => {
         </div>;
     }
 
-    const requestToggle = () => {
-        return <Toggle
-            options={[
-                {
-                    name: "By Value",
-                    selected: isByValue,
-                    onChange: handleByValueAuthRequest
-                }, {
-                    name: "By Reference",
-                    selected: isByReference,
-                    onChange: handleByReferenceAuthRequest
-                }
-            ]}
-        />;
-    }
+    const requestModeToggleOptions = [
+        {
+            name: "By Value",
+            selected: isByValue,
+            onChange: () => handleToggle('requestMode', REQUEST_MODES.BY_VALUE)
+        },
+        {
+            name: "By Reference",
+            selected: isByReference,
+            onChange: () => handleToggle('requestMode', REQUEST_MODES.BY_REFERENCE)
+        }
+    ];
 
-    const draftToggle = () => {
-        return <Toggle
-            options={[
-                {
-                    name: "Draft 23",
-                    selected: isDraft23,
-                    onChange: handleDraft23AuthRequest
-                }, {
-                    name: "Draft 21",
-                    selected: isDraft21,
-                    onChange: handleDraft21AuthRequest
-                }
-            ]}
-        />;
-    }
+    const draftVersionOptions = [
+        {
+            name: "Draft 23",
+            selected: isDraft23,
+            onChange: () => handleToggle('draftVersion', DRAFT_VERSIONS.DRAFT_23)
+        },
+        {
+            name: "Draft 21",
+            selected: isDraft21,
+            onChange: () => handleToggle('draftVersion', DRAFT_VERSIONS.DRAFT_21)
+        }
+    ];
 
+    const draftToggle = () => <Toggle options={draftVersionOptions}/>
+    const requestToggle = () => <Toggle options={requestModeToggleOptions}/>
+
+    const renderDecoderAccordion = (title, value, actualSignedData) => (
+        <AccordionSection title={title}>
+            <DecoderEncoderView input={value} actualSignedData={actualSignedData}/>
+        </AccordionSection>
+    );
+
+    const renderInputData = () => (
+        isRequestSigned
+            ? renderDecoderAccordion("Input Data", inputData, inputData["request"])
+            : <AccordionSection title={"Input Data"}><Code value={inputData}/></AccordionSection>
+    );
+
+    const renderActualAuthorizationObject = () => renderDecoderAccordion("Actual Authorization Request Object", actualAuthorizationRequestObject);
+
+    const renderPayload = () => {
+        return <AccordionSection title={"Payload"} value={qrData}/>;
+    }
     if (errorMessage) {
         return (
             <div style={{padding: '20px 30px'}}>
@@ -310,8 +272,17 @@ const QrScreen = () => {
             {header()}
             <div style={styles.content}>
                 <div style={{flex: 1}}>
-                    {requestToggle()}
-                    {draftToggle()}
+                    <div style={{
+                        paddingBottom: 20,
+                    }}>
+                        {requestToggle()}
+                        {draftToggle()}
+                        {
+                            isByValue &&
+                            <CheckBox onClick={(isChecked) => setIsRequestSigned(isChecked)} checked={isRequestSigned}
+                                      label={"Sign the request"} id={"signed"}/>
+                        }
+                    </div>
                     <div style={{maxWidth: '100%'}}>
                         <div>
                             <a href={qrData} target="_blank" rel="noopener noreferrer">
@@ -327,34 +298,12 @@ const QrScreen = () => {
                                         fontSize: '14px',
                                     }}
                                 >
-                                Open InjiWeb
+                                    Open InjiWeb
                                 </Button>
                             </div>
-                            {inputData && (
-                                <AccordionSection title={"Input Data"} value={JSON.stringify(inputData, null, 2)}/>
-                            )}
-                            {qrData && (
-                                <AccordionSection title={"Payload"} value={qrData}/>
-                            )}
-                            {actualAuthorizationRequestObject && (
-                                <AccordionSection title={"Actual Authorization Request Object"}>
-                                    <Toggle options={[
-                                        {
-                                            name: "Decoded",
-                                            selected: isDecoded,
-                                            onChange: handleDecodeJwt
-                                        }, {
-                                            name: "Encoded",
-                                            selected: !isDecoded,
-                                            onChange: () => setIsDecoded(false)
-                                        }
-                                    ]}/>
-                                    <div style={{marginTop: 10}}>
-                                        {isDecoded ? <Code value={decodedJwt}/> :
-                                            <Code value={actualAuthorizationRequestObject}/>}
-                                    </div>
-                                </AccordionSection>
-                            )}
+                            {inputData && renderInputData()}
+                            {qrData && renderPayload()}
+                            {actualAuthorizationRequestObject && renderActualAuthorizationObject()}
                         </div>
                     </div>
                 </div>
