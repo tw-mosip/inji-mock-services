@@ -1,6 +1,6 @@
 const {
-    nonce, state, responseUri, baseUrl, didDocumentUrl, requestUri, clientId, presentationDefinitionUri,
-    CLIENT_ID_SCHEMES, SUPPORT_TYPES, REQUEST_MODES, DRAFT_VERSIONS
+    nonce, state, responseUri, baseUrl, didDocumentUrl, presentationDefinitionUri,
+    CLIENT_ID_SCHEMES, REQUEST_MODES, DRAFT_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES
 } = require("./constants");
 const clientMetadata = require('./clientMetadataMock.json');
 
@@ -131,8 +131,8 @@ const didAuthorizationRequestParamsDraft21 = {
 // Final map of all combinations
 const finalAuthRequestMap = {
     [CLIENT_ID_SCHEMES.PRE_REGISTERED]: {
-        [SUPPORT_TYPES.SUPPORTS_BY_REFERENCE]: true,
-        [SUPPORT_TYPES.SUPPORTS_BY_VALUE]: true,
+        [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED] : true,
+        [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED] : true,
         [REQUEST_MODES.BY_REFERENCE]: {
             [DRAFT_VERSIONS.DRAFT_23]: preRegisteredAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: preRegisteredAuthorizationRequestParamsDraft21,
@@ -143,8 +143,8 @@ const finalAuthRequestMap = {
         }
     },
     [CLIENT_ID_SCHEMES.REDIRECT_URI]: {
-        [SUPPORT_TYPES.SUPPORTS_BY_REFERENCE]: false,
-        [SUPPORT_TYPES.SUPPORTS_BY_VALUE]: true,
+        [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED] : false,
+        [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED] : true,
         [REQUEST_MODES.BY_REFERENCE]: {
             [DRAFT_VERSIONS.DRAFT_23]: redirectUriAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: redirectUriAuthorizationRequestParamsDraft21,
@@ -155,8 +155,8 @@ const finalAuthRequestMap = {
         }
     },
     [CLIENT_ID_SCHEMES.DID]: {
-        [SUPPORT_TYPES.SUPPORTS_BY_REFERENCE]: true,
-        [SUPPORT_TYPES.SUPPORTS_BY_VALUE]: false,
+        [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED] : true,
+        [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED] : false,
         [REQUEST_MODES.BY_REFERENCE]: {
             [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: didAuthorizationRequestParamsDraft21,

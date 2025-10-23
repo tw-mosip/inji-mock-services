@@ -49,10 +49,10 @@ const REQUEST_MODES = {
     BY_REFERENCE: "by_reference"
 }
 
-// enum for support types
-const SUPPORT_TYPES = {
-    SUPPORTS_BY_VALUE: "supports_by_value",
-    SUPPORTS_BY_REFERENCE: "supports_by_reference"
+// enum for supporting signed request or not
+const REQUEST_SIGNING_SUPPORT_MODES = {
+    SIGNED_REQUEST_SUPPORTED : 'signed_request_supported',
+    UNSIGNED_REQUEST_SUPPORTED : 'unsigned_request_supported',
 }
 
 module.exports = {
@@ -70,8 +70,8 @@ module.exports = {
     ContentTypes,
     jwkSet,
 
-    SUPPORT_TYPES,
     REQUEST_MODES,
     CLIENT_ID_SCHEMES,
     DRAFT_VERSIONS,
+    REQUEST_SIGNING_SUPPORT_MODES
 };

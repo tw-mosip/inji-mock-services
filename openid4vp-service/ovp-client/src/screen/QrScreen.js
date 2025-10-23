@@ -90,6 +90,7 @@ const QrScreen = () => {
 
                 setActualAuthorizationRequestObject(uriResponse.data);
             }
+            setErrorMessage(null)
         } catch (error) {
             resetValues()
             console.error("Error fetching QR code data:", error);
@@ -228,6 +229,16 @@ const QrScreen = () => {
     const draftToggle = () => <Toggle options={draftVersionOptions}/>
     const requestToggle = () => <Toggle options={requestModeToggleOptions}/>
 
+    const signRequestToggle = () =>
+        isByValue ? (
+            <CheckBox
+                onClick={(isChecked) => setIsRequestSigned(isChecked)}
+                checked={isRequestSigned}
+                label={"Sign the request"}
+                id={"signed"}
+            />
+        ) : null;
+
     const renderDecoderAccordion = (title, value, actualSignedData) => (
         <AccordionSection title={title}>
             <DecoderEncoderView input={value} actualSignedData={actualSignedData}/>
@@ -252,6 +263,7 @@ const QrScreen = () => {
                 <div style={{paddingLeft: 40}}>
                     {requestToggle()}
                     {draftToggle()}
+                    {signRequestToggle()}
                     <Error message={errorMessage}/>
                 </div>
             </div>
@@ -277,18 +289,14 @@ const QrScreen = () => {
                     }}>
                         {requestToggle()}
                         {draftToggle()}
-                        {
-                            isByValue &&
-                            <CheckBox onClick={(isChecked) => setIsRequestSigned(isChecked)} checked={isRequestSigned}
-                                      label={"Sign the request"} id={"signed"}/>
-                        }
+                        {signRequestToggle()}
                     </div>
                     <div style={{maxWidth: '100%'}}>
                         <div>
                             <a href={qrData} target="_blank" rel="noopener noreferrer">
                                 <Image src={qrCodeData} alt={"QR code"}/>
                             </a>
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '10px', alignItems: 'center' }}>
+                            <div style={{display: 'flex', gap: '10px', marginTop: '10px', alignItems: 'center'}}>
                                 {downloadQRCode()}
                                 <Button
                                     onClick={handleOpenInjiWeb}

@@ -7,19 +7,20 @@ const {createJWT} = require("./jwt");
 const cors = require('cors');
 
 const app = express();
-const {ContentTypes, REQUEST_MODES, DRAFT_VERSIONS, SUPPORT_TYPES, baseUrl, jwkSet} = require("./constants");
+const {
+    ContentTypes,
+    REQUEST_MODES,
+    baseUrl,
+    jwkSet,
+    REQUEST_SIGNING_SUPPORT_MODES
+} = require("./constants");
 const {
     preRegisteredAuthorizationRequest,
     didAuthorizationRequest,
     redirectAuthorizationRequest,
     authorizationRequestParams,
-    preRegisteredAuthorizationRequestDraft21,
-    didAuthorizationRequestDraft21,
-    redirectAuthorizationRequestDraft21,
-    authorizationRequestParamsDraft21,
     finalAuthRequestMap
 } = require("./inputData");
-const crypto = require("crypto");
 const PORT = 3000;
 
 let responseReceived = false;
@@ -55,91 +56,12 @@ function createUrlWithParams(params) {
 const providedCombinationIsNotSupported = 'Bad Request: Provided combination is not supported';
 
 app.get('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => {
-    try {
-        const {client_id_scheme} = req.params;
-        const draftVersion = req.query.draft;
-        
-        if (!draftVersion) {
-            res.status(400).send('Bad Request: draft parameter is required');
-            return;
-        }
-        
-        let finalAuthRequestMapElement = finalAuthRequestMap[client_id_scheme];
-
-        if (!finalAuthRequestMapElement?.[SUPPORT_TYPES.SUPPORTS_BY_REFERENCE]) {
-            res.status(400).send(`Bad Request: ${client_id_scheme} does not support by_reference mode`);
-            return;
-        }
-
-        let inputData = finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion];
-
-        if (!inputData) {
-            console.error('Error generating JWT:', "Provided combination is not supported - ", {
-                client_id_scheme,
-                draftVersion
-            });
-            res.status(400).send(providedCombinationIsNotSupported);
-            return;
-        }
-        
-        const jwt = await createJWT(inputData);
-        res.contentType(ContentTypes.JWT);
-        res.send(jwt);
-    } catch (error) {
-        console.error('Error generating JWT :', error);
-        if(error.message === providedCombinationIsNotSupported) {
-            res.status(400).send(error.message);
-            return
-        }
-        res.status(500).send('Internal Server Error');
-    }
+    await createRequestUriResponse(req, res);
 });
 
 app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => {
-    try {
-        console.log("Received request with request body:", req.body);
-        const {client_id_scheme} = req.params;
-        const draftVersion = req.query.draft;
-        
-        if (!draftVersion) {
-            res.status(400).send('Bad Request: draft parameter is required');
-            return;
-        }
-        
-        // Select the correct authorization request based on client_id_scheme and draft
-        let authorizationRequest;
-        if (client_id_scheme === 'pre-registered') {
-            authorizationRequest = draftVersion === 'draft-21' 
-                ? preRegisteredAuthorizationRequestDraft21 
-                : preRegisteredAuthorizationRequest;
-        } else if (client_id_scheme === 'redirect_uri') {
-            authorizationRequest = draftVersion === 'draft-21' 
-                ? redirectAuthorizationRequestDraft21 
-                : redirectAuthorizationRequest;
-        } else if (client_id_scheme === 'did') {
-            authorizationRequest = draftVersion === 'draft-21' 
-                ? didAuthorizationRequestDraft21 
-                : didAuthorizationRequest;
-        } else {
-            res.status(400).send('Bad Request: Unsupported client_id_scheme');
-            return;
-        }
-        
-        const walletNonce = req.body?.wallet_nonce;
-        const jwt = walletNonce
-            ? await createJWT({...authorizationRequest, wallet_nonce: walletNonce})
-            : await createJWT(authorizationRequest);
-        res.contentType(ContentTypes.JWT);
-        res.send(jwt);
-
-    } catch (error) {
-        console.error('Error generating JWT :', error);
-        if(error.message === providedCombinationIsNotSupported) {
-            res.status(400).send(error.message);
-            return
-        }
-        res.status(500).send('Internal Server Error');
-    }
+    const walletNonce = req.body?.wallet_nonce;
+    await createRequestUriResponse(req, res, walletNonce);
 });
 
 // API to generate QR codes for different client_id schemes and request modes
@@ -147,6 +69,7 @@ app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) =>
 // client_id_scheme = pre-registered, redirect_uri, did
 // request_mode = by_value, by_reference
 // draft_version = draft-21, draft-23 (default draft-23)
+
 // signed = true|false (default false) - whether the request should be signed or not (only applicable for by_value mode)
 app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
     const {client_id_scheme, request_mode} = req.params;
@@ -158,38 +81,72 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
         return;
     }
 
-    let finalAuthRequestMapElement = finalAuthRequestMap[client_id_scheme];
+    const finalAuthRequestMapElement = finalAuthRequestMap[client_id_scheme];
 
-    if (!finalAuthRequestMapElement[`supports_${request_mode}`]) {
-        res.status(400).send(`Bad Request: ${client_id_scheme} does not support ${request_mode} mode`);
-        return
+    if (!finalAuthRequestMapElement) {
+        console.error("Error generating QR code:", `Unsupported client_id_scheme ${client_id_scheme}`);
+        res.status(400).send(`Bad Request: Unsupported client_id_scheme ${client_id_scheme}`);
+        return;
     }
 
-    let inputData = finalAuthRequestMapElement?.[request_mode]?.[draftVersion];
+    if (request_mode === REQUEST_MODES.BY_REFERENCE) {
+        // by_reference mode mean request uri is hit which in turn returns a signed request
+        // if signed request is not supported, then by reference mode is not supported
+        if (!finalAuthRequestMapElement[REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]) {
+            const errorMessage = `Bad Request: ${client_id_scheme} does not support signed request, so by_reference mode is not possible`;
+            console.error("Error generating QR code:", errorMessage);
+            res.status(400).send(errorMessage);
+            return;
+        }
 
-    if (!inputData) {
-        console.error('Error generating QR code:', "Provided combination is not supported - ", {
-            client_id_scheme,
-            request_mode,
-            draftVersion
-        });
-        res.status(400).send(providedCombinationIsNotSupported);
-        return
-    }
+        // signed toggle is not applicable for by_reference mode so skip signed check
 
-    if (signed) {
-        const clientId = inputData.client_id;
-        const request = await createJWT(inputData);
-        inputData = {client_id: clientId, request};
-    }
+        const inputData = finalAuthRequestMapElement?.[request_mode]?.[draftVersion];
+        if (!inputData) {
+            console.error('Error generating QR code:', "Provided combination is not supported - ", {
+                client_id_scheme,
+                request_mode,
+                draftVersion
+            });
+            res.status(400).send(providedCombinationIsNotSupported);
+            return;
+        }
 
-    try {
-        const qrData = createUrlWithParams(inputData);
-        const qrCodeData = await QRCode.toDataURL(qrData);
-        res.json({qrCodeData, qrData, inputData});
-    } catch (error) {
-        console.error('Error generating QR code:', error);
-        res.status(500).send('Internal Server Error');
+        await generateQrCodeResponse(inputData, res)
+    } else { // By value mode
+        let inputData = finalAuthRequestMapElement?.[request_mode]?.[draftVersion];
+
+        if (!inputData) {
+            console.error('Error generating QR code:', "Provided combination is not supported - ", {
+                client_id_scheme,
+                request_mode,
+                draftVersion
+            });
+
+            res.status(400).send(providedCombinationIsNotSupported);
+            return
+        }
+
+        if (signed) {
+            if( !finalAuthRequestMapElement[REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]) {
+                console.error("Error generating QR code:", `${client_id_scheme} does not support signed request`);
+
+                res.status(400).send(`Bad Request: ${client_id_scheme} does not support ${request_mode} mode with signed request\nAction: try switching to unsigned request`);
+                return
+            }
+
+            const clientId = inputData.client_id;
+            const request = await createJWT(inputData);
+
+            inputData = {client_id: clientId, request};
+        } else if ( !finalAuthRequestMapElement[REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED]) { // if signed flag is false and unsigned request is not supported, throw error
+            console.error("Error generating QR code:", `${client_id_scheme} does not support unsigned request`);
+
+            res.status(400).send(`Bad Request: ${client_id_scheme} does not support unsigned request in ${request_mode} mode\nAction: try switching to signed request`);
+            return
+        }
+
+        await generateQrCodeResponse(inputData, res);
     }
 });
 
@@ -315,26 +272,56 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
-const extractByReferenceInputData = (req) => {
-    const {client_id_scheme} = req.params;
-    const draftVersion = req.query.draft || DRAFT_VERSIONS.DRAFT_23;
+const createRequestUriResponse = async (req, res, walletNonce = null) => {
+    try {
+        const {client_id_scheme} = req.params;
+        const draftVersion = req.query.draft;
 
-    let finalAuthRequestMapElement = finalAuthRequestMap[client_id_scheme];
+        if (!draftVersion) {
+            res.status(400).send('Bad Request: draft parameter is required');
+            return;
+        }
 
-    if (!finalAuthRequestMapElement?.[SUPPORT_TYPES.SUPPORTS_BY_REFERENCE]) {
-        console.error('Error generating JWT :', `${client_id_scheme} does not support by_reference mode`);
-        throw new Error(providedCombinationIsNotSupported);
+        let finalAuthRequestMapElement = finalAuthRequestMap[client_id_scheme];
+
+        if (!finalAuthRequestMapElement?.[REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]) {
+            res.status(400).send(`Bad Request: ${client_id_scheme} does not support signed request, so by_reference mode is not possible`);
+            return;
+        }
+
+        let inputData = finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion];
+
+        if (!inputData) {
+            console.error('Error generating JWT:', "Provided combination is not supported - ", {
+                client_id_scheme,
+                draftVersion
+            });
+            res.status(400).send(providedCombinationIsNotSupported);
+            return;
+        }
+
+        const jwt = walletNonce
+            ? await createJWT({...inputData, wallet_nonce: walletNonce})
+            : await createJWT(inputData);
+        res.contentType(ContentTypes.JWT);
+        res.send(jwt);
+    } catch (error) {
+        console.error('Error generating JWT :', error);
+        if (error.message === providedCombinationIsNotSupported) {
+            res.status(400).send(error.message);
+            return
+        }
+        res.status(500).send('Internal Server Error');
     }
+}
 
-    let inputData = finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion];
-
-    if (!inputData) {
-        console.error('Error generating JWT :', "Provided combination is not supported - ", {
-            client_id_scheme,
-            draftVersion
-        });
-
-        throw new Error(providedCombinationIsNotSupported);
+const generateQrCodeResponse = async (inputData, res) => {
+    try {
+        const qrData = createUrlWithParams(inputData);
+        const qrCodeData = await QRCode.toDataURL(qrData);
+        res.json({qrCodeData, qrData, inputData});
+    } catch (error) {
+        console.error('Error generating QR code:', error);
+        res.status(500).send('Internal Server Error');
     }
-    return inputData;
 }

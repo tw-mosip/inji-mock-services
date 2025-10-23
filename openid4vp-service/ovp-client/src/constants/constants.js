@@ -18,8 +18,3 @@ export const REQUEST_MODES = {
 }
 
 // enum for support types
-export const SUPPORT_TYPES = {
-    SUPPORTS_BY_VALUE: "supports_by_value",
-    SUPPORTS_BY_REFERENCE: "supports_by_reference"
-}
-
