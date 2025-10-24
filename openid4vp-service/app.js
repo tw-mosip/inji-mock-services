@@ -273,6 +273,9 @@ app.listen(PORT, () => {
 });
 
 const createRequestUriResponse = async (req, res, walletNonce = null) => {
+    console.log("Time :", Date.now().toLocaleString());
+    console.log("received call to request_uri endpoint with header:", req.headers);
+    console.log("received call to request_uri endpoint with body:", req.body);
     try {
         const {client_id_scheme} = req.params;
         const draftVersion = req.query.draft;
