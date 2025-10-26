@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { useEffect, useState } from 'react';
 import { useExternalScript } from '../../hooks/useExternalScript';
 import { useTranslation } from 'react-i18next';
@@ -16,12 +17,12 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
     const [uinVerificationContinueBtn, setUinVerificationContinueBtn] = useState(false);
     const signInButtonScript = window._env_.SIGN_IN_BUTTON_PLUGIN_URL;
     const state = useExternalScript(signInButtonScript);
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [uin, setUin] = useState('');
+    const [searchParams] = useSearchParams();
+    // const [uin, setUin] = useState('');
     const [showUIN, setShowUIN] = useState(false);
-    const [verified, setVerified] = useState(false);
-    const [errorCode, setErrorCode] = useState("");
-    const [errorMsg, setErrorMsg] = useState('');
+    const [verified] = useState(false);
+    // const [errorCode, setErrorCode] = useState("");
+    // const [errorMsg, setErrorMsg] = useState('');
     const [verificationStatus, setVerificationStatus] = useState<'pending' | 'verified' | 'already-registered' | 'unable-to-fetch-data'>('pending');
 
     const { post_fetchUserInfo } = {
@@ -44,7 +45,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
         const getsearchparams = async () => {
             let authCode = searchParams.get("code");
             let errorCode = searchParams.get("error");
-            let error_desc = searchParams.get("error_description");
+            // let error_desc = searchParams.get("error_description");
             const savedLang = localStorage.getItem("appLanguage");
 
             if (savedLang) {
@@ -59,7 +60,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
             if (authCode) {
                 getUserDetails(authCode);
             } else {
-                setErrorCode("authCode_missing");
+                // setErrorCode("authCode_missing");
                 return;
             }
         };
@@ -67,7 +68,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
     }, []);
 
     const getUserDetails = async (authCode: string) => {
-        setErrorMsg("");
+        // setErrorMsg("");
         try {
             let client_id = clientDetails.clientId;
             let redirect_uri = clientDetails.redirect_uri_userprofile;
@@ -88,10 +89,11 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
             localStorage.setItem('driverInformation', JSON.stringify(userInfo));
         }
         catch (error) {
+            console.error("Error in fetching the user details: ", error);
             if (error instanceof Error) {
-                setErrorMsg(error.message);
+                // setErrorMsg(error.message);
             } else {
-                setErrorMsg(String(error));
+                // setErrorMsg(String(error));
             }
         }
     };

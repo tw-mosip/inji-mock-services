@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { TruckpassRequestStepper } from './TruckpassRequestStepper';
-import helpIcon from '../../assets/help_icon.png';
 import vehicleIcon from '../../assets/truck_icon.png';
 import { CertificateUploadingSection } from '../../components/CertificateUploadSection';
 import { DropDownSelection } from '../../components/DropDownSelection';
@@ -14,7 +13,7 @@ export const VehicleDetails = () => {
   const [selectedVehicleType, setSelectedVehicleType] = useState<any>(null);
   const [selectedAxleSize, setSelectedAxleSize] = useState<any>(null);
   const [truckLicensePlate, setTruckLicensePlate] = useState('');
-  const [truckLicensePlateErrorMsg, setTruckLicensePlateErrorMsg] = useState('');
+  const [truckLicensePlateErrorMsg] = useState('');
   const [vehicleRegDocumentUploading, setVehicleRegDocumentUploading] = useState(false);
   const [vehicleRegDocumentUploaded, setVehicleRegDocumentUploaded] = useState(false);
   const [vehicleRegDocumentData, setVehicleRegDocumentData] = useState<string | null>(null);

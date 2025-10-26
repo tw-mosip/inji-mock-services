@@ -4,8 +4,8 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import tickIcon from '../../assets/confirmation_icon.png';
-import { base64ToFile } from '../../commans/AppUtilities';
-import relyingPartyService from '../../services/relyingPartyService';
+// import { base64ToFile } from '../../commans/AppUtilities';
+// import relyingPartyService from '../../services/relyingPartyService';
 
 export const ReviewPage = () => {
   const { t } = useTranslation('');
@@ -18,7 +18,7 @@ export const ReviewPage = () => {
   const [journeyDetails, setJourneyDetails] = useState<JourneyDetailsInfo | null>(null);
 
 
-  const { post_driver_details } = { ...relyingPartyService };
+  // const { post_driver_details } = { ...relyingPartyService };
 
   const setLocalStoredData = (key: string, setItemDetails: (item: any) => void) => {
     const data = localStorage.getItem(key);
@@ -42,35 +42,35 @@ export const ReviewPage = () => {
   }
 
   const confirmAndSubmit = async () => {
-    const payload = {
-      driverUin: driverInformation?.uin,
-      driverName: driverInformation?.fullName,
-      phoneNumber: driverInformation?.phoneNumber,
-      gender: driverInformation?.gender,
-      emailId: driverInformation?.emailId,
-      city: driverInformation?.city,
-      faceImagePath: driverInformation?.faceImagePath,  //Convert into actual file using base64ToFile before posting as like other documents.
-      driverLicenseNumber: vehicleDetails?.truckLicensePlate,
-      passportNumber: driverInformation?.passportNumber,
-
-      invoiceNumber: consignmentDetails?.inVoiceNumber,
-      cmrWaybill: consignmentDetails?.waybillNumber,
-      customsDocumentation: consignmentDetails?.customDocument ? base64ToFile(consignmentDetails?.customDocument, 'customDocument.pdf') : '',
-      weightCertificatePath: consignmentDetails?.weightCertificate ? base64ToFile(consignmentDetails?.weightCertificate, 'weightCertificate.pdf') : '',
-
-      vehicleType: vehicleDetails?.vehicleType,
-      axleSize: vehicleDetails?.axleSize,
-      vehicleRegistrationDocsPath: vehicleDetails?.vehicleRegistrationDocument ? base64ToFile(vehicleDetails?.vehicleRegistrationDocument, 'vehicleRegistrationDocument.pdf') : '',
-      truckLicensePlate: vehicleDetails?.truckLicensePlate,
-
-      exporterName: journeyDetails?.exporterCompany,
-      importerName: journeyDetails?.importerCompany,
-      entryExitPoint: journeyDetails?.borderOfArrival,
-      countryOrigin: journeyDetails?.originCountry,
-      countryDestination: journeyDetails?.destinationCountry,
-      dateDeparture: journeyDetails?.dateOfDeparture,
-      dateReturn: journeyDetails?.dateOfArrival,
-    };
+    // const payload = {
+    //   driverUin: driverInformation?.uin,
+    //   driverName: driverInformation?.fullName,
+    //   phoneNumber: driverInformation?.phoneNumber,
+    //   gender: driverInformation?.gender,
+    //   emailId: driverInformation?.emailId,
+    //   city: driverInformation?.city,
+    //   faceImagePath: driverInformation?.faceImagePath,  //Convert into actual file using base64ToFile before posting as like other documents.
+    //   driverLicenseNumber: vehicleDetails?.truckLicensePlate,
+    //   passportNumber: driverInformation?.passportNumber,
+    //
+    //   invoiceNumber: consignmentDetails?.inVoiceNumber,
+    //   cmrWaybill: consignmentDetails?.waybillNumber,
+    //   customsDocumentation: consignmentDetails?.customDocument ? base64ToFile(consignmentDetails?.customDocument, 'customDocument.pdf') : '',
+    //   weightCertificatePath: consignmentDetails?.weightCertificate ? base64ToFile(consignmentDetails?.weightCertificate, 'weightCertificate.pdf') : '',
+    //
+    //   vehicleType: vehicleDetails?.vehicleType,
+    //   axleSize: vehicleDetails?.axleSize,
+    //   vehicleRegistrationDocsPath: vehicleDetails?.vehicleRegistrationDocument ? base64ToFile(vehicleDetails?.vehicleRegistrationDocument, 'vehicleRegistrationDocument.pdf') : '',
+    //   truckLicensePlate: vehicleDetails?.truckLicensePlate,
+    //
+    //   exporterName: journeyDetails?.exporterCompany,
+    //   importerName: journeyDetails?.importerCompany,
+    //   entryExitPoint: journeyDetails?.borderOfArrival,
+    //   countryOrigin: journeyDetails?.originCountry,
+    //   countryDestination: journeyDetails?.destinationCountry,
+    //   dateDeparture: journeyDetails?.dateOfDeparture,
+    //   dateReturn: journeyDetails?.dateOfArrival,
+    // };
 
     // try {
     //   const response = await post_driver_details(payload);

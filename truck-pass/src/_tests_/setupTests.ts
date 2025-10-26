@@ -8,24 +8,30 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Mock FileReader
-global.FileReader = jest.fn(() => {
-  const mockReader = {
-    readAsText: jest.fn((file) => {
-      console.log('Mock FileReader reading:', file.name);
-      Promise.resolve().then(() => {
-        if (mockReader.onload) {
-          mockReader.onload({
-            target: { result: `data for ${file.name}` },
-          } as ProgressEvent<FileReader>);
-        }
-      });
-    }),
-    onload: null,
-    onloadend: null,
-    result: null,
-  };
-  return mockReader as any;
-});
+// Mock FileReader with required static properties and correct types
+class MockFileReader {
+  static readonly EMPTY = 0;
+  static readonly LOADING = 1;
+  static readonly DONE = 2;
+
+  public result: string | null = null;
+  public onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
+  public onloadend: ((event: ProgressEvent<FileReader>) => void) | null = null;
+
+  readAsText(file: { name: string }) {
+    // Simulate async file reading
+    Promise.resolve().then(() => {
+      if (this.onload) {
+        this.result = `data for ${file.name}`;
+        this.onload({
+          target: { result: this.result },
+        } as ProgressEvent<FileReader>);
+      }
+    });
+  }
+}
+
+global.FileReader = MockFileReader as any;
 
 // Clear mocks before each test
 beforeEach(() => {
@@ -36,7 +42,7 @@ beforeEach(() => {
 import { act } from '@testing-library/react';
 
 const originalAct = act;
-global.act = (callback: () => void | Promise<void>) => {
+(global as any).act = (callback: () => void | Promise<void>) => {
   return originalAct(async () => {
     await callback();
     // Flush microtasks and ensure all timers are processed

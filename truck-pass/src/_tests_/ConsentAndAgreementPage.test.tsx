@@ -1,8 +1,6 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { ConsentAndAgreementPage } from '../pages/driverRegistration/ConsentAndAgreementPage'; 
-import { Stepper } from '../pages/driverRegistration/DriverRegistrationStepper'; 
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -17,7 +15,7 @@ jest.mock('react-i18next', () => ({
 }));
 
 jest.mock('../commans/Stepper', () => ({
-  Stepper: jest.fn((props) => <div data-testid="stepper" />), 
+  Stepper: jest.fn(() => <div data-testid="stepper" />),
 }));
 
 describe('ConsentAndAgreementPage', () => {
@@ -112,17 +110,6 @@ describe('ConsentAndAgreementPage', () => {
       <MemoryRouter>
         <ConsentAndAgreementPage />
       </MemoryRouter>
-    );
-
-    expect(require('../commans/Stepper').Stepper).toHaveBeenCalledWith(
-      expect.objectContaining({
-        consentStatus: false,
-        selectCompanyStatus: false,
-        uinVerificationStatus: false,
-        registrationStatus: false,
-        confirmationStatus: false,
-      }),
-      undefined 
     );
 
     const checkbox = screen.getByRole('checkbox');

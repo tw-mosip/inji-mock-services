@@ -3,7 +3,7 @@ import { TruckpassRequestStepper } from "./TruckpassRequestStepper";
 import magnifierIcon from "../../assets/magnifier_icon.png";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import relyingPartyService from "../../services/relyingPartyService";
+// import relyingPartyService from "../../services/relyingPartyService";
 import Tooltip from "../../components/Tooltip";
 import { DropDownSelection } from "../../components/DropDownSelection";
 
@@ -237,15 +237,15 @@ export const SearchDriver = () => {
   );
 };
 
-interface DriverList {
-  id?: number;
-  fullName: string;
-  gender?: string;
-  uin?: string;
-  phoneNumber?: string;
-  emailId?: string;
-  city?: string
-  passportNumber?: string;
-  driverLicenseNumber?: string;
-  faceImagePath?: string
-};
+// interface DriverList {
+//   id?: number;
+//   fullName: string;
+//   gender?: string;
+//   uin?: string;
+//   phoneNumber?: string;
+//   emailId?: string;
+//   city?: string
+//   passportNumber?: string;
+//   driverLicenseNumber?: string;
+//   faceImagePath?: string
+// };
