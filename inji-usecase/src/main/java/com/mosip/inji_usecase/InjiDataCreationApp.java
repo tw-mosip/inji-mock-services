@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.mosip.inji_usecase.entity.EntityMetadata;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootApplication
+@EntityScan(basePackages = "com.mosip.inji_usecase.entity")
 public class InjiDataCreationApp {
 
 	public static void main(String[] args) {

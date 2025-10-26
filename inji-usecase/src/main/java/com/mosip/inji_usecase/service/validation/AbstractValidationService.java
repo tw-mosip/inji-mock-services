@@ -1,20 +1,12 @@
 package com.mosip.inji_usecase.service.validation;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 public abstract class AbstractValidationService implements ValidationService {
 
@@ -74,6 +66,4 @@ public abstract class AbstractValidationService implements ValidationService {
         verifyFieldService.verifyRequired(data, requiredFields);
         verifyFieldService.verify(data, fields);
     }
-
-
 }

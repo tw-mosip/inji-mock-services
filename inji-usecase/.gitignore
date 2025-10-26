@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+## Inji usecase ##
+truck-pass/.idea/
+truck-pass/dist/
+truck-pass/node_modules/
