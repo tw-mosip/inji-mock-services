@@ -3,7 +3,6 @@ package com.mosip.inji_usecase.entity.data;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,6 @@ import org.hibernate.type.SqlTypes;
 import java.util.Map;
 
 @Entity
-@Table(name = "entity_data", schema = "inji_usecase")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
