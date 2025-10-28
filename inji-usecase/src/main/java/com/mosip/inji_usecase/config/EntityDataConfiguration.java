@@ -38,7 +38,7 @@ public class EntityDataConfiguration {
         return JpaConfigHelper.createEntityManagerFactory(
                 builder,
                 dataSource,
-                "com.mosip.inji_usecase.entity",
+                "com.mosip.inji_usecase.entity.data",
                 "entityData");
     }
 

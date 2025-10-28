@@ -1,6 +1,6 @@
 package com.mosip.inji_usecase.controller;
 
-import com.mosip.inji_usecase.entity.EntityData;
+import com.mosip.inji_usecase.entity.data.EntityData;
 import com.mosip.inji_usecase.service.GenericCrudService;
 import com.mosip.inji_usecase.service.query.SearchCriteria;
 import com.mosip.inji_usecase.service.repository.RepositoryService;

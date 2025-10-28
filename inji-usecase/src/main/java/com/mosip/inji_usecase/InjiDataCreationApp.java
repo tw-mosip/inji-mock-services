@@ -2,7 +2,7 @@ package com.mosip.inji_usecase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.mosip.inji_usecase.entity.EntityMetadata;
+import com.mosip.inji_usecase.entity.data.EntityMetadata;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

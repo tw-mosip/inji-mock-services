@@ -1,4 +1,4 @@
-package com.mosip.inji_usecase.entity;
+package com.mosip.inji_usecase.entity.data;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

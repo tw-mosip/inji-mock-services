@@ -1,7 +1,7 @@
 package com.mosip.inji_usecase.service;
 
-import com.mosip.inji_usecase.entity.EntityData;
-import com.mosip.inji_usecase.entity.EntityMetadata;
+import com.mosip.inji_usecase.entity.data.EntityData;
+import com.mosip.inji_usecase.entity.data.EntityMetadata;
 import com.mosip.inji_usecase.service.query.EntityDataSpecification;
 import com.mosip.inji_usecase.service.query.SearchCriteria;
 import com.mosip.inji_usecase.service.validation.EntityDataValidationService;

@@ -1,6 +1,6 @@
 package com.mosip.inji_usecase.service.query;
 
-import com.mosip.inji_usecase.entity.EntityData;
+import com.mosip.inji_usecase.entity.data.EntityData;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 

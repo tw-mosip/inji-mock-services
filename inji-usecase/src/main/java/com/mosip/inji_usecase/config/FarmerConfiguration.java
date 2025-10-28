@@ -25,14 +25,14 @@ import jakarta.persistence.EntityManagerFactory;
 public class FarmerConfiguration {
 
     @Bean
-    @Primary  // Add this
+//    @Primary  // Add this
     @ConfigurationProperties(prefix = "spring.farmer-datasource")
     public DataSource farmerDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean
-    @Primary  // Add this
+//    @Primary  // Add this
     public LocalContainerEntityManagerFactoryBean farmerEntityManager(
             @Qualifier("farmerDataSource") DataSource dataSource,
             EntityManagerFactoryBuilder builder) {
@@ -44,7 +44,7 @@ public class FarmerConfiguration {
     }
 
     @Bean
-    @Primary  // Add this
+//    @Primary  // Add this
     public PlatformTransactionManager farmerTransactionManager(
             @Qualifier("farmerEntityManager") EntityManagerFactory emf) {
         return JpaConfigHelper.createTransactionManager(emf);
