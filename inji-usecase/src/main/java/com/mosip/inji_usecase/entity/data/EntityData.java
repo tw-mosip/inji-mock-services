@@ -14,7 +14,7 @@ import org.hibernate.type.SqlTypes;
 import java.util.Map;
 
 @Entity
-@Table(name = "entity_data", schema = "inji_usecase_generic")
+@Table(name = "entity_data", schema = "inji_usecase")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
