@@ -1,7 +1,6 @@
 package com.mosip.inji_usecase.config;
 
-import javax.sql.DataSource;
-
+import jakarta.persistence.EntityManagerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -14,39 +13,39 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import jakarta.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
 
 @Configuration
 @PropertySource({ "classpath:database.properties" })
 @EnableJpaRepositories(
-        basePackages="com.mosip.inji_usecase.repository.farmer",
-        entityManagerFactoryRef="farmerEntityManager",
-        transactionManagerRef="farmerTransactionManager")
-public class FarmerConfiguration {
+        basePackages="com.mosip.inji_usecase.repository.data",
+        entityManagerFactoryRef="entityDataEntityManager",
+        transactionManagerRef="entityDataTransactionManager")
+public class EntityDataConfiguration {
 
     @Bean
     @Primary  // Add this
-    @ConfigurationProperties(prefix = "spring.farmer-datasource")
-    public DataSource farmerDataSource() {
+    @ConfigurationProperties(prefix = "spring.entity-datasource")
+    public DataSource entityDataSource() {
         return DataSourceBuilder.create().build();
     }
 
     @Bean
     @Primary  // Add this
-    public LocalContainerEntityManagerFactoryBean farmerEntityManager(
-            @Qualifier("farmerDataSource") DataSource dataSource,
+    public LocalContainerEntityManagerFactoryBean entityDataEntityManager(
+            @Qualifier("entityDataSource") DataSource dataSource,
             EntityManagerFactoryBuilder builder) {
         return JpaConfigHelper.createEntityManagerFactory(
                 builder,
                 dataSource,
-                "com.mosip.inji_usecase.entity.farmer",
-                "farmer");
+                "com.mosip.inji_usecase.entity",
+                "entityData");
     }
 
     @Bean
     @Primary  // Add this
-    public PlatformTransactionManager farmerTransactionManager(
-            @Qualifier("farmerEntityManager") EntityManagerFactory emf) {
+    public PlatformTransactionManager entityDataTransactionManager(
+            @Qualifier("entityDataEntityManager") EntityManagerFactory emf) {
         return JpaConfigHelper.createTransactionManager(emf);
     }
 }

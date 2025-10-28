@@ -13,7 +13,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,7 @@ public class GenericCrudService {
     private final EntityMetadata entityMetadata;
     private final VerifyFieldService verifyFieldService;
 
-    public GenericCrudService(@Qualifier("entityDataManager") EntityManager entityManager, EntityMetadata entityMetadata, VerifyFieldService verifyFieldService) {
+    public GenericCrudService(EntityManager entityManager, EntityMetadata entityMetadata, VerifyFieldService verifyFieldService) {
         this.entityManager = entityManager;
         this.entityMetadata = entityMetadata;
         this.verifyFieldService = verifyFieldService;
