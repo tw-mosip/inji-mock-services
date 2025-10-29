@@ -17,17 +17,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
-public class GenericCrudService {
+public class DataService {
 
     private final EntityManager entityManager;
     private final EntityMetadata entityMetadata;
     private final VerifyFieldService verifyFieldService;
 
-    public GenericCrudService(EntityManager entityManager, EntityMetadata entityMetadata, VerifyFieldService verifyFieldService) {
+    public DataService(EntityManager entityManager, EntityMetadata entityMetadata, VerifyFieldService verifyFieldService) {
         this.entityManager = entityManager;
         this.entityMetadata = entityMetadata;
         this.verifyFieldService = verifyFieldService;
@@ -64,10 +65,18 @@ public class GenericCrudService {
     }
 
     @Transactional(readOnly = true)
-    public List<EntityData> readAll(String entityName) {
-        return entityManager.createQuery("SELECT e FROM EntityData e WHERE e.entityType = :entityType", EntityData.class)
+    public List<Map<String, Object>> readAll(String entityName) {
+        List<EntityData> result = entityManager.createQuery("SELECT e FROM EntityData e WHERE e.entityType = :entityType", EntityData.class)
                 .setParameter("entityType", entityName)
                 .getResultList();
+
+        if (result == null || result.isEmpty()) {
+            return null;
+        }
+
+        List<Map<String, Object>> data = result.stream().map(EntityData::getData).toList();
+
+        return data;
     }
 
     @Transactional(readOnly = true)
@@ -109,8 +118,17 @@ public class GenericCrudService {
         return false;
     }
 
-    public List<Map<String, Object>> search(List<SearchCriteria> criterias) {
+    public List<Map<String, Object>> search(List filterKey, List operation, List value, String dataOption) {
         try {
+            List<SearchCriteria> criterias = new ArrayList<>();
+            for(int i = 0; i < filterKey.size(); i++){
+                SearchCriteria criteria = new SearchCriteria();
+                criteria.setFilterKey(filterKey.get(i).toString());
+                criteria.setOperation(operation.get(i).toString());
+                criteria.setValue(value.get(i).toString());
+                criteria.setDataOption(dataOption);
+                criterias.add(criteria);
+            }
             Specification<EntityData> spec = new EntityDataSpecification(criterias.get(0));
             for (int i = 1; i < criterias.size(); i++) {
                 spec = spec.and(new EntityDataSpecification(criterias.get(i)));

@@ -1,200 +1,137 @@
 package com.mosip.inji_usecase.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mosip.inji_usecase.service.repository.RepositoryService;
-import com.mosip.inji_usecase.service.validation.ValidationService;
-import org.junit.jupiter.api.BeforeEach;
+import com.mosip.inji_usecase.entity.data.EntityData;
+import com.mosip.inji_usecase.service.DataService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(DataController.class)
 class DataControllerTest {
-
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    // @MockBean creates mock implementations of the services for the application context
     @MockBean
-    private Map<String, ValidationService> validationServices;
-
-    @MockBean
-    private Map<String, RepositoryService> repositoryServices;
-
-    // Individual mock services for more granular control
-    private ValidationService mockFarmerValidationService;
-    private RepositoryService mockFarmerRepositoryService;
-    private RepositoryService mockOtherRepositoryService;
-
-    @BeforeEach
-    void setUp() {
-        // Initialize individual mocks before each test
-        mockFarmerValidationService = mock(ValidationService.class);
-        mockFarmerRepositoryService = mock(RepositoryService.class);
-        mockOtherRepositoryService = mock(RepositoryService.class);
-    }
+    private DataService dataService;
 
     @Test
-    void ingestData_Success() throws Exception {
-        // Arrange
-        String dataSource = "farmer";
-        Map<String, Object> requestBody = Map.of("name", "John Doe", "farmSize", 50);
-
-        when(validationServices.get("farmerValidationService")).thenReturn(mockFarmerValidationService);
-        when(repositoryServices.get("farmerRepositoryService")).thenReturn(mockFarmerRepositoryService);
-        doNothing().when(mockFarmerValidationService).validate(requestBody);
-
-        // Act & Assert
-        mockMvc.perform(post("/api/data")
-                        .header("x-source", dataSource)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestBody)))
+    @DisplayName("Test create endpoint")
+    void testCreate() throws Exception {
+        Mockito.doNothing().when(dataService).create(anyString(), anyMap());
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/data/testEntity")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"key\":\"value\"}"))
                 .andExpect(status().isOk());
-
-        verify(mockFarmerValidationService).validate(requestBody);
-        verify(mockFarmerRepositoryService).save(requestBody);
     }
 
     @Test
-    void ingestData_ValidationFails() throws Exception {
-        // Arrange
-        String dataSource = "farmer";
-        Map<String, Object> requestBody = Map.of("name", "John Doe"); // Missing farmSize
-        String errorMessage = "Farm size is mandatory";
-
-        when(validationServices.get("farmerValidationService")).thenReturn(mockFarmerValidationService);
-        when(repositoryServices.get("farmerRepositoryService")).thenReturn(mockFarmerRepositoryService);
-        doThrow(new IllegalArgumentException(errorMessage)).when(mockFarmerValidationService).validate(requestBody);
-
-        // Act & Assert
-        mockMvc.perform(post("/api/data")
-                        .header("x-source", dataSource)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestBody)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("VALIDATION ERROR:: '" + errorMessage + "'")));
-
-        verify(mockFarmerRepositoryService, never()).save(anyMap());
-    }
-
-    @Test
-    void ingestData_UnknownDataSource() throws Exception {
-        // Arrange
-        String dataSource = "unknown";
-        Map<String, Object> requestBody = Map.of("key", "value");
-
-        when(validationServices.get("unknownValidationService")).thenReturn(null);
-
-        // Act & Assert
-        mockMvc.perform(post("/api/data")
-                        .header("x-source", dataSource)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestBody)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Unknown data source: " + dataSource));
-    }
-
-    @Test
-    void retrieveDataById_WhenDataFound() throws Exception {
-        // Arrange
-        Long id = 123L;
-        Map<String, Object> farmerData = Map.of("id", id, "type", "farmer");
-        
-        // Mock the entrySet to simulate iterating over the map of services
-        Map<String, RepositoryService> repoMap = Map.of(
-            "farmerRepo", mockFarmerRepositoryService,
-            "otherRepo", mockOtherRepositoryService
-        );
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
-
-        when(mockFarmerRepositoryService.getById(id)).thenReturn(Optional.of(farmerData));
-        when(mockOtherRepositoryService.getById(id)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        mockMvc.perform(get("/api/data/{id}", id))
+    @DisplayName("Test readAll endpoint - found")
+    void testReadAllFound() throws Exception {
+        List<Map<String, Object>> data = List.of(Map.of("id", "1"));
+        Mockito.when(dataService.readAll("testEntity")).thenReturn(data);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/data/testEntity"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].type", is("farmer")));
+                .andExpect(jsonPath("$[0].id").value("1"));
     }
 
     @Test
-    void retrieveDataById_WhenDataNotFound() throws Exception {
-        // Arrange
-        Long id = 404L;
-        
-        Map<String, RepositoryService> repoMap = Map.of(
-            "farmerRepo", mockFarmerRepositoryService,
-            "otherRepo", mockOtherRepositoryService
-        );
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
-
-        when(mockFarmerRepositoryService.getById(id)).thenReturn(Optional.empty());
-        when(mockOtherRepositoryService.getById(id)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        mockMvc.perform(get("/api/data/{id}", id))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("No data found for ID: " + id));
+    @DisplayName("Test readAll endpoint - not found")
+    void testReadAllNotFound() throws Exception {
+        Mockito.when(dataService.readAll("testEntity")).thenReturn(null);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/data/testEntity"))
+                .andExpect(status().isNotFound());
     }
-    
+
     @Test
-    void retrieveDataByQuery_WhenDataFound() throws Exception {
-        // Arrange
-        Map<String, Object> searchResult = Map.of("name", "Jane Doe");
-        
-        Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
-
-        when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
-                .thenReturn(List.of(searchResult));
-
-        // Act & Assert
-        mockMvc.perform(get("/api/data")
-                        .param("filterKey", "name")
-                        .param("operation", "eq")
-                        .param("value", "Jane Doe"))
+    @DisplayName("Test read endpoint - found")
+    void testReadFound() throws Exception {
+        EntityData entityData = Mockito.mock(EntityData.class);
+        Mockito.when(entityData.getData()).thenReturn(Map.of("id", "1"));
+        Mockito.when(dataService.read("testEntity", "1")).thenReturn(entityData);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/data/testEntity/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is("Jane Doe")));
+                .andExpect(jsonPath("$.id").value("1"));
     }
 
     @Test
-    void retrieveDataByQuery_WhenDataNotFound() throws Exception {
-        // Arrange
-        Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+    @DisplayName("Test read endpoint - not found")
+    void testReadNotFound() throws Exception {
+        Mockito.when(dataService.read("testEntity", "1")).thenReturn(null);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/data/testEntity/1"))
+                .andExpect(status().isNotFound());
+    }
 
-        when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
-                .thenReturn(Collections.emptyList());
+    @Test
+    @DisplayName("Test update endpoint - success")
+    void testUpdateSuccess() throws Exception {
+        Mockito.when(dataService.update(eq("testEntity"), eq("1"), anyMap())).thenReturn(true);
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/data/testEntity/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"key\":\"value\"}"))
+                .andExpect(status().isOk());
+    }
 
-        // Act & Assert
-        mockMvc.perform(get("/api/data")
-                        .param("filterKey", "name")
-                        .param("operation", "eq")
-                        .param("value", "NonExistent"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("No data found for the given query criteria"));
+    @Test
+    @DisplayName("Test update endpoint - not found")
+    void testUpdateNotFound() throws Exception {
+        Mockito.when(dataService.update(eq("testEntity"), eq("1"), anyMap())).thenReturn(false);
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/data/testEntity/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"key\":\"value\"}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Test delete endpoint - success")
+    void testDeleteSuccess() throws Exception {
+        Mockito.when(dataService.delete("testEntity", "1")).thenReturn(true);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/data/testEntity/1"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Test delete endpoint - not found")
+    void testDeleteNotFound() throws Exception {
+        Mockito.when(dataService.delete("testEntity", "1")).thenReturn(false);
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/data/testEntity/1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Test retrieveDataByQuery endpoint - found")
+    void testRetrieveDataByQueryFound() throws Exception {
+        List<Map<String, Object>> results = List.of(Map.of("id", "1"));
+        Mockito.when(dataService.search(anyList(), anyList(), anyList(), any())).thenReturn(results);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/data")
+                .param("filterKey", "id")
+                .param("operation", "eq")
+                .param("value", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value("1"));
+    }
+
+    @Test
+    @DisplayName("Test retrieveDataByQuery endpoint - not found")
+    void testRetrieveDataByQueryNotFound() throws Exception {
+        Mockito.when(dataService.search(anyList(), anyList(), anyList(), any())).thenReturn(Collections.emptyList());
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/data")
+                .param("filterKey", "id")
+                .param("operation", "eq")
+                .param("value", "1"))
+                .andExpect(status().isNotFound());
     }
 }
