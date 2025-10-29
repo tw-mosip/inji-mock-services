@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.security.Timestamp;
 import java.util.Map;
 
 @Entity
@@ -29,4 +30,16 @@ public class EntityData {
     @Column(name = "data", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, Object> data;
+
+    @Column(name = "created_at", updatable = false)
+    private Timestamp createdAt;
+
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
+    @Column(name = "deleted_at")
+    private Timestamp deletedAt;
 }
