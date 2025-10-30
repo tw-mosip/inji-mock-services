@@ -313,3 +313,29 @@ https://github.com/user-attachments/assets/dda1043a-676e-4bbc-bc3f-599f7c17b21f
   - 404 NOT FOUND: "No data found for the given query criteria"
 
 ---
+
+## Customizations
+
+### 1. Add support for new entity
+
+To add support for a new entity, follow these steps:
+- Gather the requirements for the new entity, including fields, field values validations and required fields
+- Update the requirements into [entities.yml](./src/main/resources/entities.yml) as per the below template
+```yaml
+  - name: <entity_name>
+    table_name: <table_name>
+    fields:
+      id:
+        type: integer
+      <field1>:
+        type: <type - string | integer | ...>
+        <constraint1>: <constraint_value_1>
+      <field2>:
+        type: string
+        regex: <regex_pattern>
+    required:
+      - <required_field_1>
+      - <required_field_2>
+    emailSource: <email_source_if_any>
+```
+- Restart the application to load the new entity configuration
