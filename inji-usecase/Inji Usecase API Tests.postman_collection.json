@@ -1,0 +1,153 @@
+{
+	"info": {
+		"_postman_id": "9446cb55-d65b-4abc-89b3-f1a6e895c27e",
+		"name": "Inji Usercase API Tests",
+		"description": "A collection for testing the Inji Farmer Data API endpoints.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "33118932"
+	},
+	"item": [
+		{
+			"name": "Create new data",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"uin\": \"DRIVER14349\",\n    \"fullName\": \"Maeve\",\n    \"phoneNumber\": \"9876543110\",\n    \"gender\": \"Female\",\n    \"driverEmailId\": \"maeve@example.com\",\n    \"city\": \"Bangalore\",\n    \"faceImagePath\": \"/images/drivers/maeve.jpg\",\n    \"driverLicenseNumber\": \"DL123456790\",\n    \"passportNumber\": \"P12345698\"\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{HOST}}/api/data/{{entityName}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Data by ID --",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{HOST}}/api/data/Driver/{{dataId}}",
+				"description": "Retrieves data for a single entity by its ID. Assumes you have created a farmer and the `farmerId` environment variable is set."
+			},
+			"response": []
+		},
+		{
+			"name": "Read all data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{HOST}}/api/data/{{entityName}}"
+			},
+			"response": []
+		},
+		{
+			"name": "Search Data (Simple)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/data?filterKey=name&operation=cn&value=Kaisher Kumar",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"data"
+					],
+					"query": [
+						{
+							"key": "filterKey",
+							"value": "name"
+						},
+						{
+							"key": "operation",
+							"value": "cn"
+						},
+						{
+							"key": "value",
+							"value": "Kaisher Kumar"
+						}
+					]
+				},
+				"description": "Searches for farmers with an exact name match."
+			},
+			"response": []
+		},
+		{
+			"name": "Search Data (Complex - AND)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/data?filterKey=name&operation=cn&value=Kaisher&dataOption=all&filterKey=pin_code&operation=ne&value=123456",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"data"
+					],
+					"query": [
+						{
+							"key": "filterKey",
+							"value": "name"
+						},
+						{
+							"key": "operation",
+							"value": "cn"
+						},
+						{
+							"key": "value",
+							"value": "Kaisher"
+						},
+						{
+							"key": "dataOption",
+							"value": "all",
+							"description": "Use 'all' for AND logic, 'any' for OR logic"
+						},
+						{
+							"key": "filterKey",
+							"value": "pin_code"
+						},
+						{
+							"key": "operation",
+							"value": "ne"
+						},
+						{
+							"key": "value",
+							"value": "123456"
+						}
+					]
+				},
+				"description": "Searches for farmers where the name CONTAINS 'Kaisher' AND the pin_code is NOT EQUAL to 123456."
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "HOST",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "entityName",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "dataId",
+			"value": "",
+			"type": "default"
+		}
+	]
+}

@@ -235,3 +235,81 @@ https://github.com/user-attachments/assets/dda1043a-676e-4bbc-bc3f-599f7c17b21f
     - [ ] System must support pluggable encryption of sensitive data
     - [ ] Response time for ingestion and retrieval APIs should be under 300ms for payloads <1KB
 
+## API
+
+### Create Entity Record
+- **Description:** Creates a new entity record.
+- **Method:** POST
+- **URL:** `/api/data/{entityName}`
+- **Headers:**
+  - Content-Type: application/json
+- **Query Parameters:**
+  - notifyUser (optional, boolean, default: false)
+- **Body:**
+  ```json
+  {
+    "field1": "value1",
+    "field2": "value2"
+  }
+  ```
+- **Response:**
+  - 200 OK: Record created successfully
+  - 400 BAD REQUEST: VALIDATION ERROR: <error message>
+
+---
+
+### Retrieve All Records
+- **Description:** Retrieves all records of a given entity type.
+- **Method:** GET
+- **URL:** `/api/data/{entityName}`
+- **Headers:**
+  - Accept: application/json
+- **Response:**
+  - 200 OK: List of records
+    ```json
+    [
+      { "field1": "value1", ... },
+      ...
+    ]
+    ```
+  - 404 NOT FOUND: []
+
+---
+
+### Retrieve Record by ID
+- **Description:** Retrieves a single record by entity type and ID.
+- **Method:** GET
+- **URL:** `/api/data/{entityName}/{id}`
+- **Headers:**
+  - Accept: application/json
+- **Response:**
+  - 200 OK: Record data
+    ```json
+    { "field1": "value1", ... }
+    ```
+  - 404 NOT FOUND
+
+---
+
+### Search Records (Query)
+- **Description:** Retrieves records matching query criteria.
+- **Method:** GET
+- **URL:** `/api/data`
+- **Headers:**
+  - Accept: application/json
+- **Query Parameters:**
+  - filterKey (list, required)
+  - operation (list, required)
+  - value (list, required)
+  - dataOption (optional)
+- **Response:**
+  - 200 OK: List of matching records
+    ```json
+    [
+      { "field1": "value1", ... },
+      ...
+    ]
+    ```
+  - 404 NOT FOUND: "No data found for the given query criteria"
+
+---
