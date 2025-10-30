@@ -27,10 +27,13 @@ public class DataController {
      * @return
      */
     @PostMapping("api/data/{entityName}")
-    public ResponseEntity<Void> create(@PathVariable String entityName, @RequestBody Map<String, Object> data, @RequestParam(value = "notifyUser", required = false, defaultValue = "false") boolean notifyUser) {
-        System.out.println("Creating data with entity: " + entityName);
-        service.create(entityName, data);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<? extends Object> create(@PathVariable String entityName, @RequestBody Map<String, Object> data, @RequestParam(value = "notifyUser", required = false, defaultValue = "false") boolean notifyUser) {
+        try {
+            service.create(entityName, data);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("VALIDATION ERROR: " + e.getMessage());
+        }
     }
 
     /**
@@ -65,9 +68,13 @@ public class DataController {
     }
 
     @PutMapping("api/data/{entityName}/{id}")
-    public ResponseEntity<Void> update(@PathVariable String entityName, @PathVariable String id, @RequestBody Map<String, Object> data) {
-        boolean updated = service.update(entityName, id, data);
-        return updated ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<String> update(@PathVariable String entityName, @PathVariable String id, @RequestBody Map<String, Object> data) {
+        try {
+            boolean updated = service.update(entityName, id, data);
+            return updated ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("VALIDATION ERROR: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("api/data/{entityName}/{id}")
@@ -77,7 +84,6 @@ public class DataController {
     }
 
     /**
-     *
      * @param filterKey
      * @param operation
      * @param value
@@ -86,13 +92,13 @@ public class DataController {
      */
     @GetMapping("/api/data")
     public ResponseEntity<?> retrieveDataByQuery(@RequestParam List filterKey,
-                                                @RequestParam List operation,
-                                                @RequestParam List value,
-                                                @RequestParam(required = false) String dataOption){
+                                                 @RequestParam List operation,
+                                                 @RequestParam List value,
+                                                 @RequestParam(required = false) String dataOption) {
 
-        List<Map<String, Object>> results = service.search(filterKey,operation ,value, dataOption);
+        List<Map<String, Object>> results = service.search(filterKey, operation, value, dataOption);
 
-        if(results.isEmpty())
+        if (results.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for the given query criteria");
         else {
             return ResponseEntity.ok(results);

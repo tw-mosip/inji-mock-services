@@ -1,7 +1,7 @@
 package com.mosip.inji_usecase.service;
 
 import com.mosip.inji_usecase.entity.data.EntityData;
-import com.mosip.inji_usecase.entity.data.EntityMetadata;
+import com.mosip.inji_usecase.entity.data.EntityMetadataService;
 import com.mosip.inji_usecase.service.query.EntityDataSpecification;
 import com.mosip.inji_usecase.service.query.SearchCriteria;
 import com.mosip.inji_usecase.service.validation.EntityDataValidationService;
@@ -25,18 +25,18 @@ import java.util.Map;
 public class DataService {
 
     private final EntityManager entityManager;
-    private final EntityMetadata entityMetadata;
+    private final EntityMetadataService entityMetadataService;
     private final VerifyFieldService verifyFieldService;
 
-    public DataService(EntityManager entityManager, EntityMetadata entityMetadata, VerifyFieldService verifyFieldService) {
+    public DataService(EntityManager entityManager, EntityMetadataService entityMetadataService, VerifyFieldService verifyFieldService) {
         this.entityManager = entityManager;
-        this.entityMetadata = entityMetadata;
+        this.entityMetadataService = entityMetadataService;
         this.verifyFieldService = verifyFieldService;
     }
 
     @Transactional
     public void create(String entityName, Map<String, Object> data) {
-        if (!entityMetadata.validate(entityName, data)) {
+        if (!entityMetadataService.validate(entityName, data)) {
             throw new IllegalArgumentException("Invalid data for entity: " + entityName);
         }
 
@@ -96,7 +96,7 @@ public class DataService {
 
     @Transactional
     public boolean update(String entityName, String id, Map<String, Object> data) {
-        if (!entityMetadata.validate(entityName, data)) {
+        if (!entityMetadataService.validate(entityName, data)) {
             throw new IllegalArgumentException("Invalid data for entity: " + entityName);
         }
         EntityData entity = entityManager.find(EntityData.class, id);

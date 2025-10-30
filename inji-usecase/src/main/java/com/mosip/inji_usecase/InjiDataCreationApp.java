@@ -2,7 +2,7 @@ package com.mosip.inji_usecase;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.mosip.inji_usecase.entity.data.EntityMetadata;
+import com.mosip.inji_usecase.entity.data.EntityMetadataService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -22,10 +22,10 @@ public class InjiDataCreationApp {
 	}
 
 	@Bean
-	public EntityMetadata entityMetadata() throws IOException {
+	public EntityMetadataService entityMetadata() throws IOException {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		ClassPathResource resource = new ClassPathResource("entities.yml");
 		Map<String, List<Map<String, Object>>> config = mapper.readValue(resource.getInputStream(), Map.class);
-		return new EntityMetadata(config.get("entities"));
+		return new EntityMetadataService(config.get("entities"));
 	}
 }

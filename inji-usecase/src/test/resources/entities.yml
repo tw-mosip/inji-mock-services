@@ -1,0 +1,14 @@
+entities:
+  - name: entity
+    table_name: drivers
+    fields:
+      id:
+        type: string
+      name:
+        type: string
+      status:
+        type: string
+    required:
+      - id
+
+

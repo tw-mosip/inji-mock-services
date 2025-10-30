@@ -2,134 +2,199 @@ entities:
   - name: Driver
     table_name: drivers
     fields:
-      - name: id
+      id:
         type: integer
-        primary_key: true
-      - name: uin
+      uin:
         type: string
-      - name: fullName
+        minLength: 10
+        maxLength: 20
+      fullName:
         type: string
-      - name: phoneNumber
+        minLength: 3
+        maxLength: 100
+      phoneNumber:
         type: string
-      - name: gender
+        regex: '^[0-9]{10}$'
+      gender:
         type: string
-      - name: driverEmailId
+        regex: '(Male|Female|Other)'
+      driverEmailId:
         type: string
-      - name: city
+        regex: '^[\w\.-]+@[\w\.-]+\.\w{2,}$'
+      city:
         type: string
-      - name: faceImagePath
+      faceImagePath:
         type: string
-      - name: driverLicenseNumber
-        type: string0
-      - name: passportNumber
+      driverLicenseNumber:
         type: string
+        minLength: 5
+        maxLength: 20
+      passportNumber:
+        type: string
+        minLength: 8
+        maxLength: 15
+    required:
+      - uin
+      - fullName
+    emailSource: driverEmailId
+
   - name: Farmer
     table_name: farmers
     fields:
-      - name: id
+      id:
         type: integer
-        primary_key: true
-      - name: name
+      name:
         type: string
-      - name: phone_number
+        minLength: 3
+        maxLength: 50
+      phone_number:
         type: string
-      - name: email
+        regex: '^[0-9]{10}$'
+      email:
         type: string
-      - name: district
+        regex: '^[\w\.-]+@[\w\.-]+\.\w{2,}$'
+      district:
         type: string
-      - name: village
+      village:
         type: string
-      - name: date_of_birth
+      date_of_birth:
         type: date
-      - name: gender
+      gender:
         type: string
-      - name: state
+        regex: '(Male|Female|Other)'
+      state:
         type: string
-      - name: pin_code
+      pin_code:
         type: integer
-      - name: address
+        minLength: 100000
+        maxLength: 999999
+      address:
         type: string
-      - name: civil_status
+      civil_status:
         type: string
-      - name: registration_date
+      registration_date:
         type: date
-      - name: education_level
+        regex: '[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}'
+      education_level:
         type: string
-      - name: employment_status
+      employment_status:
         type: string
-      - name: hh_income_type
+      hh_income_type:
         type: string
-      - name: total_land_area
+      total_land_area:
         type: integer
-      - name: ownership_type
+      ownership_type:
         type: string
-      - name: land_certificate
+      land_certificate:
         type: string
-      - name: land_id
+      land_id:
         type: integer
-      - name: primary_crop
+      primary_crop:
         type: string
-      - name: collected_gc
+      collected_gc:
         type: string
-      - name: season
+      season:
         type: string
-      - name: secondary_crop
+      secondary_crop:
         type: string
-      - name: livestock_type
+      livestock_type:
         type: string
-      - name: livestock_count
+      livestock_count:
         type: string
+    required:
+      - name
+    emailSource: email
+
+
   - name: TruckPass
     table_name: truckpasses
     fields:
-      - name: id
+      id:
         type: integer
-        primary_key: true
-      - name: driverUin
+      driverUin:
         type: string
-      - name: driverName
+        minLength: 10
+        maxLength: 20
+      driverName:
         type: string
-      - name: phoneNumber
+        minLength: 3
+        maxLength: 100
+      phoneNumber:
         type: string
-      - name: gender
+        regex: '^[0-9]{10}$'
+      gender:
         type: string
-      - name: emailId
+        regex: '(Male|Female|Other)'
+      emailId:
         type: string
-      - name: city
+        regex: '^[\w\.-]+@[\w\.-]+\.\w{2,}$'
+      city:
         type: string
-      - name: faceImagePath
+      faceImagePath:
         type: string
-      - name: driverLicenseNumber
+      driverLicenseNumber:
         type: string
-      - name: passportNumber
+        minLength: 5
+        maxLength: 20
+      passportNumber:
         type: string
-      - name: invoiceNumber
+        minLength: 8
+        maxLength: 15
+      invoiceNumber:
         type: string
-      - name: cmrWaybill
+        minLength: 1
+        maxLength: 50
+      cmrWaybill:
         type: string
-      - name: customsDocumentation
+      customsDocumentation:
         type: string
-      - name: weightCertificatePath
+      weightCertificatePath:
         type: string
-      - name: vehicleType
+      vehicleType:
         type: string
-      - name: axleSize
+      axleSize:
         type: string
-      - name: vehicleRegistrationDocsPath
+      vehicleRegistrationDocsPath:
         type: string
-      - name: truckLicensePlate
+      truckLicensePlate:
         type: string
-      - name: exporterName
+        minLength: 6
+        maxLength: 15
+      exporterName:
         type: string
-      - name: importerName
+        minLength: 2
+        maxLength: 100
+      importerName:
         type: string
-      - name: entryExitPoint
+        minLength: 2
+        maxLength: 100
+      entryExitPoint:
         type: string
-      - name: countryOrigin
+        minLength: 2
+        maxLength: 50
+      countryOrigin:
         type: string
-      - name: countryDestination
+        minLength: 2
+        maxLength: 50
+      countryDestination:
         type: string
-      - name: dateDeparture
+        minLength: 2
+        maxLength: 50
+      dateDeparture:
         type: date
-      - name: dateReturn
+        regex: '[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}'
+      dateReturn:
         type: date
+        regex: '[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}'
+    required:
+      - driverUin
+      - driverName
+      - invoiceNumber
+      - vehicleType
+      - truckLicensePlate
+      - exporterName
+      - importerName
+      - entryExitPoint
+      - countryOrigin
+      - countryDestination
+    emailSource: emailId
