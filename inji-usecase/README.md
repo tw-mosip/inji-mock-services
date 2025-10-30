@@ -8,6 +8,10 @@ A common Spring Boot service that can dynamically accept, validate, store, and r
 2. Run the command `docker-compose up` to start the databases
 3. Run the command `./mvwn spring-boot:run` to start the application
 
+## Tool versions 
+
+- Java : Java 21
+
 ## Project Structure
 
 ```
