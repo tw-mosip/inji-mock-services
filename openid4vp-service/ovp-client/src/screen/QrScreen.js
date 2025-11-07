@@ -168,7 +168,7 @@ const QrScreen = () => {
             encodedRequest = qrData;
         }
 
-        const strippedRequest = encodedRequest.replace(/^.*?(?=client_id=)/, '');
+        const strippedRequest = encodedRequest.split('?')[1] || '';
         window.open(`${INJIWEB_URL}?${strippedRequest}`, '_blank');
     }
 
