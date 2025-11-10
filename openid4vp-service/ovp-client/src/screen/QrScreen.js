@@ -158,17 +158,7 @@ const QrScreen = () => {
     }
 
     const handleOpenInjiWeb = () => {
-        let encodedRequest = '';
-
-        if (actualAuthorizationRequestObject) {
-            // For "By Reference" mode, use the fetched authorization request object
-            encodedRequest = actualAuthorizationRequestObject;
-        } else if (qrData) {
-            // For "By Value" mode, use the qrData (URL string) as the authorization request
-            encodedRequest = qrData;
-        }
-
-        const strippedRequest = encodedRequest.split('?')[1] || '';
+        const strippedRequest = qrData.split('?')[1] || '';
         window.open(`${INJIWEB_URL}?${strippedRequest}`, '_blank');
     }
 
