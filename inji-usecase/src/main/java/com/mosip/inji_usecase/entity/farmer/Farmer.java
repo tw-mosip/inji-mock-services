@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "farmer", schema = "farmer")
 @Data
 public class Farmer {
 

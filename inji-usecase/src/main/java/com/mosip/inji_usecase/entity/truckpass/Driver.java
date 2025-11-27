@@ -9,7 +9,6 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "driver", schema = "driver")
 @Data
 public class Driver {
     @Id
