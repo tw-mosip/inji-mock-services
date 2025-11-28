@@ -134,17 +134,6 @@ const Home = () => {
                             </Button>
                         </div>
                     ))}
-                    
-                    <div style={{ display: 'flex', alignItems: 'baseline', marginTop: '20px'}}>
-                        <span role="img" aria-label="emoji" style={styles.emoji}>🌐</span>
-                        <Button
-                            onClick={handleOpenInjiWeb}
-                            variant={"primary"}
-                            style={styles.button}
-                        >
-                            Open InjiWeb Application
-                        </Button>
-                    </div>
                 </div>
             </div>
         </div>

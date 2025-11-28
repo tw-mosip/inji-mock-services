@@ -11,7 +11,12 @@ This React client application is built to interact with the OpenID4VP mock verif
 ## Steps to run the client app
 - Run the mock services by running `npm start` in the `openid4vp-service` directory. It will be running in the port `3000`.
 - Expose the backend service using localtunnel url by running the command `lt --port 3000 --subdomain <your-subdomain>` in another terminal. Replace `<your-subdomain>` with any unique name.
-- Update the baseUrl in `openid4vp-service/constants.js` and BACKEND_URL in `ovp-client/src/mockui-constants.js` with the localtunnel url. Restart the backend service.
+- Update the baseUrl in `openid4vp-service/constants.js` and BACKEND_URL in `ovp-client/src/constants/mockui-constants.js` with the localtunnel url. Restart the backend service.
+- **Configure INJIWEB_URL**: Update the `INJIWEB_URL` in `ovp-client/src/constants/mockui-constants.js` based on the environment you want to integrate with:
+  - For development environment: `https://injiweb.dev-int-inji.mosip.net/authorize`
+  - For local InjiWeb instance: `http://localhost:3004/authorize`
+  - For other environments: Update with the appropriate InjiWeb authorization URL
+  - This URL is used when clicking the "Open InjiWeb" button in the client app to test the integration with InjiWeb wallet.
 - In other terminal, go inside the `ovp-client` directory and run `npm install` to install the required dependencies.
 - Then run ``npm start`` to start the client app. It will be running in the port `3001`.
 - Open your browser and navigate to `http://localhost:3001` to access the client app.
