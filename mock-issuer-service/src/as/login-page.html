@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mock Issuer Login</title>
+    <style>
+      body { font-family: sans-serif; margin: 40px; }
+      .box {
+        width: 300px;
+        padding: 20px;
+        border: 1px solid #ccc;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        background: #0066ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Mock Issuer Login</h2>
+    <div class="box">
+      <p><strong>User:</strong> demo user</p>
+      <p><strong>Password:</strong> any password (mock)</p>
+
+      <form method="POST" action="/as/login">
+        <input type="hidden" name="client_id" value="{{client_id}}" />
+        <input type="hidden" name="redirect_uri" value="{{redirect_uri}}" />
+        <input type="hidden" name="state" value="{{state}}" />
+
+        <button type="submit">Login & Continue</button>
+      </form>
+    </div>
+  </body>
+</html>

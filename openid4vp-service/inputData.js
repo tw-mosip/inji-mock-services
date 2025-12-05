@@ -34,7 +34,7 @@ const redirectAuthorizationRequestDraft23 = {
     "client_id": `redirect_uri:${responseUri}`,
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
-    "response_mode": "direct_post.jwt",
+    "response_mode": "direct_post",
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,

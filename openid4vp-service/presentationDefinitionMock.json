@@ -26,45 +26,6 @@
       "constraints": {
 
       }
-    },
-    {
-      "id": "id card credential",
-      "format": {
-        "ldp_vc": {
-          "proof_type": [
-            "Ed25519Signature2020",
-            "RsaSignature2018"
-          ]
-        }
-      },
-      "constraints": {
-        "fields": [
-          {
-            "path": ["$.credentialSubject.email"],
-            "filter": {
-              "type": "string",
-              "pattern": "@gmail.com"
-            }
-          }
-        ]
-      }
-    },
-    {
-      "id": "org.iso.18013.5.1.mDL",
-      "format": {
-        "mso_mdoc": {
-          "alg": ["ES256"]
-        }
-      },
-      "constraints": {
-        "fields" : [
-          {
-            "path": [
-              "$['org.iso.18013.5.1']['document_number']"
-            ]
-          }
-        ]
-      }
     }
   ]
 }
