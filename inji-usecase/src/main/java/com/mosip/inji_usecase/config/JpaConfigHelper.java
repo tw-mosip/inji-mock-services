@@ -9,6 +9,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import jakarta.persistence.EntityManagerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class JpaConfigHelper {
         public static LocalContainerEntityManagerFactoryBean createEntityManagerFactory(
             EntityManagerFactoryBuilder builder,
@@ -16,10 +19,17 @@ public class JpaConfigHelper {
             String packagesToScan,
             String persistenceUnitName) {
 
+        Map<String, Object> jpaProperties = new HashMap<>();
+        jpaProperties.put("hibernate.hbm2ddl.auto", "none");
+        jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        jpaProperties.put("hibernate.format_sql", true);
+        jpaProperties.put("hibernate.jdbc.lob.non_contextual_creation", true);
+
         return builder
                 .dataSource(dataSource)
                 .packages(packagesToScan)
                 .persistenceUnit(persistenceUnitName)
+                .properties(jpaProperties)
                 .build();
     }
 
