@@ -38,8 +38,7 @@ RUN chown -R ${container_user}:${container_user} /home/${container_user}
 USER ${container_user_uid}:${container_user_gid}
 
 # Expose application ports
-EXPOSE 8091
-EXPOSE 9010
+EXPOSE 8092
 
 # Run the app
 CMD ["java", "-jar", "inji_usecase.jar"]
