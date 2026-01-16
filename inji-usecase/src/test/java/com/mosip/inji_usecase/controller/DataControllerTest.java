@@ -1,13 +1,18 @@
 package com.mosip.inji_usecase.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mosip.inji_usecase.service.EmailService;
+import com.mosip.inji_usecase.config.EmailTemplateProperties;
 import com.mosip.inji_usecase.service.repository.RepositoryService;
 import com.mosip.inji_usecase.service.validation.ValidationService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -20,181 +25,186 @@ import java.util.Optional;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(DataController.class)
 class DataControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    // @MockBean creates mock implementations of the services for the application context
-    @MockBean
-    private Map<String, ValidationService> validationServices;
+        // MANDATORY constructor dependencies
+        @MockBean
+        private EmailService emailService;
 
-    @MockBean
-    private Map<String, RepositoryService> repositoryServices;
+        @MockBean
+        private EmailTemplateProperties emailTemplateProperties;
 
-    // Individual mock services for more granular control
-    private ValidationService mockFarmerValidationService;
-    private RepositoryService mockFarmerRepositoryService;
-    private RepositoryService mockOtherRepositoryService;
+        // Existing mocks
+        @MockBean
+        private Map<String, ValidationService> validationServices;
 
-    @BeforeEach
-    void setUp() {
-        // Initialize individual mocks before each test
-        mockFarmerValidationService = mock(ValidationService.class);
-        mockFarmerRepositoryService = mock(RepositoryService.class);
-        mockOtherRepositoryService = mock(RepositoryService.class);
-    }
+        @MockBean
+        private Map<String, RepositoryService> repositoryServices;
 
-    @Test
-    void ingestData_Success() throws Exception {
-        // Arrange
-        String dataSource = "farmer";
-        Map<String, Object> requestBody = Map.of("name", "John Doe", "farmSize", 50);
+        // Local mocks for specific behaviors
+        private ValidationService mockFarmerValidationService;
+        private RepositoryService mockFarmerRepositoryService;
+        private RepositoryService mockOtherRepositoryService;
 
-        when(validationServices.get("farmerValidationService")).thenReturn(mockFarmerValidationService);
-        when(repositoryServices.get("farmerRepositoryService")).thenReturn(mockFarmerRepositoryService);
-        doNothing().when(mockFarmerValidationService).validate(requestBody);
+        @BeforeEach
+        void setUp() {
+                mockFarmerValidationService = mock(ValidationService.class);
+                mockFarmerRepositoryService = mock(RepositoryService.class);
+                mockOtherRepositoryService = mock(RepositoryService.class);
+        }
 
-        // Act & Assert
-        mockMvc.perform(post("/api/data")
-                        .header("x-source", dataSource)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestBody)))
-                .andExpect(status().isOk());
+        @Test
+        void ingestData_Success() throws Exception {
+                String dataSource = "farmer";
+                Map<String, Object> requestBody = Map.of("name", "John Doe", "farmSize", 50);
 
-        verify(mockFarmerValidationService).validate(requestBody);
-        verify(mockFarmerRepositoryService).save(requestBody);
-    }
+                when(validationServices.get("farmerValidationService"))
+                                .thenReturn(mockFarmerValidationService);
+                when(repositoryServices.get("farmerRepositoryService"))
+                                .thenReturn(mockFarmerRepositoryService);
 
-    @Test
-    void ingestData_ValidationFails() throws Exception {
-        // Arrange
-        String dataSource = "farmer";
-        Map<String, Object> requestBody = Map.of("name", "John Doe"); // Missing farmSize
-        String errorMessage = "Farm size is mandatory";
+                doNothing().when(mockFarmerValidationService).validate(requestBody);
 
-        when(validationServices.get("farmerValidationService")).thenReturn(mockFarmerValidationService);
-        when(repositoryServices.get("farmerRepositoryService")).thenReturn(mockFarmerRepositoryService);
-        doThrow(new IllegalArgumentException(errorMessage)).when(mockFarmerValidationService).validate(requestBody);
+                mockMvc.perform(post("/api/data")
+                                .header("x-source", dataSource)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestBody)))
+                                .andExpect(status().isOk());
 
-        // Act & Assert
-        mockMvc.perform(post("/api/data")
-                        .header("x-source", dataSource)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestBody)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("VALIDATION ERROR:: '" + errorMessage + "'")));
+                verify(mockFarmerValidationService).validate(requestBody);
+                verify(mockFarmerRepositoryService).save(requestBody);
+        }
 
-        verify(mockFarmerRepositoryService, never()).save(anyMap());
-    }
+        @Test
+        void ingestData_ValidationFails() throws Exception {
+                String dataSource = "farmer";
+                Map<String, Object> requestBody = Map.of("name", "John Doe");
+                String errorMessage = "Farm size is mandatory";
 
-    @Test
-    void ingestData_UnknownDataSource() throws Exception {
-        // Arrange
-        String dataSource = "unknown";
-        Map<String, Object> requestBody = Map.of("key", "value");
+                when(validationServices.get("farmerValidationService"))
+                                .thenReturn(mockFarmerValidationService);
+                when(repositoryServices.get("farmerRepositoryService"))
+                                .thenReturn(mockFarmerRepositoryService);
 
-        when(validationServices.get("unknownValidationService")).thenReturn(null);
+                doThrow(new IllegalArgumentException(errorMessage))
+                                .when(mockFarmerValidationService).validate(requestBody);
 
-        // Act & Assert
-        mockMvc.perform(post("/api/data")
-                        .header("x-source", dataSource)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestBody)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Unknown data source: " + dataSource));
-    }
+                mockMvc.perform(post("/api/data")
+                                .header("x-source", dataSource)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestBody)))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(content()
+                                                .string(containsString("VALIDATION ERROR:: '" + errorMessage + "'")));
 
-    @Test
-    void retrieveDataById_WhenDataFound() throws Exception {
-        // Arrange
-        Long id = 123L;
-        Map<String, Object> farmerData = Map.of("id", id, "type", "farmer");
-        
-        // Mock the entrySet to simulate iterating over the map of services
-        Map<String, RepositoryService> repoMap = Map.of(
-            "farmerRepo", mockFarmerRepositoryService,
-            "otherRepo", mockOtherRepositoryService
-        );
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+                verify(mockFarmerRepositoryService, never()).save(anyMap());
+        }
 
-        when(mockFarmerRepositoryService.getById(id)).thenReturn(Optional.of(farmerData));
-        when(mockOtherRepositoryService.getById(id)).thenReturn(Optional.empty());
+        @Test
+        void ingestData_UnknownDataSource() throws Exception {
+                String dataSource = "unknown";
+                Map<String, Object> requestBody = Map.of("key", "value");
 
-        // Act & Assert
-        mockMvc.perform(get("/api/data/{id}", id))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].type", is("farmer")));
-    }
+                when(validationServices.get("unknownValidationService")).thenReturn(null);
 
-    @Test
-    void retrieveDataById_WhenDataNotFound() throws Exception {
-        // Arrange
-        Long id = 404L;
-        
-        Map<String, RepositoryService> repoMap = Map.of(
-            "farmerRepo", mockFarmerRepositoryService,
-            "otherRepo", mockOtherRepositoryService
-        );
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+                mockMvc.perform(post("/api/data")
+                                .header("x-source", dataSource)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(requestBody)))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(content().string("Unknown data source: " + dataSource));
+        }
 
-        when(mockFarmerRepositoryService.getById(id)).thenReturn(Optional.empty());
-        when(mockOtherRepositoryService.getById(id)).thenReturn(Optional.empty());
+        @Test
+        void retrieveDataById_WhenDataFound() throws Exception {
+                Long id = 123L;
+                Map<String, Object> farmerData = Map.of("id", id, "type", "farmer");
 
-        // Act & Assert
-        mockMvc.perform(get("/api/data/{id}", id))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("No data found for ID: " + id));
-    }
-    
-    @Test
-    void retrieveDataByQuery_WhenDataFound() throws Exception {
-        // Arrange
-        Map<String, Object> searchResult = Map.of("name", "Jane Doe");
-        
-        Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+                Map<String, RepositoryService> repoMap = Map.of(
+                                "farmerRepo", mockFarmerRepositoryService,
+                                "otherRepo", mockOtherRepositoryService);
+                when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
 
-        when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
-                .thenReturn(List.of(searchResult));
+                when(mockFarmerRepositoryService.getById(id))
+                                .thenReturn(Optional.of(farmerData));
 
-        // Act & Assert
-        mockMvc.perform(get("/api/data")
-                        .param("filterKey", "name")
-                        .param("operation", "eq")
-                        .param("value", "Jane Doe"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is("Jane Doe")));
-    }
+                when(mockOtherRepositoryService.getById(id))
+                                .thenReturn(Optional.empty());
 
-    @Test
-    void retrieveDataByQuery_WhenDataNotFound() throws Exception {
-        // Arrange
-        Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
-        when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+                mockMvc.perform(get("/api/data/{id}", id))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)))
+                                .andExpect(jsonPath("$[0].type", is("farmer")));
+        }
 
-        when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
-                .thenReturn(Collections.emptyList());
+        @Test
+        void retrieveDataById_WhenDataNotFound() throws Exception {
+                Long id = 404L;
 
-        // Act & Assert
-        mockMvc.perform(get("/api/data")
-                        .param("filterKey", "name")
-                        .param("operation", "eq")
-                        .param("value", "NonExistent"))
-                .andExpect(status().isNotFound())
-                .andExpect(content().string("No data found for the given query criteria"));
-    }
+                Map<String, RepositoryService> repoMap = Map.of(
+                                "farmerRepo", mockFarmerRepositoryService,
+                                "otherRepo", mockOtherRepositoryService);
+                when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+
+                when(mockFarmerRepositoryService.getById(id)).thenReturn(Optional.empty());
+                when(mockOtherRepositoryService.getById(id)).thenReturn(Optional.empty());
+
+                mockMvc.perform(get("/api/data/{id}", id))
+                                .andExpect(status().isNotFound())
+                                .andExpect(content().string("No data found for ID: " + id));
+        }
+
+        @Test
+        void retrieveDataByQuery_WhenDataFound() throws Exception {
+                Map<String, Object> searchResult = Map.of("name", "Jane Doe");
+
+                Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
+
+                when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+
+                when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
+                                .thenReturn(List.of(searchResult));
+
+                mockMvc.perform(get("/api/data")
+                                .param("filterKey", "name")
+                                .param("operation", "eq")
+                                .param("value", "Jane Doe"))
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$", hasSize(1)))
+                                .andExpect(jsonPath("$[0].name", is("Jane Doe")));
+        }
+
+        @Test
+        void retrieveDataByQuery_WhenDataNotFound() throws Exception {
+                Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
+
+                when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+
+                when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
+                                .thenReturn(Collections.emptyList());
+
+                mockMvc.perform(get("/api/data")
+                                .param("filterKey", "name")
+                                .param("operation", "eq")
+                                .param("value", "NonExistent"))
+                                .andExpect(status().isNotFound())
+                                .andExpect(content().string("No data found for the given query criteria"));
+        }
 }
