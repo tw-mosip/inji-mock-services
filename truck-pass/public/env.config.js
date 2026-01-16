@@ -1,6 +1,7 @@
 window._env_ = {
   ESIGNET_UI_BASE_URL: "http://localhost:3000",
   MOCK_RELYING_PARTY_SERVER_URL: "http://localhost:8888",
+  BACKEND_API_URL: "http://localhost:8080/api",
   REDIRECT_URI_USER_PROFILE: "http://localhost:5000/driverRegistrationProcessPage/verifyUINPage",
   REDIRECT_URI_REGISTRATION: "http://localhost:5000/driverRegistrationProcessPage/verifyUINPage",
   REDIRECT_URI: "http://localhost:5000/driverRegistrationProcessPage/verifyUINPage",

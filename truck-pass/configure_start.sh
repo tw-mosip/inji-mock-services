@@ -4,6 +4,7 @@ cat <<EOF > /usr/share/nginx/html/env.config.js
 window._env_ = {
   ESIGNET_UI_BASE_URL: "${ESIGNET_BASE_URL}",
   MOCK_RELYING_PARTY_SERVER_URL: "${MOCK_RELYING_PARTY_SERVER_URL}",
+  BACKEND_API_URL: "${BACKEND_URL}",
   REDIRECT_URI_USER_PROFILE: "${FRONTEND_URL}/driverRegistrationProcessPage/verifyUINPage",
   REDIRECT_URI_REGISTRATION: "${FRONTEND_URL}/driverRegistrationProcessPage/verifyUINPage",
   REDIRECT_URI: "${FRONTEND_URL}/driverRegistrationProcessPage/verifyUINPage",
