@@ -21,8 +21,8 @@ window._env_ = {
   MAX_AGE: ${MAX_AGE},
   CLAIMS_LOCALES: "en",
   DEFAULT_LANG: "en",
-  FALLBACK_LANG: "%7B%22label%22%3A%22English%22%2C%22value%22%3A%22en%22%7D"
-}
+  FALLBACK_LANG: "%7B%22label%22%3A%22English%22%2C%22value%22%3A%22en%22%7D",
+};
 EOF
 
 exec "$@"
