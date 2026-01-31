@@ -56,7 +56,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         }
     }, []);
 
-    const { post_driver_registration } = { ...relyingPartyService }
+    const { post_driver_details } = { ...relyingPartyService }
 
     const moveToVerifyUinPage = () => {
         navigate('/driverRegistrationProcessPage/verifyUINPage');
@@ -124,7 +124,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         try {
             setRegistrationScreen(false);
             setRegistrationSubmitBtn(true);
-            const response = await post_driver_registration('/drivers/register', driverRegistrationFormData);
+            const response = await post_driver_details(driverRegistrationFormData);
             if (response) {
                 const driverAdditionalFiles = {
                     driverPicture: driverInfo?.picture,
