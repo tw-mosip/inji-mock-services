@@ -1,8 +1,11 @@
 package com.mosip.inji_usecase.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mosip.inji_usecase.dto.truckpass.UserInfoRequestDto;
+import com.mosip.inji_usecase.dto.truckpass.TokenResponseDto;
 import com.mosip.inji_usecase.service.EmailService;
 import com.mosip.inji_usecase.config.EmailTemplateProperties;
+import com.mosip.inji_usecase.service.OAuthService;
 import com.mosip.inji_usecase.service.repository.RepositoryService;
 import com.mosip.inji_usecase.service.validation.ValidationService;
 
@@ -57,6 +60,9 @@ class DataControllerTest {
 
         @MockBean
         private Map<String, RepositoryService> repositoryServices;
+
+        @MockBean
+        private OAuthService oAuthService;
 
         // Local mocks for specific behaviors
         private ValidationService mockFarmerValidationService;
@@ -206,5 +212,84 @@ class DataControllerTest {
                                 .param("value", "NonExistent"))
                                 .andExpect(status().isNotFound())
                                 .andExpect(content().string("No data found for the given query criteria"));
+        }
+
+        @Test
+        void fetchUserInfo_success() throws Exception {
+
+                UserInfoRequestDto request = new UserInfoRequestDto();
+                request.setClientId("client-123");
+
+                TokenResponseDto tokenResponse = new TokenResponseDto();
+                tokenResponse.setAccessToken("access-token");
+
+                Map<String, Object> userInfo = Map.of(
+                        "name", "mock",
+                        "email", "mock@test.com"
+                );
+
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
+                        .thenReturn(tokenResponse);
+
+                when(oAuthService.getUserInfo("access-token", "client-123"))
+                        .thenReturn(userInfo);
+
+                mockMvc.perform(post("/fetchUserInfo")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.name").value("mock"))
+                        .andExpect(jsonPath("$.email").value("mock@test.com"));
+        }
+
+        @Test
+        void fetchUserInfo_tokenFailure() throws Exception {
+
+                UserInfoRequestDto request = new UserInfoRequestDto();
+                request.setClientId("client-123");
+
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
+                        .thenReturn(null);
+
+                mockMvc.perform(post("/fetchUserInfo")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                        .andExpect(status().isBadGateway())
+                        .andExpect(jsonPath("$.message")
+                                .value("Failed to fetch access token"));
+        }
+
+        @Test
+        void fetchUserInfo_badRequest() throws Exception {
+
+                UserInfoRequestDto request = new UserInfoRequestDto();
+
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
+                        .thenThrow(new IllegalArgumentException("Invalid client"));
+
+                mockMvc.perform(post("/fetchUserInfo")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(jsonPath("$.message")
+                                .value("Invalid client"));
+        }
+
+        @Test
+        void fetchUserInfo_internalServerError() throws Exception {
+
+                UserInfoRequestDto request = new UserInfoRequestDto();
+
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
+                        .thenThrow(new RuntimeException("Service down"));
+
+                mockMvc.perform(post("/fetchUserInfo")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request)))
+                        .andExpect(status().isInternalServerError())
+                        .andExpect(jsonPath("$.message")
+                                .value("Failed to fetch user info"))
+                        .andExpect(jsonPath("$.error")
+                                .value("Service down"));
         }
 }

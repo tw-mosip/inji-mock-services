@@ -7,6 +7,9 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.mosip.inji_usecase.dto.truckpass.UserInfoRequestDto;
+import com.mosip.inji_usecase.dto.truckpass.TokenResponseDto;
+import com.mosip.inji_usecase.service.OAuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +43,9 @@ public class DataController {
     private final Map<String, RepositoryService> repositoryServices;
     private final EmailService emailService;
     private final EmailTemplateProperties templateProperties;
+    private final OAuthService oAuthService;
+
+
 
     @GetMapping("/api/data/{id}")
     public ResponseEntity<?> retrieveDataById(@PathVariable("id") Long id) {
@@ -193,6 +199,41 @@ public class DataController {
     }
 
     // ---------- Utilities ----------
+
+    @PostMapping("/fetchUserInfo")
+    public ResponseEntity<Map<String, Object>> fetchUserInfo(
+            @RequestBody UserInfoRequestDto request) {
+
+        try {
+            TokenResponseDto tokenResponse = oAuthService.getToken(request);
+
+            if (tokenResponse == null || tokenResponse.getAccessToken() == null) {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_GATEWAY)
+                        .body(Map.of("message", "Failed to fetch access token"));
+            }
+
+            Map<String, Object> userInfo = oAuthService.getUserInfo(
+                    tokenResponse.getAccessToken(),
+                    request.getClientId()
+            );
+
+            return ResponseEntity.ok(userInfo);
+
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(Map.of("message", ex.getMessage()));
+
+        } catch (Exception ex) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of(
+                            "message", "Failed to fetch user info",
+                            "error", ex.getMessage()
+                    ));
+        }
+    }
 
     /**
      * Normalize header / product key: keep only letters/digits/underscore/hyphen,
