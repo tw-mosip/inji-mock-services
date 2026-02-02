@@ -3,7 +3,7 @@ package com.mosip.inji_usecase.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.mosip.inji_usecase.dto.truckpass.TokenRequestDto;
+import com.mosip.inji_usecase.dto.truckpass.UserInfoRequestDto;
 import com.mosip.inji_usecase.dto.truckpass.TokenResponseDto;
 import com.nimbusds.jose.jwk.RSAKey;
 import jakarta.annotation.PostConstruct;
@@ -53,7 +53,7 @@ public class OAuthServiceImpl implements OAuthService {
     }
 
     @Override
-    public TokenResponseDto getToken(TokenRequestDto request) {
+    public TokenResponseDto getToken(UserInfoRequestDto request) {
 
         String endpoint = baseUrl + TOKEN_ENDPOINT;
 

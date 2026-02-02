@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.mosip.inji_usecase.dto.truckpass.TokenRequestDto;
+import com.mosip.inji_usecase.dto.truckpass.UserInfoRequestDto;
 import com.mosip.inji_usecase.dto.truckpass.TokenResponseDto;
 import com.mosip.inji_usecase.service.OAuthService;
 import org.slf4j.Logger;
@@ -202,7 +202,7 @@ public class DataController {
 
     @PostMapping("/fetchUserInfo")
     public ResponseEntity<Map<String, Object>> fetchUserInfo(
-            @RequestBody TokenRequestDto request) {
+            @RequestBody UserInfoRequestDto request) {
 
         try {
             TokenResponseDto tokenResponse = oAuthService.getToken(request);

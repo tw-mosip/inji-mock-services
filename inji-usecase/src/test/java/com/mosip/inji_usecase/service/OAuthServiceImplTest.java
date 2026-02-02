@@ -2,7 +2,7 @@ package com.mosip.inji_usecase.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.mosip.inji_usecase.dto.truckpass.TokenRequestDto;
+import com.mosip.inji_usecase.dto.truckpass.UserInfoRequestDto;
 import com.mosip.inji_usecase.dto.truckpass.TokenResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -63,7 +63,7 @@ class OAuthServiceImplTest {
         @Test
         void getToken_success() {
 
-            TokenRequestDto request = new TokenRequestDto();
+            UserInfoRequestDto request = new UserInfoRequestDto();
             request.setClientId("client-123");
             request.setGrantType("authorization_code");
             request.setCode("auth-code");
@@ -89,7 +89,7 @@ class OAuthServiceImplTest {
         @Test
         void getToken_restTemplateThrowsException() {
 
-            TokenRequestDto request = new TokenRequestDto();
+            UserInfoRequestDto request = new UserInfoRequestDto();
             request.setClientId("client-123");
 
             when(restTemplate.postForEntity(
@@ -107,7 +107,7 @@ class OAuthServiceImplTest {
         @Test
         void getToken_nullResponseBody() {
 
-            TokenRequestDto request = new TokenRequestDto();
+            UserInfoRequestDto request = new UserInfoRequestDto();
             request.setClientId("client-123");
 
             when(restTemplate.postForEntity(
@@ -124,7 +124,7 @@ class OAuthServiceImplTest {
         @Test
         void getToken_sendsCorrectHeadersAndBody() {
 
-            TokenRequestDto request = new TokenRequestDto();
+            UserInfoRequestDto request = new UserInfoRequestDto();
             request.setClientId("client-123");
             request.setGrantType("authorization_code");
             request.setCode("auth-code");

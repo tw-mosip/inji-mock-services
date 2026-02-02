@@ -1,12 +1,11 @@
 package com.mosip.inji_usecase.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mosip.inji_usecase.dto.truckpass.TokenRequestDto;
+import com.mosip.inji_usecase.dto.truckpass.UserInfoRequestDto;
 import com.mosip.inji_usecase.dto.truckpass.TokenResponseDto;
 import com.mosip.inji_usecase.service.EmailService;
 import com.mosip.inji_usecase.config.EmailTemplateProperties;
 import com.mosip.inji_usecase.service.OAuthService;
-import com.mosip.inji_usecase.service.OAuthServiceImpl;
 import com.mosip.inji_usecase.service.repository.RepositoryService;
 import com.mosip.inji_usecase.service.validation.ValidationService;
 
@@ -218,7 +217,7 @@ class DataControllerTest {
         @Test
         void fetchUserInfo_success() throws Exception {
 
-                TokenRequestDto request = new TokenRequestDto();
+                UserInfoRequestDto request = new UserInfoRequestDto();
                 request.setClientId("client-123");
 
                 TokenResponseDto tokenResponse = new TokenResponseDto();
@@ -229,7 +228,7 @@ class DataControllerTest {
                         "email", "mock@test.com"
                 );
 
-                when(oAuthService.getToken(any(TokenRequestDto.class)))
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
                         .thenReturn(tokenResponse);
 
                 when(oAuthService.getUserInfo("access-token", "client-123"))
@@ -246,10 +245,10 @@ class DataControllerTest {
         @Test
         void fetchUserInfo_tokenFailure() throws Exception {
 
-                TokenRequestDto request = new TokenRequestDto();
+                UserInfoRequestDto request = new UserInfoRequestDto();
                 request.setClientId("client-123");
 
-                when(oAuthService.getToken(any(TokenRequestDto.class)))
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
                         .thenReturn(null);
 
                 mockMvc.perform(post("/fetchUserInfo")
@@ -263,9 +262,9 @@ class DataControllerTest {
         @Test
         void fetchUserInfo_badRequest() throws Exception {
 
-                TokenRequestDto request = new TokenRequestDto();
+                UserInfoRequestDto request = new UserInfoRequestDto();
 
-                when(oAuthService.getToken(any(TokenRequestDto.class)))
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
                         .thenThrow(new IllegalArgumentException("Invalid client"));
 
                 mockMvc.perform(post("/fetchUserInfo")
@@ -279,9 +278,9 @@ class DataControllerTest {
         @Test
         void fetchUserInfo_internalServerError() throws Exception {
 
-                TokenRequestDto request = new TokenRequestDto();
+                UserInfoRequestDto request = new UserInfoRequestDto();
 
-                when(oAuthService.getToken(any(TokenRequestDto.class)))
+                when(oAuthService.getToken(any(UserInfoRequestDto.class)))
                         .thenThrow(new RuntimeException("Service down"));
 
                 mockMvc.perform(post("/fetchUserInfo")
