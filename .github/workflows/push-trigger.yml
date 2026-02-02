@@ -48,6 +48,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   build-dockers-truckpass-ui:
+    needs: build-truckpass-ui
     strategy:
       matrix:
         include:
