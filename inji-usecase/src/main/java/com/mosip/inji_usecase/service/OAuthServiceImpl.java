@@ -125,7 +125,6 @@ public class OAuthServiceImpl implements OAuthService {
         decodedJWT.getClaims().forEach((key, claim) -> {
             if (claim.asBoolean() != null) claims.put(key, claim.asBoolean());
             else if (claim.asLong() != null) claims.put(key, claim.asLong());
-            else if (claim.asInt() != null) claims.put(key, claim.asInt());
             else if (claim.asString() != null) claims.put(key, claim.asString());
             else if (claim.asList(String.class) != null)
                 claims.put(key, claim.asList(String.class));
