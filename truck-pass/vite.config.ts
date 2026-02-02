@@ -6,7 +6,7 @@ export default defineConfig({
   ],
   build: {
     // Change the output directory
-    outDir: 'build', // default is 'dist'
+    outDir: 'dist', // default is 'dist'
     emptyOutDir: true, // cleans folder before build
   },
   assetsInclude: [
