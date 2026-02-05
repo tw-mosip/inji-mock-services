@@ -87,26 +87,9 @@ const post_driver_details = async (payload: any): Promise<any> => {
     {
       headers: {
         "Content-Type": "application/json",
-        "x-source": "truckpass",
+        "x-source": "driver",
       },
     });
-  return response;
-};
-
-const post_registration_driver_details = async (payload: any): Promise<any> => {
-  const formData = new FormData();
-  for (const key in payload) {
-    if (payload[key] !== undefined && payload[key] !== null) {
-      formData.append(key, payload[key]);
-    }
-  }
-  const response = await axios.post(API_URL + "/data?registration=true", payload,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          "x-source": "truckpass",
-        },
-      });
   return response;
 };
 
@@ -117,7 +100,6 @@ const relyingPartyService = {
   post_driver_registration,
   get_driver_information,
   post_driver_details,
-  post_registration_driver_details
 };
 
 export default relyingPartyService;
