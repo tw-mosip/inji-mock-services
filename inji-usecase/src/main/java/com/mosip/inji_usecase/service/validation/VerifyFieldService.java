@@ -12,10 +12,19 @@ import org.springframework.stereotype.Service;
 public class VerifyFieldService {
     
 
-    public void verifyRequired(Map<String, Object> data, Set<String> required_fields) {
-        for (String field : required_fields) {
-            if (!data.containsKey(field)) {
-                throw new IllegalArgumentException("Missing required field: " + field);
+    public void verifyRequired(Map<String, Object> data, Set<String> required_fields,Set<String> registration_required_fields, Boolean isRegistration) {
+        if (isRegistration) {
+            for (String field : registration_required_fields) {
+                if (!data.containsKey(field)) {
+                    throw new IllegalArgumentException("Missing registration required field: " + field);
+                }
+            }
+        }
+        else{
+            for (String field : required_fields) {
+                if (!data.containsKey(field)) {
+                    throw new IllegalArgumentException("Missing required field: " + field);
+                }
             }
         }
     }
