@@ -16,7 +16,7 @@ public class VerifyFieldServiceTest {
         VerifyFieldService service = new VerifyFieldService();
         Map<String, Object> data = Map.of("name", "John", "age", 30);
         Set<String> required = Set.of("name", "age");
-        assertDoesNotThrow(() -> service.verifyRequired(data, required, Set.of(),false));
+        assertDoesNotThrow(() -> service.verifyRequired(data, required));
     }
 
     @Test
@@ -24,7 +24,7 @@ public class VerifyFieldServiceTest {
         VerifyFieldService service = new VerifyFieldService();
         Map<String, Object> data = Map.of("name", "John");
         Set<String> required = Set.of("name", "age");
-        Exception ex = assertThrows(IllegalArgumentException.class, () -> service.verifyRequired(data, required, Set.of(),false));
+        Exception ex = assertThrows(IllegalArgumentException.class, () -> service.verifyRequired(data, required));
         assertTrue(ex.getMessage().contains("Missing required field: age"));
     }
 

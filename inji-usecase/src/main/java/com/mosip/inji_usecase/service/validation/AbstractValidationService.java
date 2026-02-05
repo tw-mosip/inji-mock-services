@@ -30,8 +30,6 @@ public abstract class AbstractValidationService implements ValidationService {
 
     private Set<String> requiredFields;
 
-    private Set<String> registrationRequiredFields;
-
     private Map<String, Object> fields;
 
     private Map<String, Object> readConfig(InputStream in) {
@@ -55,7 +53,6 @@ public abstract class AbstractValidationService implements ValidationService {
             Map<String, Object> config = readConfig(in);
 
             requiredFields = new HashSet<>((List<String>) config.get("required"));
-            registrationRequiredFields = new HashSet<>((List<String>) config.get("registration"));
 
             fields = new HashMap<>();
             Map<String, Object> f = (Map<String, Object>) config.get("fields");
@@ -70,11 +67,11 @@ public abstract class AbstractValidationService implements ValidationService {
     }
 
     @Override
-    public void validate(Map<String, Object> data, Boolean isRegistration) {
+    public void validate(Map<String, Object> data){
 
         loadConfig();
 
-        verifyFieldService.verifyRequired(data, requiredFields, registrationRequiredFields,isRegistration);
+        verifyFieldService.verifyRequired(data, requiredFields);
         verifyFieldService.verify(data, fields);
     }
 

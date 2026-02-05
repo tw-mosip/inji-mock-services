@@ -15,7 +15,13 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.mosip.inji_usecase.config.EmailTemplateProperties;
 import com.mosip.inji_usecase.service.query.SearchCriteria;
@@ -102,7 +108,6 @@ public class DataController {
     public ResponseEntity<?> ingestData(
             @RequestHeader(name = "x-source") String dataSource,
             @RequestParam(required = false) String notifyEmail,
-            @RequestParam(name = "registration", defaultValue = "false") boolean registration,
             @RequestBody Map<String, Object> data) {
 
         ValidationService validationService = validationServices.get(dataSource + "ValidationService");
@@ -113,7 +118,7 @@ public class DataController {
         }
 
         try {
-            validationService.validate(data,registration);
+            validationService.validate(data);
             repositoryService.save(data);
 
             // ---------- PRODUCT-DRIVEN RECIPIENT RESOLUTION (NO HARDCODED PRODUCT NAMES)

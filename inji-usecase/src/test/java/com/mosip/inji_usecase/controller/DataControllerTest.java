@@ -86,7 +86,7 @@ class DataControllerTest {
                 when(repositoryServices.get("farmerRepositoryService"))
                                 .thenReturn(mockFarmerRepositoryService);
 
-                doNothing().when(mockFarmerValidationService).validate(requestBody,false);
+                doNothing().when(mockFarmerValidationService).validate(requestBody);
 
                 mockMvc.perform(post("/api/data")
                                 .header("x-source", dataSource)
@@ -94,7 +94,7 @@ class DataControllerTest {
                                 .content(objectMapper.writeValueAsString(requestBody)))
                                 .andExpect(status().isOk());
 
-                verify(mockFarmerValidationService).validate(requestBody,false);
+                verify(mockFarmerValidationService).validate(requestBody);
                 verify(mockFarmerRepositoryService).save(requestBody);
         }
 
@@ -110,7 +110,7 @@ class DataControllerTest {
                                 .thenReturn(mockFarmerRepositoryService);
 
                 doThrow(new IllegalArgumentException(errorMessage))
-                                .when(mockFarmerValidationService).validate(requestBody,false);
+                                .when(mockFarmerValidationService).validate(requestBody);
 
                 mockMvc.perform(post("/api/data")
                                 .header("x-source", dataSource)
