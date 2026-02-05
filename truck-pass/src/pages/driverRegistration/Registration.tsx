@@ -56,7 +56,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         }
     }, []);
 
-    const { post_driver_details } = { ...relyingPartyService }
+    const { post_registration_driver_details } = { ...relyingPartyService }
 
     const moveToVerifyUinPage = () => {
         navigate('/driverRegistrationProcessPage/verifyUINPage');
@@ -108,23 +108,31 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         }
 
         const driverRegistrationFormData = {
-            full_name: driverInfo?.name ?? '',
-            uin: '198765432123',
-            gender: driverInfo?.gender ?? '',
-            emailId: driverInfo?.email ?? '',
-            phone_number: driverInfo?.phone_number ?? '',
-            city: driverInfo?.address?.locality ?? '',
-            drivers_license_number: driverLicenceNum,
-            passport_number: passportNum,
-            transportCompany: selectedCompany?.companyName,
-            face_image: driverInfo?.picture ? base64ToFile(driverInfo.picture, 'driverPhoto.jpeg') : '',
-            cpc_certificate: fileData ? base64ToFile(fileData, 'CPC-Certificate.pdf') : '',
+            driverName: driverInfo?.name ?? 'Ravi Kumar',
+            driverUin: '198765432123',
+            gender: driverInfo?.gender ?? 'Male',
+            emailId: driverInfo?.email ?? 'ravi.kumar@example.com',
+            phoneNumber: driverInfo?.phone_number ?? '9876543210',
+            city: driverInfo?.address?.locality ?? 'Bengaluru',
+
+            driverLicenseNumber: driverLicenceNum ?? 'DL-0420110149646',
+            passportNumber: passportNum ?? 'N1234567',
+
+            faceImagePath: driverInfo?.picture
+                ? base64ToFile(driverInfo.picture, 'driverPhoto.jpeg')
+                : '',
+
+            // cpcCertificate: fileData
+            //     ? base64ToFile(fileData, 'CPC-Certificate.pdf')
+            //     : '',
         };
+
+
 
         try {
             setRegistrationScreen(false);
             setRegistrationSubmitBtn(true);
-            const response = await post_driver_details(driverRegistrationFormData);
+            const response = await post_registration_driver_details(driverRegistrationFormData);
             if (response) {
                 const driverAdditionalFiles = {
                     driverPicture: driverInfo?.picture,

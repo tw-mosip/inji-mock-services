@@ -6,9 +6,11 @@ const baseUrl: string =
     : window?._env_?.MOCK_RELYING_PARTY_SERVER_URL;
 
 const fetchUserInfoEndPoint = "/fetchUserInfo";
-const API_URL = (process.env.NODE_ENV === "develop"
-    ? (process.env.REACT_APP_BACKEND_API_URL as string)
-    : window?._env_?.BACKEND_API_URL) ?? "http://localhost:8080/api";
+// const API_URL = (process.env.NODE_ENV === "develop"
+//     ? (process.env.REACT_APP_BACKEND_API_URL as string)
+//     : window?._env_?.BACKEND_API_URL) ?? "http://localhost:8092/v1/truckpass/api";
+
+const API_URL = "/api"
 
 // API Call: /fetchUserInfo
 const post_fetchUserInfo = async (
@@ -86,9 +88,26 @@ const post_driver_details = async (payload: any): Promise<any> => {
     {
       headers: {
         "Content-Type": "application/json",
-        "x-source": "driver",
+        "x-source": "truckpass",
       },
     });
+  return response;
+};
+
+const post_registration_driver_details = async (payload: any): Promise<any> => {
+  const formData = new FormData();
+  for (const key in payload) {
+    if (payload[key] !== undefined && payload[key] !== null) {
+      formData.append(key, payload[key]);
+    }
+  }
+  const response = await axios.post(API_URL + "/data?registration=true", payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-source": "truckpass",
+        },
+      });
   return response;
 };
 
@@ -98,7 +117,8 @@ const relyingPartyService = {
   search_company,
   post_driver_registration,
   get_driver_information,
-  post_driver_details
+  post_driver_details,
+  post_registration_driver_details
 };
 
 export default relyingPartyService;

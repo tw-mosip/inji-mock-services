@@ -98,15 +98,14 @@ export const JourneyDetails = () => {
     };
 
     const journeyDetails = {
-      originCountry: countryOfOrigin?.country,
-      exporterCompany: exporterCompany,
-      dateOfDeparture: departureDate,
-      borderOfDeparture: departureCrossingPoint?.departurePoint,
-      destinationCountry: countryOfDestination?.country,
-      importerCompany: importerCompany,
-      dateOfArrival: arrivalDate,
-      borderOfArrival: arrivalCrossingPoint?.arrivalPoint,
-    }
+      countryOrigin: countryOfOrigin?.country,
+      exporterName: exporterCompany,
+      dateDeparture: departureDate,
+      entryExitPoint: departureCrossingPoint?.departurePoint,
+      countryDestination: countryOfDestination?.country,
+      importerName: importerCompany,
+      dateReturn: arrivalDate,
+    };
     localStorage.setItem('journeyDetails', JSON.stringify(journeyDetails));
     setJourneyDetailsStatus(false);
     navigate('/requestTruckpassProcess/reviewPage');
