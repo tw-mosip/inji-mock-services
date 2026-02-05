@@ -4,7 +4,7 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import tickIcon from '../../assets/confirmation_icon.png';
-import {base64ToFile, base64ToString} from '../../commans/AppUtilities';
+import {base64ToString} from '../../commans/AppUtilities';
 import relyingPartyService from '../../services/relyingPartyService';
 
 export const ReviewPage = () => {
@@ -58,17 +58,17 @@ export const ReviewPage = () => {
       invoiceNumber: consignmentDetails?.inVoiceNumber,
       cmrWaybill: consignmentDetails?.waybillNumber,
       customsDocumentation: consignmentDetails?.customDocument
-          ? base64ToString(consignmentDetails.customDocument, "customDocument.pdf")
+          ? base64ToString(consignmentDetails.customDocument)
           : "",
       weightCertificatePath: consignmentDetails?.weightCertificate
-          ? base64ToString(consignmentDetails.weightCertificate, "weightCertificate.pdf")
+          ? base64ToString(consignmentDetails.weightCertificate)
           : "",
 
       // Vehicle
       vehicleType: vehicleDetails?.vehicleType,
       axleSize: vehicleDetails?.axleSize,
       vehicleRegistrationDocsPath: vehicleDetails?.vehicleRegistrationDocsPath
-          ? base64ToString(vehicleDetails.vehicleRegistrationDocsPath, "vehicleRegistrationDocument.pdf")
+          ? base64ToString(vehicleDetails.vehicleRegistrationDocsPath)
           : "",
       truckLicensePlate: vehicleDetails?.truckLicensePlate,
 

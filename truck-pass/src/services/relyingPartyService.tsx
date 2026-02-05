@@ -6,11 +6,10 @@ const baseUrl: string =
     : window?._env_?.MOCK_RELYING_PARTY_SERVER_URL;
 
 const fetchUserInfoEndPoint = "/fetchUserInfo";
-// const API_URL = (process.env.NODE_ENV === "develop"
-//     ? (process.env.REACT_APP_BACKEND_API_URL as string)
-//     : window?._env_?.BACKEND_API_URL) ?? "http://localhost:8092/v1/truckpass/api";
+const API_URL = (process.env.NODE_ENV === "develop"
+    ? (process.env.REACT_APP_BACKEND_API_URL as string)
+    : window?._env_?.BACKEND_API_URL) ?? "http://localhost:8092/v1/truckpass/api";
 
-const API_URL = "/api"
 
 // API Call: /fetchUserInfo
 const post_fetchUserInfo = async (

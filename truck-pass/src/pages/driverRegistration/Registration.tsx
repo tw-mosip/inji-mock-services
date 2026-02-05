@@ -21,8 +21,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
     const [licenseShared, setLicenseShared] = useState(false);
     const [passportNum, setPassportNum] = useState('');
     const [certificateUploaded, setCertificateUploaded] = useState(false);
-
-    const [selectedCompany, setSelectedCompany] = useState<CompanyInfo | null>(null);
     const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null);
     const [registrationScreen, setRegistrationScreen] = useState(true);
     const [showCertificateUploading, setShowCertificateUploading] = useState(false);
@@ -40,7 +38,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
 
     useEffect(() => {
         const data = localStorage.getItem('driverInformation');
-        const selectedCompany = localStorage.getItem('companySelected');
 
         if (data) {
             try {
@@ -49,10 +46,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
             } catch (e) {
                 console.error("Invalid Information JSON:", e);
             }
-        }
-        if (selectedCompany) {
-            const company = JSON.parse(selectedCompany);
-            setSelectedCompany(company);
         }
     }, []);
 
@@ -360,10 +353,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
 
 type RegistrationProps = {
 
-}
-
-type CompanyInfo = {
-    companyName?: string;
 }
 
 type DriverInfo = {
