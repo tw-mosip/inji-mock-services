@@ -19,3 +19,8 @@ export const base64ToFile = (base64Data: string, filename: string): File => {
     return new File([blob], filename, { type: mimeType });
 };
 
+export const base64ToString = (base64Data: string): string => {
+    const [, base64String] = base64Data.split(",");
+    return atob(base64String);
+};
+
