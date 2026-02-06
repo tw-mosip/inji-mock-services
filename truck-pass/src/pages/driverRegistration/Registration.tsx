@@ -101,24 +101,19 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         }
 
         const driverRegistrationFormData = {
-            driverName: driverInfo?.name ?? 'Ravi Kumar',
-            driverUin: '198765432123',
+            fullName: driverInfo?.name ?? 'Ravi Kumar',
+            uin: '198765432123',
+
             gender: driverInfo?.gender ?? 'Male',
-            emailId: driverInfo?.email ?? 'ravi.kumar@example.com',
+            driverEmailId: driverInfo?.email ?? 'ravi.kumar@example.com',
             phoneNumber: driverInfo?.phone_number ?? '9876543210',
             city: driverInfo?.address?.locality ?? 'Bengaluru',
 
             driverLicenseNumber: driverLicenceNum ?? 'DL-0420110149646',
             passportNumber: passportNum ?? 'N1234567',
-
-            faceImagePath: driverInfo?.picture
-                ? base64ToFile(driverInfo.picture, 'driverPhoto.jpeg')
-                : '',
-
-            // cpcCertificate: fileData
-            //     ? base64ToFile(fileData, 'CPC-Certificate.pdf')
-            //     : '',
+            faceImagePath: driverInfo?.picture ?? ''
         };
+
 
 
 
