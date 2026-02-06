@@ -124,10 +124,3 @@ const relyingPartyService = {
 };
 
 export default relyingPartyService;
-
-interface CustomWindow extends Window {
-  _env_: {
-    MOCK_RELYING_PARTY_SERVER_URL: string;
-    BACKEND_API_URL: string;
-  };
-}
