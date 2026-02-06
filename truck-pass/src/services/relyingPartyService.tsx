@@ -1,14 +1,15 @@
 import axios from "axios";
-declare const window: CustomWindow;
-const baseUrl: string =
-  process.env.NODE_ENV === "develop"
-    ? (process.env.REACT_APP_MOCK_RELYING_PARTY_SERVER_URL as string)
-    : window?._env_?.MOCK_RELYING_PARTY_SERVER_URL;
+// declare const window: CustomWindow;
+// const baseUrl: string =
+//   process.env.NODE_ENV === "develop"
+//     ? (process.env.REACT_APP_MOCK_RELYING_PARTY_SERVER_URL as string)
+//     : window?._env_?.MOCK_RELYING_PARTY_SERVER_URL;
 
 const fetchUserInfoEndPoint = "/fetchUserInfo";
 const API_URL = (process.env.NODE_ENV === "develop"
     ? (process.env.REACT_APP_BACKEND_API_URL as string)
-    : window?._env_?.BACKEND_API_URL) ?? "http://localhost:8080/api";
+    : window?._env_?.BACKEND_API_URL) ?? "http://localhost:8092/v1/truckpass/api";
+
 
 // API Call: /fetchUserInfo
 const post_fetchUserInfo = async (
@@ -19,12 +20,12 @@ const post_fetchUserInfo = async (
 ): Promise<any> => {
   const request = {
     code,
-    client_id,
-    redirect_uri,
-    grant_type,
+    clientId: client_id,
+    redirectUri: redirect_uri,
+    grantType: grant_type,
   };
 
-  const endpoint = baseUrl + fetchUserInfoEndPoint;
+  const endpoint = API_URL + fetchUserInfoEndPoint;
   const response = await axios.post(endpoint, request, {
     headers: {
       "Content-Type": "application/json",
@@ -70,6 +71,9 @@ const get_driver_information = async (key: string, value: string) => {
       value: value,
       dataOption: "all",
     },
+    headers: {
+      "x-source": "driver",
+    }
   });
   return response;
 };
@@ -92,20 +96,31 @@ const post_driver_details = async (payload: any): Promise<any> => {
   return response;
 };
 
+const post_truckpass_details = async (payload: any): Promise<any> => {
+  const formData = new FormData();
+  for (const key in payload) {
+    if (payload[key] !== undefined && payload[key] !== null) {
+      formData.append(key, payload[key]);
+    }
+  }
+  const response = await axios.post(API_URL + "/data", payload,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "x-source": "truckpass",
+        },
+      });
+  return response;
+};
+
 const relyingPartyService = {
   post_fetchUserInfo,
   get_companiesList,
   search_company,
   post_driver_registration,
   get_driver_information,
-  post_driver_details
+  post_driver_details,
+  post_truckpass_details
 };
 
 export default relyingPartyService;
-
-interface CustomWindow extends Window {
-  _env_: {
-    MOCK_RELYING_PARTY_SERVER_URL: string;
-    BACKEND_API_URL: string;
-  };
-}

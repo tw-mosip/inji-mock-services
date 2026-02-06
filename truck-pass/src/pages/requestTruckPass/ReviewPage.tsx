@@ -4,8 +4,7 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import tickIcon from '../../assets/confirmation_icon.png';
-// import { base64ToFile } from '../../commans/AppUtilities';
-// import relyingPartyService from '../../services/relyingPartyService';
+import relyingPartyService from '../../services/relyingPartyService';
 
 export const ReviewPage = () => {
   const { t } = useTranslation('');
@@ -18,7 +17,7 @@ export const ReviewPage = () => {
   const [journeyDetails, setJourneyDetails] = useState<JourneyDetailsInfo | null>(null);
 
 
-  // const { post_driver_details } = { ...relyingPartyService };
+  const { post_truckpass_details } = { ...relyingPartyService };
 
   const setLocalStoredData = (key: string, setItemDetails: (item: any) => void) => {
     const data = localStorage.getItem(key);
@@ -42,51 +41,61 @@ export const ReviewPage = () => {
   }
 
   const confirmAndSubmit = async () => {
-    // const payload = {
-    //   driverUin: driverInformation?.uin,
-    //   driverName: driverInformation?.fullName,
-    //   phoneNumber: driverInformation?.phoneNumber,
-    //   gender: driverInformation?.gender,
-    //   emailId: driverInformation?.emailId,
-    //   city: driverInformation?.city,
-    //   faceImagePath: driverInformation?.faceImagePath,  //Convert into actual file using base64ToFile before posting as like other documents.
-    //   driverLicenseNumber: vehicleDetails?.truckLicensePlate,
-    //   passportNumber: driverInformation?.passportNumber,
-    //
-    //   invoiceNumber: consignmentDetails?.inVoiceNumber,
-    //   cmrWaybill: consignmentDetails?.waybillNumber,
-    //   customsDocumentation: consignmentDetails?.customDocument ? base64ToFile(consignmentDetails?.customDocument, 'customDocument.pdf') : '',
-    //   weightCertificatePath: consignmentDetails?.weightCertificate ? base64ToFile(consignmentDetails?.weightCertificate, 'weightCertificate.pdf') : '',
-    //
-    //   vehicleType: vehicleDetails?.vehicleType,
-    //   axleSize: vehicleDetails?.axleSize,
-    //   vehicleRegistrationDocsPath: vehicleDetails?.vehicleRegistrationDocument ? base64ToFile(vehicleDetails?.vehicleRegistrationDocument, 'vehicleRegistrationDocument.pdf') : '',
-    //   truckLicensePlate: vehicleDetails?.truckLicensePlate,
-    //
-    //   exporterName: journeyDetails?.exporterCompany,
-    //   importerName: journeyDetails?.importerCompany,
-    //   entryExitPoint: journeyDetails?.borderOfArrival,
-    //   countryOrigin: journeyDetails?.originCountry,
-    //   countryDestination: journeyDetails?.destinationCountry,
-    //   dateDeparture: journeyDetails?.dateOfDeparture,
-    //   dateReturn: journeyDetails?.dateOfArrival,
-    // };
+    const payload = {
+      // Driver
+      driverUin: driverInformation?.uin,
+      driverName: driverInformation?.fullName,
+      phoneNumber: driverInformation?.phoneNumber,
+      gender: driverInformation?.gender,
+      emailId: driverInformation?.driverEmailId,
+      city: driverInformation?.city,
+      faceImagePath: driverInformation?.faceImagePath,
+      driverLicenseNumber: driverInformation?.driverLicenseNumber,
+      passportNumber: driverInformation?.passportNumber,
 
-    // try {
-    //   const response = await post_driver_details(payload);
+      // Consignment
+      invoiceNumber: consignmentDetails?.inVoiceNumber,
+      cmrWaybill: consignmentDetails?.waybillNumber,
+      customsDocumentation: consignmentDetails?.customDocument
+          ? consignmentDetails.customDocument
+          : "",
+      weightCertificatePath: consignmentDetails?.weightCertificate
+          ? consignmentDetails.weightCertificate
+          : "",
 
-    //   if (response.status === 200 || response.status === 201) {
-    //     setReviewAndSubmitStatus(false);
-    //     setShowSuccessScreen(true);
-    //   } else {
-    //     console.error('Submission failed:', response.status, response.statusText);
-    //   }
-    // } catch (error: any) {
-    //   console.error('Error during submission:', error.message);
-    //   if (error.response) {
-    //     console.error('Server response:', error.response.data);
-    //   }
-    // }
+      // Vehicle
+      vehicleType: vehicleDetails?.vehicleType,
+      axleSize: vehicleDetails?.axleSize,
+      vehicleRegistrationDocsPath: vehicleDetails?.vehicleRegistrationDocsPath
+          ? vehicleDetails.vehicleRegistrationDocsPath
+          : "",
+      truckLicensePlate: vehicleDetails?.truckLicensePlate,
+
+      // Journey
+      exporterName: journeyDetails?.exporterName,
+      importerName: journeyDetails?.importerName,
+      entryExitPoint: journeyDetails?.entryExitPoint,
+      countryOrigin: journeyDetails?.countryOrigin,
+      countryDestination: journeyDetails?.countryDestination,
+      dateDeparture: journeyDetails?.dateDeparture,
+      dateReturn: journeyDetails?.dateReturn,
+    };
+
+    try {
+      const response = await post_truckpass_details(payload);
+
+      if (response.status === 200 || response.status === 201) {
+        setReviewAndSubmitStatus(false);
+        setShowSuccessScreen(true);
+      } else {
+        console.error('Submission failed:', response.status, response.statusText);
+      }
+    } catch (error: any) {
+      console.error('Error during submission:', error.message);
+      if (error.response) {
+        console.error('Server response:', error.response.data);
+      }
+    }
 
     setReviewAndSubmitStatus(false);
     setShowSuccessScreen(true);
@@ -146,7 +155,7 @@ export const ReviewPage = () => {
                         <span className='font-[600]'>{t('reviewPage.uin')}</span>{driverInformation?.uin}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.email')}</span>{driverInformation?.emailId}
+                        <span className='font-[600]'>{t('reviewPage.email')}</span>{driverInformation?.driverEmailId}
                       </p>
                     </div>
                     <div className='flex flex-col space-y-4'>
@@ -202,7 +211,7 @@ export const ReviewPage = () => {
                         <span className='font-[600]'>{t('reviewPage.axleSize')}</span>{vehicleDetails?.axleSize}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.registrationDocs')}</span>{vehicleDetails?.vehicleRegistrationDocument ? t('reviewPage.uploaded') : t('reviewPage.pending')}
+                        <span className='font-[600]'>{t('reviewPage.registrationDocs')}</span>{vehicleDetails?.vehicleRegistrationDocsPath ? t('reviewPage.uploaded') : t('reviewPage.pending')}
                       </p>
                     </div>
                   </div>
@@ -215,27 +224,27 @@ export const ReviewPage = () => {
                   <div className='flex flex-row gap-x-[350px]'>
                     <div className='flex flex-col space-y-4'>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.exporter')}</span>{journeyDetails?.exporterCompany}
+                        <span className='font-[600]'>{t('reviewPage.exporter')}</span>{journeyDetails?.exporterName}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.countryOfOrigin')}</span>{journeyDetails?.originCountry}
+                        <span className='font-[600]'>{t('reviewPage.countryOfOrigin')}</span>{journeyDetails?.countryOrigin}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.departureDate')}</span>{journeyDetails?.dateOfDeparture}
+                        <span className='font-[600]'>{t('reviewPage.departureDate')}</span>{journeyDetails?.dateDeparture}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.arrivalDate')}</span>{journeyDetails?.dateOfArrival}
+                        <span className='font-[600]'>{t('reviewPage.arrivalDate')}</span>{journeyDetails?.dateReturn}
                       </p>
                     </div>
                     <div className='flex flex-col space-y-4'>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.importer')}</span>{journeyDetails?.importerCompany}
+                        <span className='font-[600]'>{t('reviewPage.importer')}</span>{journeyDetails?.importerName}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.destination')}</span>{journeyDetails?.destinationCountry}
+                        <span className='font-[600]'>{t('reviewPage.destination')}</span>{journeyDetails?.countryDestination}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.borderPoint')}</span>{journeyDetails?.borderOfArrival}
+                        <span className='font-[600]'>{t('reviewPage.borderPoint')}</span>{journeyDetails?.dateReturn}
                       </p>
                     </div>
                   </div>
@@ -271,7 +280,7 @@ interface DriverInfo {
   gender?: string;
   uin?: string;
   phoneNumber?: string;
-  emailId?: string;
+  driverEmailId?: string;
   city?: string
   passportNumber?: string;
   driverLicenseNumber?: string;
@@ -289,17 +298,16 @@ interface VehicleDetailsInfo {
   vehicleType?: string;
   axleSize?: string;
   truckLicensePlate?: string;
-  vehicleRegistrationDocument?: string;
+  vehicleRegistrationDocsPath?: string;
 };
 
 interface JourneyDetailsInfo {
-  originCountry?: string;
-  exporterCompany?: string;
-  dateOfDeparture?: string;
-  borderOfDeparture?: string;
-  destinationCountry?: string;
-  importerCompany?: string;
-  dateOfArrival?: string;
-  borderOfArrival?: string;
+  countryOrigin?: string;
+  exporterName?: string;
+  dateDeparture?: string;
+  entryExitPoint?: string;
+  countryDestination?: string;
+  importerName?: string;
+  dateReturn?: string;
 }
 

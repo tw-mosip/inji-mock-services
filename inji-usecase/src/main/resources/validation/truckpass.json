@@ -15,11 +15,11 @@
     },
     "phoneNumber": {
       "type": "string",
-      "regex": "^[0-9]{10}$"
+      "regex": "^(\\+91)?[6-9]\\d{9}$"
     },
     "gender": {
       "type": "string",
-      "regex": "(Male|Female|Other)"
+      "regex": "(Male|Female|male|female|Other)"
     },
     "emailId": {
       "type": "string",
@@ -96,11 +96,11 @@
     },
     "dateDeparture": {
       "type": "date",
-      "regex": "[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}"
+      "regex": "[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}"
     },
     "dateReturn": {
       "type": "date",
-      "regex": "[0-9]{1,2}-[0-9]{1,2}-[0-9]{4}"
+      "regex": "[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}"
     }
 
   },

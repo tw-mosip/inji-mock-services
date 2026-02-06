@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import relyingPartyService from '../../services/relyingPartyService';
 import { ErrorPopup } from '../../components/ErrorPopup';
 import { DriverRegistrationStepper } from './DriverRegistrationStepper';
-import { base64ToFile } from '../../commans/AppUtilities';
 import Tooltip from '../../components/Tooltip';
 
 
@@ -21,8 +20,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
     const [licenseShared, setLicenseShared] = useState(false);
     const [passportNum, setPassportNum] = useState('');
     const [certificateUploaded, setCertificateUploaded] = useState(false);
-
-    const [selectedCompany, setSelectedCompany] = useState<CompanyInfo | null>(null);
     const [driverInfo, setDriverInfo] = useState<DriverInfo | null>(null);
     const [registrationScreen, setRegistrationScreen] = useState(true);
     const [showCertificateUploading, setShowCertificateUploading] = useState(false);
@@ -40,7 +37,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
 
     useEffect(() => {
         const data = localStorage.getItem('driverInformation');
-        const selectedCompany = localStorage.getItem('companySelected');
 
         if (data) {
             try {
@@ -49,10 +45,6 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
             } catch (e) {
                 console.error("Invalid Information JSON:", e);
             }
-        }
-        if (selectedCompany) {
-            const company = JSON.parse(selectedCompany);
-            setSelectedCompany(company);
         }
     }, []);
 
@@ -108,18 +100,21 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         }
 
         const driverRegistrationFormData = {
-            full_name: driverInfo?.name ?? '',
-            uin: '198765432123',
+            fullName: driverInfo?.name ?? '',
+            uin: driverInfo?.uin?? '',
+
             gender: driverInfo?.gender ?? '',
-            emailId: driverInfo?.email ?? '',
-            phone_number: driverInfo?.phone_number ?? '',
+            driverEmailId: driverInfo?.email ?? '',
+            phoneNumber: driverInfo?.phone_number ?? '',
             city: driverInfo?.address?.locality ?? '',
-            drivers_license_number: driverLicenceNum,
-            passport_number: passportNum,
-            transportCompany: selectedCompany?.companyName,
-            face_image: driverInfo?.picture ? base64ToFile(driverInfo.picture, 'driverPhoto.jpeg') : '',
-            cpc_certificate: fileData ? base64ToFile(fileData, 'CPC-Certificate.pdf') : '',
+
+            driverLicenseNumber: driverLicenceNum ?? '',
+            passportNumber: passportNum ?? '',
+            faceImagePath: driverInfo?.picture ?? ''
         };
+
+
+
 
         try {
             setRegistrationScreen(false);
@@ -190,7 +185,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                     <label className='flex items-center'>
                                         <p className='text-sm'>{t('registration.uin')} </p>
                                     </label>
-                                    <input type='text' disabled value={'198765432123'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                    <input type='text' disabled value={driverInfo?.uin ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
@@ -354,10 +349,6 @@ type RegistrationProps = {
 
 }
 
-type CompanyInfo = {
-    companyName?: string;
-}
-
 type DriverInfo = {
     name?: string;
     picture?: string;
@@ -366,4 +357,5 @@ type DriverInfo = {
     phone_number?: string;
     city?: string;
     address?: { locality?: string };
+    uin?: string;
 };

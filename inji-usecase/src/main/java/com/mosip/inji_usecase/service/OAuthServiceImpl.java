@@ -99,8 +99,18 @@ public class OAuthServiceImpl implements OAuthService {
                 String.class
         );
 
-        return extractClaims(response.getBody());
+        Map<String, Object> claims = extractClaims(response.getBody());
+
+        DecodedJWT accessTokenJwt = JWT.decode(accessToken);
+        String uin = accessTokenJwt.getSubject();
+
+        if (uin != null) {
+            claims.put("uin", uin);
+        }
+
+        return claims;
     }
+
 
     private String buildClientAssertion(String clientId, String audience) {
 

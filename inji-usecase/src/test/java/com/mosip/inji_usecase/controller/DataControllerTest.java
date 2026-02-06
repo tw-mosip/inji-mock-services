@@ -179,40 +179,43 @@ class DataControllerTest {
 
         @Test
         void retrieveDataByQuery_WhenDataFound() throws Exception {
+
                 Map<String, Object> searchResult = Map.of("name", "Jane Doe");
 
-                Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
-
-                when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+                when(repositoryServices.get("farmerRepositoryService"))
+                        .thenReturn(mockFarmerRepositoryService);
 
                 when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
-                                .thenReturn(List.of(searchResult));
+                        .thenReturn(List.of(searchResult));
 
                 mockMvc.perform(get("/api/data")
+                                .header("x-source", "farmer")
                                 .param("filterKey", "name")
                                 .param("operation", "eq")
                                 .param("value", "Jane Doe"))
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$", hasSize(1)))
-                                .andExpect(jsonPath("$[0].name", is("Jane Doe")));
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$", hasSize(1)))
+                        .andExpect(jsonPath("$[0].name").value("Jane Doe"));
         }
 
         @Test
         void retrieveDataByQuery_WhenDataNotFound() throws Exception {
-                Map<String, RepositoryService> repoMap = Map.of("farmerRepo", mockFarmerRepositoryService);
 
-                when(repositoryServices.entrySet()).thenReturn(repoMap.entrySet());
+                when(repositoryServices.get("farmerRepositoryService"))
+                        .thenReturn(mockFarmerRepositoryService);
 
                 when(mockFarmerRepositoryService.getBySearchCriteria(any(Specification.class)))
-                                .thenReturn(Collections.emptyList());
+                        .thenReturn(Collections.emptyList());
 
                 mockMvc.perform(get("/api/data")
+                                .header("x-source", "farmer")
                                 .param("filterKey", "name")
                                 .param("operation", "eq")
                                 .param("value", "NonExistent"))
-                                .andExpect(status().isNotFound())
-                                .andExpect(content().string("No data found for the given query criteria"));
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().string("No data found for the given query criteria"));
         }
+
 
         @Test
         void fetchUserInfo_success() throws Exception {
