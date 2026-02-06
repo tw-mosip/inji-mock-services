@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import tickIcon from '../../assets/confirmation_icon.png';
 import relyingPartyService from '../../services/relyingPartyService';
-import {base64ToString} from '../../commans/AppUtilities';
 
 export const ReviewPage = () => {
   const { t } = useTranslation('');
