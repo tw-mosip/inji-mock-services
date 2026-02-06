@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import com.mosip.inji_usecase.dto.truckpass.UserInfoRequestDto;
 import com.mosip.inji_usecase.dto.truckpass.TokenResponseDto;
 import com.mosip.inji_usecase.service.OAuthService;
+import jakarta.persistence.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,11 +65,14 @@ public class DataController {
     }
 
     @GetMapping("/api/data")
-    public ResponseEntity<?> retrieveDataByQuery(@RequestParam List filterKey,
+    public ResponseEntity<?> retrieveDataByQuery(
+            @RequestHeader(name = "x-source") String dataSource,
+            @RequestParam List filterKey,
             @RequestParam List operation,
             @RequestParam List value,
             @RequestParam(required = false) String dataOption) {
 
+        RepositoryService repositoryService = repositoryServices.get(dataSource + "RepositoryService");
         List<SearchCriteria> criterias = new ArrayList<>();
         for (int i = 0; i < filterKey.size(); i++) {
             SearchCriteria criteria = new SearchCriteria();
@@ -79,7 +83,6 @@ public class DataController {
             criterias.add(criteria);
         }
         SearchDto params = new SearchDto(criterias, dataOption);
-        List<Map<String, Object>> result = new ArrayList<>();
         SpecificationBuilder<?> builder = new SpecificationBuilder<>();
         List<SearchCriteria> criteriaList = params.getSearchCriteria();
         if (criteriaList != null) {
@@ -89,13 +92,8 @@ public class DataController {
             });
         }
 
-        for (Map.Entry<String, RepositoryService> repo : repositoryServices.entrySet()) {
-            try {
-                result.addAll(repo.getValue().getBySearchCriteria(builder.build()));
-            } catch (Exception e) {
-                LOGGER.error("Search failed for repository {}: {}", repo.getKey(), e.getMessage(), e);
-            }
-        }
+
+        List<Map<String, Object>> result = repositoryService.getBySearchCriteria(builder.build());
 
         if (result.isEmpty())
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No data found for the given query criteria");
