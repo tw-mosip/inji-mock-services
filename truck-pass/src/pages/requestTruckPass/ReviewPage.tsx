@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import tickIcon from '../../assets/confirmation_icon.png';
 import relyingPartyService from '../../services/relyingPartyService';
+import {base64ToString} from '../../commans/AppUtilities';
 
 export const ReviewPage = () => {
   const { t } = useTranslation('');
@@ -56,13 +57,19 @@ export const ReviewPage = () => {
       // Consignment
       invoiceNumber: consignmentDetails?.inVoiceNumber,
       cmrWaybill: consignmentDetails?.waybillNumber,
-      customsDocumentation: "",
-      weightCertificatePath: "",
+      customsDocumentation: consignmentDetails?.customDocument
+          ? consignmentDetails.customDocument
+          : "",
+      weightCertificatePath: consignmentDetails?.weightCertificate
+          ? consignmentDetails.weightCertificate
+          : "",
 
       // Vehicle
       vehicleType: vehicleDetails?.vehicleType,
       axleSize: vehicleDetails?.axleSize,
-      vehicleRegistrationDocsPath: "",
+      vehicleRegistrationDocsPath: vehicleDetails?.vehicleRegistrationDocsPath
+          ? vehicleDetails.vehicleRegistrationDocsPath
+          : "",
       truckLicensePlate: vehicleDetails?.truckLicensePlate,
 
       // Journey
