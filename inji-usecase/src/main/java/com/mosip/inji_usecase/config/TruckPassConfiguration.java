@@ -14,6 +14,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @PropertySource({ "classpath:database.properties" })
@@ -44,5 +45,10 @@ public class TruckPassConfiguration {
     public PlatformTransactionManager truckpassTransactionManager(
             @Qualifier("truckpassEntityManager") EntityManagerFactory emf) {
         return JpaConfigHelper.createTransactionManager(emf);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }
