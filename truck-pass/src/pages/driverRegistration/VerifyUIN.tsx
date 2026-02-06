@@ -18,7 +18,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
     const signInButtonScript = window._env_.SIGN_IN_BUTTON_PLUGIN_URL;
     const state = useExternalScript(signInButtonScript);
     const [searchParams] = useSearchParams();
-    // const [uin, setUin] = useState('');
+    const [uinValue, setUinValue] = useState('');
     const [showUIN, setShowUIN] = useState(false);
     const [verified] = useState(false);
     // const [errorCode, setErrorCode] = useState("");
@@ -80,6 +80,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                 grant_type
             )
             if (userInfo) {
+                setUinValue(userInfo?.uin)
                 setVerificationStatus('verified');
             }
             else {
@@ -167,7 +168,7 @@ export const VerifyUIN: React.FC<VerifyUINProps> = ({ }) => {
                     </div>
                 );
             case 'verified':
-                const uin = "8769123460";
+                const uin = uinValue;
                 const toggleUIN = () => {
                     setShowUIN(prev => !prev);
                 };

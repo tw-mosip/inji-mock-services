@@ -184,7 +184,7 @@
         "searchByUinToolTip": "Here get the Driver information by entering their already provided 12-digit UIN",
         "searchByNameToolTip": "Here get the Driver information through their name that when registered",
         "enterDriverUin": "Enter Driver’s Unique Identification Number (UIN) ",
-        "uinPlaceHolder": "Enter 12-digit UIN",
+        "uinPlaceHolder": "Enter 10-digit UIN",
         "uinErrorMsg1": "Invalid UIN. Please verify and try again.",
         "uinErrorMsg2": "Driver not found. Please verify UIN or name and try again."
     },

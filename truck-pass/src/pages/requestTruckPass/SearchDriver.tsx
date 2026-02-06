@@ -92,7 +92,7 @@ export const SearchDriver = () => {
   const moveToDriverProfile = async () => {
     if (searchByUin) {
       setUinErrorMsg("");
-      if (uin.length < 12) {
+      if (uin.length < 10) {
         if (uin.length === 0) {
           setUinErrorMsg(t("searchDriver.uinErrorMsg2"));
           return;

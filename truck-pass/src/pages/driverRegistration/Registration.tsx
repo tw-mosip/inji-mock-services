@@ -100,16 +100,16 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
         }
 
         const driverRegistrationFormData = {
-            fullName: driverInfo?.name ?? 'Ravi Kumar',
-            uin: '198765432123',
+            fullName: driverInfo?.name ?? '',
+            uin: driverInfo?.uin?? '',
 
-            gender: driverInfo?.gender ?? 'Male',
-            driverEmailId: driverInfo?.email ?? 'ravi.kumar@example.com',
-            phoneNumber: driverInfo?.phone_number ?? '9876543210',
-            city: driverInfo?.address?.locality ?? 'Bengaluru',
+            gender: driverInfo?.gender ?? '',
+            driverEmailId: driverInfo?.email ?? '',
+            phoneNumber: driverInfo?.phone_number ?? '',
+            city: driverInfo?.address?.locality ?? '',
 
-            driverLicenseNumber: driverLicenceNum ?? 'DL-0420110149646',
-            passportNumber: passportNum ?? 'N1234567',
+            driverLicenseNumber: driverLicenceNum ?? '',
+            passportNumber: passportNum ?? '',
             faceImagePath: driverInfo?.picture ?? ''
         };
 
@@ -185,7 +185,7 @@ export const Registration: React.FC<RegistrationProps> = ({ }) => {
                                     <label className='flex items-center'>
                                         <p className='text-sm'>{t('registration.uin')} </p>
                                     </label>
-                                    <input type='text' disabled value={'198765432123'} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
+                                    <input type='text' disabled value={driverInfo?.uin ?? ''} className='bg-[#FAFAFA] text-[15px] text-[#717680] p-1.5 w-full border border-[#D5D7DA] rounded-md' />
                                 </div>
                                 <div className='space-y-1'>
                                     <label className='flex items-center'>
@@ -357,4 +357,5 @@ type DriverInfo = {
     phone_number?: string;
     city?: string;
     address?: { locality?: string };
+    uin?: string;
 };

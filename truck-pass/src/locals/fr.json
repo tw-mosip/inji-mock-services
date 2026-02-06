@@ -184,7 +184,7 @@
     "searchByUinToolTip": "Obtenez ici les informations du conducteur en entrant son UIN à 12 chiffres déjà fourni",
     "searchByNameToolTip": "Obtenez ici les informations du conducteur via le nom utilisé lors de l’inscription",
     "enterDriverUin": "Entrez le numéro d’identification unique (UIN) du conducteur ",
-    "uinPlaceHolder": "Entrez un UIN à 12 chiffres",
+    "uinPlaceHolder": "Entrez un UIN à 10 chiffres",
     "uinErrorMsg1": "UIN invalide. Veuillez vérifier et réessayer.",
     "uinErrorMsg2": "Conducteur introuvable. Veuillez vérifier l’UIN ou le nom et réessayer."
   },
