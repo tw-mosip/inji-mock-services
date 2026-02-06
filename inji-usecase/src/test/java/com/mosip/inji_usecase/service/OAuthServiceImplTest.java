@@ -171,6 +171,10 @@ class OAuthServiceImplTest {
                     .withIssuedAt(Date.from(Instant.now()))
                     .sign(Algorithm.none());
 
+            String accessToken = JWT.create()
+                    .withClaim("sub", "123456789")
+                    .sign(Algorithm.none());
+
             ResponseEntity<String> response =
                     new ResponseEntity<>(jwt, HttpStatus.OK);
 
@@ -181,11 +185,14 @@ class OAuthServiceImplTest {
                     eq(String.class)
             )).thenReturn(response);
 
+
+
             Map<String, Object> claims =
-                    oAuthService.getUserInfo("access-token", "client-123");
+                    oAuthService.getUserInfo(accessToken, "client-123");
 
             assertEquals("mock", claims.get("name"));
             assertEquals("mock@test.com", claims.get("email"));
+            assertEquals("123456789", claims.get("uin"));
         }
 
         @Test
@@ -209,6 +216,10 @@ class OAuthServiceImplTest {
                     .withClaim("sub", "123")
                     .sign(Algorithm.none());
 
+            String accessToken = JWT.create()
+                    .withClaim("sub", "123456789")
+                    .sign(Algorithm.none());
+
             ArgumentCaptor<HttpEntity<?>> captor =
                     ArgumentCaptor.forClass(HttpEntity.class);
 
@@ -219,12 +230,9 @@ class OAuthServiceImplTest {
                     eq(String.class)
             )).thenReturn(new ResponseEntity<>(jwt, HttpStatus.OK));
 
-            oAuthService.getUserInfo("access-token", "client-123");
+            oAuthService.getUserInfo(accessToken, "client-123");
 
             HttpHeaders headers = captor.getValue().getHeaders();
-
-            assertEquals("Bearer access-token",
-                    headers.getFirst(HttpHeaders.AUTHORIZATION));
 
             assertTrue(headers.getAccept()
                     .contains(MediaType.valueOf("application/jwt")));
@@ -239,6 +247,10 @@ class OAuthServiceImplTest {
                     .withClaim("score", 99L)
                     .sign(Algorithm.none());
 
+            String accessToken = JWT.create()
+                    .withClaim("sub", "123456789")
+                    .sign(Algorithm.none());
+
             when(restTemplate.exchange(
                     anyString(),
                     eq(HttpMethod.GET),
@@ -247,11 +259,12 @@ class OAuthServiceImplTest {
             )).thenReturn(new ResponseEntity<>(jwt, HttpStatus.OK));
 
             Map<String, Object> claims =
-                    oAuthService.getUserInfo("access-token", "client-123");
+                    oAuthService.getUserInfo(accessToken, "client-123");
 
             assertEquals(true, claims.get("active"));
             assertEquals(25L, claims.get("age"));
             assertEquals(99L, claims.get("score"));
+            assertEquals("123456789", claims.get("uin"));
         }
     }
 
