@@ -10,7 +10,7 @@
         },
         "phone_number": {
             "type": "string",
-            "regex": "^[0-9]{10}$"
+            "regex": "^(\\+91)?[6-9]\\d{9}$\n"
         },
         "email": {
             "regex": "^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$",
@@ -27,7 +27,7 @@
         },
         "gender": {
             "type": "string",
-            "regex": "(Male|Female|Other)"
+            "regex": "(Male|Female|male|female|Other)"
         },
         "state": {
             "type": "string"
