@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import relyingPartyService from '../../services/relyingPartyService';
 import { ErrorPopup } from '../../components/ErrorPopup';
 import { DriverRegistrationStepper } from './DriverRegistrationStepper';
-import { base64ToFile } from '../../commans/AppUtilities';
 import Tooltip from '../../components/Tooltip';
 
 
