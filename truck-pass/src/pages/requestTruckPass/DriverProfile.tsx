@@ -56,7 +56,7 @@ export const DriverProfile = () => {
         <div className='flex flex-wrap justify-between gap-x-4'>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.fullName')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.driverName}</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.fullName}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2  my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.gender')}</p>
@@ -64,7 +64,7 @@ export const DriverProfile = () => {
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.uin')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.driverUin}</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.uin}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.phoneNumber')}</p>
@@ -72,7 +72,7 @@ export const DriverProfile = () => {
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.emailID')}</p>
-            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.emailId}</p>
+            <p className='font-[500] text-[#000000] text-sm'>{driverInformation?.driverEmailId}</p>
           </div>
           <div className='flex flex-col w-[580px] bg-[#FAFAFA] border border-[#D5D7DA] shadow-xs rounded-md px-4 py-2 my-3'>
             <p className='font-[500] text-[#717680] text-xs'>{t('driverProfilePage.city')}</p>
@@ -105,13 +105,13 @@ export const DriverProfile = () => {
 
 interface DriverInfo {
   id?: number;
-  driverName: string;
-  driverUin?: string;
-  gender?: "Male" | "Female" | "Other";
+  fullName: string;
+  uin?: string;
+  gender?: string;
   phoneNumber?: string;
-  emailId?: string;
-  city?: string;
+  driverEmailId?: string;
+  city?: string
   passportNumber?: string;
   driverLicenseNumber?: string;
-  faceImagePath?: string;
-}
+  faceImagePath?: string
+};
