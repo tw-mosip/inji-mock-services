@@ -53,7 +53,7 @@ export const SearchDriver = () => {
     try {
       setLoading(true);
       setError("");
-      const response = await get_driver_information("driverUin", uin);
+      const response = await get_driver_information("uin", uin);
       if (response.data && response.data.length > 0) {
         setSelectedriver(response.data[0]);
       } else {
@@ -71,7 +71,7 @@ export const SearchDriver = () => {
     try {
       setLoading(true);
       setError("");
-      const response = await get_driver_information("driverName", search)
+      const response = await get_driver_information("fullName", search)
       setDriversList(response.data || []);
       console.log("success")
     } catch (err) {
@@ -209,19 +209,19 @@ export const SearchDriver = () => {
                         <ul className="absolute z-10 bg-white border border-[#D5D7DA] w-full rounded-md max-h-40 overflow-y-auto shadow-md">
                           {driversList
                               .filter((driver) =>
-                                  driver.driverName.toLowerCase().includes(search.toLowerCase())
+                                  driver.fullName.toLowerCase().includes(search.toLowerCase())
                               )
                               .map((driver) => (
                                   <div
                                       key={driver.id}
                                       onClick={() => {
                                         setSelectedriver(driver);
-                                        setSearch(driver.driverName);
+                                        setSearch(driver.fullName);
                                       }}
                                       className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex flex-row items-center justify-between"
                                   >
-                                    <span className="text-base text-[#181D27] font-[500] w-[280px] break-words">{driver.driverName}</span>
-                                    <span className="text-base text-gray-500 font-[500]">{t('searchDriver.uin')} {driver.driverUin} </span>
+                                    <span className="text-base text-[#181D27] font-[500] w-[280px] break-words">{driver.fullName}</span>
+                                    <span className="text-base text-gray-500 font-[500]">{t('searchDriver.uin')} {driver.fullName} </span>
                                     <span className="text-base text-gray-500 font-[500]">{t('searchDriver.licenseNum')}{driver.driverLicenseNumber} </span>
                                   </div>
                               ))}
@@ -229,7 +229,7 @@ export const SearchDriver = () => {
                     )}
                 {/* No matches */}
                 {driversList.filter((driver) =>
-                    driver.driverName.toLowerCase().includes(search.toLowerCase())
+                    driver.fullName.toLowerCase().includes(search.toLowerCase())
                 ).length === 0 && error && (
                     <p className="text-xs text-[#D92D20]">{t('searchDriver.nameErrorMsg')}</p>
                 )}
@@ -258,13 +258,13 @@ export const SearchDriver = () => {
 
 interface DriverList {
   id?: number;
-  driverName: string;
+  fullName: string;
   gender?: string;
-  driverUin?: string;
+  uin?: string;
   phoneNumber?: string;
-  emailId?: string;
-  city?: string;
+  driverEmailId?: string;
+  city?: string
   passportNumber?: string;
   driverLicenseNumber?: string;
-  faceImagePath?: string;
-}
+  faceImagePath?: string
+};

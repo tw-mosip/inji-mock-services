@@ -4,7 +4,6 @@ import { TruckpassRequestStepper } from './TruckpassRequestStepper';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import tickIcon from '../../assets/confirmation_icon.png';
-import {base64ToString} from '../../commans/AppUtilities';
 import relyingPartyService from '../../services/relyingPartyService';
 
 export const ReviewPage = () => {
@@ -18,7 +17,7 @@ export const ReviewPage = () => {
   const [journeyDetails, setJourneyDetails] = useState<JourneyDetailsInfo | null>(null);
 
 
-  const { post_driver_details } = { ...relyingPartyService };
+  const { post_truckpass_details } = { ...relyingPartyService };
 
   const setLocalStoredData = (key: string, setItemDetails: (item: any) => void) => {
     const data = localStorage.getItem(key);
@@ -44,11 +43,11 @@ export const ReviewPage = () => {
   const confirmAndSubmit = async () => {
     const payload = {
       // Driver
-      driverUin: driverInformation?.driverUin,
-      driverName: driverInformation?.driverName,
+      driverUin: driverInformation?.uin,
+      driverName: driverInformation?.fullName,
       phoneNumber: driverInformation?.phoneNumber,
       gender: driverInformation?.gender,
-      emailId: driverInformation?.emailId,
+      emailId: driverInformation?.driverEmailId,
       city: driverInformation?.city,
       faceImagePath: driverInformation?.faceImagePath,
       driverLicenseNumber: driverInformation?.driverLicenseNumber,
@@ -57,19 +56,13 @@ export const ReviewPage = () => {
       // Consignment
       invoiceNumber: consignmentDetails?.inVoiceNumber,
       cmrWaybill: consignmentDetails?.waybillNumber,
-      customsDocumentation: consignmentDetails?.customDocument
-          ? base64ToString(consignmentDetails.customDocument)
-          : "",
-      weightCertificatePath: consignmentDetails?.weightCertificate
-          ? base64ToString(consignmentDetails.weightCertificate)
-          : "",
+      customsDocumentation: "",
+      weightCertificatePath: "",
 
       // Vehicle
       vehicleType: vehicleDetails?.vehicleType,
       axleSize: vehicleDetails?.axleSize,
-      vehicleRegistrationDocsPath: vehicleDetails?.vehicleRegistrationDocsPath
-          ? base64ToString(vehicleDetails.vehicleRegistrationDocsPath)
-          : "",
+      vehicleRegistrationDocsPath: "",
       truckLicensePlate: vehicleDetails?.truckLicensePlate,
 
       // Journey
@@ -83,7 +76,7 @@ export const ReviewPage = () => {
     };
 
     try {
-      const response = await post_driver_details(payload);
+      const response = await post_truckpass_details(payload);
 
       if (response.status === 200 || response.status === 201) {
         setReviewAndSubmitStatus(false);
@@ -150,13 +143,13 @@ export const ReviewPage = () => {
                   <div className='flex flex-row gap-x-[370px]'>
                     <div className='flex flex-col space-y-4'>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.fullName')}</span>{driverInformation?.driverName}
+                        <span className='font-[600]'>{t('reviewPage.fullName')}</span>{driverInformation?.fullName}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.uin')}</span>{driverInformation?.driverUin}
+                        <span className='font-[600]'>{t('reviewPage.uin')}</span>{driverInformation?.uin}
                       </p>
                       <p className='text-[14px]'>
-                        <span className='font-[600]'>{t('reviewPage.email')}</span>{driverInformation?.emailId}
+                        <span className='font-[600]'>{t('reviewPage.email')}</span>{driverInformation?.driverEmailId}
                       </p>
                     </div>
                     <div className='flex flex-col space-y-4'>
@@ -277,15 +270,15 @@ export const ReviewPage = () => {
 
 interface DriverInfo {
   id?: number;
-  driverName: string;
+  fullName: string;
   gender?: string;
-  driverUin?: string;
+  uin?: string;
   phoneNumber?: string;
-  emailId?: string;
-  city?: string;
+  driverEmailId?: string;
+  city?: string
   passportNumber?: string;
   driverLicenseNumber?: string;
-  faceImagePath?: string;
+  faceImagePath?: string
 };
 
 interface ConsigmentDetailsInfo {
