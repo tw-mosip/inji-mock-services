@@ -198,7 +198,7 @@ public class DataController {
 
     // ---------- Utilities ----------
 
-    @PostMapping("/fetchUserInfo")
+    @PostMapping("/api/fetchUserInfo")
     public ResponseEntity<Map<String, Object>> fetchUserInfo(
             @RequestBody UserInfoRequestDto request) {
 
