@@ -237,7 +237,7 @@ class DataControllerTest {
                 when(oAuthService.getUserInfo("access-token", "client-123"))
                         .thenReturn(userInfo);
 
-                mockMvc.perform(post("/fetchUserInfo")
+                mockMvc.perform(post("/api/fetchUserInfo")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isOk())
@@ -254,7 +254,7 @@ class DataControllerTest {
                 when(oAuthService.getToken(any(UserInfoRequestDto.class)))
                         .thenReturn(null);
 
-                mockMvc.perform(post("/fetchUserInfo")
+                mockMvc.perform(post("/api/fetchUserInfo")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isBadGateway())
@@ -270,7 +270,7 @@ class DataControllerTest {
                 when(oAuthService.getToken(any(UserInfoRequestDto.class)))
                         .thenThrow(new IllegalArgumentException("Invalid client"));
 
-                mockMvc.perform(post("/fetchUserInfo")
+                mockMvc.perform(post("/api/fetchUserInfo")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isBadRequest())
@@ -286,7 +286,7 @@ class DataControllerTest {
                 when(oAuthService.getToken(any(UserInfoRequestDto.class)))
                         .thenThrow(new RuntimeException("Service down"));
 
-                mockMvc.perform(post("/fetchUserInfo")
+                mockMvc.perform(post("/api/fetchUserInfo")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andExpect(status().isInternalServerError())
