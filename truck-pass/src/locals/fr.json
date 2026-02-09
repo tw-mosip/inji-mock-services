@@ -137,15 +137,16 @@
     "approvedPasses": "Passes approuvés",
     "pendingReview": "En attente de révision",
     "totalTrucks": "Total des camions",
-    "requestId": "ID de demande",
+    "uin": "UIN",
     "driverName": "Nom du conducteur",
     "requestTruckPass": "Demandes de laissez-passer camion",
     "licenceNumber": "Numéro de licence",
-    "status": "Statut",
-    "date": "Date",
+    "email": "Adresse e-mail",
+    "phoneNumber": "Numéro de téléphone",
     "myDashBoard": "Mon tableau de bord",
     "newTruckPassRequest": "+ Nouvelle demande de laissez-passer camion"
   },
+
   "newTruckPassRequest": {
     "newTruckPassRequest": "Nouvelle demande de laissez-passer camion",
     "headerDesc": "Complétez toutes les étapes pour soumettre votre demande"
