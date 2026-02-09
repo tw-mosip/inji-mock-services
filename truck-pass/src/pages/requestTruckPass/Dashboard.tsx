@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { useTranslation } from 'react-i18next';
 // import clockIcon from '../../assets/clock_icon.png';
 // import approvedIcon from '../../assets/approved_icon.png';
@@ -7,11 +7,17 @@ import { useTranslation } from 'react-i18next';
 import sortUpIcon from '../../assets/sort_up_icon.png';
 import sortDownIcon from '../../assets/sort_down_icon.png';
 import { useNavigate } from 'react-router-dom';
+import relyingPartyService from "../../services/relyingPartyService";
 
 export const Dashboard: React.FC = () => {
 
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const [truckpassList, setTruckpassList] = useState<TruckpassList[]>([]);
+
+    const { get_truckpass_information } = {
+        ...relyingPartyService,
+    };
 
     // const metricItems = [
     //     { icon: clockIcon, itemName: t('dashBoard.activeRequest'), count: '10' },
@@ -20,35 +26,50 @@ export const Dashboard: React.FC = () => {
     //     { icon: trucksNumIcon, itemName: t('dashBoard.totalTrucks'), count: '45' }
     // ]
 
-    const tableHeaders = [
-        { id: '1', title: t('dashBoard.requestId') },
-        { id: '2', title: t('dashBoard.driverName') },
-        { id: '3', title: t('dashBoard.licenceNumber') },
-        { id: '4', title: t('dashBoard.status') },
-        { id: '5', title: t('dashBoard.date') }
-    ];
+    useEffect(() => {
+       fetchTruckpassDB();
+    }, []);
 
-    const listOfTruckPassRequests = [
-        { requestId: 'TP-2024-001', driverName: 'John Smith', licenceNumber: 'ABC-123', status: 'approved', date: '20-08-2025' },
-        { requestId: 'TP-2024-002', driverName: 'Srikar dube', licenceNumber: 'XYZ-234', status: 'pending', date: '12-05-2025' },
-        { requestId: 'TP-2024-003', driverName: 'Anand Kumar', licenceNumber: 'PQR-345', status: 'underReview', date: '06-6-2025' },
-        { requestId: 'TP-2024-004', driverName: 'Rajesh singh', licenceNumber: 'TUV-890', status: 'rejected', date: '5m 8s' },
-        { requestId: 'TP-2024-005', driverName: 'Raja Vijaya Venkatesh pratap rana Singh', licenceNumber: 'STR-345', status: 'approved', date: '1hr 30m 20s' },
-        { requestId: 'TP-2024-006', driverName: 'Arjun Naidu', licenceNumber: 'GHI-567', status: 'pending', date: '33m 21s' }
-    ];
-
-    const statusBg = (status: string) => {
-        switch (status) {
-            case 'approved':
-                return { label: 'Approved', statusClass: 'text-[#067647] bg-[#ECFDF3] border-[#ABEFC6] rounded-2xl w-[90px]', pointerBg: 'bg-[#17B26A]' };
-            case 'pending':
-                return { label: 'Pending', statusClass: 'text-[#B54708] bg-[#FFFAEB] border-[#FEDF89] rounded-2xl w-[90px]', pointerBg: 'bg-[#F79009]' };
-            case 'underReview':
-                return { label: 'Under Review', statusClass: 'text-[#026AA2] bg-[#F0F9FF] border-[#B9E6FE] rounded-2xl w-[120px]', pointerBg: 'bg-[#0BA5EC]' };
-            case 'rejected':
-                return { label: 'Rejected', statusClass: 'text-[#f74060] bg-[#F7C7CF] border-[#F7C7Ch] rounded-2xl w-[90px]', pointerBg: 'bg-[#F74060]' };
+    const fetchTruckpassDB = async () => {
+        try {
+            const response = await get_truckpass_information()
+            setTruckpassList(response.data || []);
+            console.log("success")
+        } catch (err) {
+            console.error(err);
+            console.log("fail")
         }
     };
+
+    const tableHeaders = [
+        { id: '1', title: t('dashBoard.uin') },
+        { id: '2', title: t('dashBoard.driverName') },
+        { id: '3', title: t('dashBoard.licenceNumber') },
+        { id: '4', title: t('dashBoard.email') },
+        { id: '5', title: t('dashBoard.phoneNumber') }
+    ];
+
+    // const listOfTruckPassRequests = [
+    //     { requestId: 'TP-2024-001', driverName: 'John Smith', licenceNumber: 'ABC-123', status: 'approved', date: '20-08-2025' },
+    //     { requestId: 'TP-2024-002', driverName: 'Srikar dube', licenceNumber: 'XYZ-234', status: 'pending', date: '12-05-2025' },
+    //     { requestId: 'TP-2024-003', driverName: 'Anand Kumar', licenceNumber: 'PQR-345', status: 'underReview', date: '06-6-2025' },
+    //     { requestId: 'TP-2024-004', driverName: 'Rajesh singh', licenceNumber: 'TUV-890', status: 'rejected', date: '5m 8s' },
+    //     { requestId: 'TP-2024-005', driverName: 'Raja Vijaya Venkatesh pratap rana Singh', licenceNumber: 'STR-345', status: 'approved', date: '1hr 30m 20s' },
+    //     { requestId: 'TP-2024-006', driverName: 'Arjun Naidu', licenceNumber: 'GHI-567', status: 'pending', date: '33m 21s' }
+    // ];
+
+    // const statusBg = (status: string) => {
+    //     switch (status) {
+    //         case 'approved':
+    //             return { label: 'Approved', statusClass: 'text-[#067647] bg-[#ECFDF3] border-[#ABEFC6] rounded-2xl w-[90px]', pointerBg: 'bg-[#17B26A]' };
+    //         case 'pending':
+    //             return { label: 'Pending', statusClass: 'text-[#B54708] bg-[#FFFAEB] border-[#FEDF89] rounded-2xl w-[90px]', pointerBg: 'bg-[#F79009]' };
+    //         case 'underReview':
+    //             return { label: 'Under Review', statusClass: 'text-[#026AA2] bg-[#F0F9FF] border-[#B9E6FE] rounded-2xl w-[120px]', pointerBg: 'bg-[#0BA5EC]' };
+    //         case 'rejected':
+    //             return { label: 'Rejected', statusClass: 'text-[#f74060] bg-[#F7C7CF] border-[#F7C7Ch] rounded-2xl w-[90px]', pointerBg: 'bg-[#F74060]' };
+    //     }
+    // };
 
     const newTruckPassRequest = () => {
         navigate('/requestTruckpassProcess/searchDriver');
@@ -100,21 +121,16 @@ export const Dashboard: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {listOfTruckPassRequests.map((request, id) => {
-                            const currentStatus = statusBg(request.status) ?? { label: '', statusClass: '', pointerBg: '' };
-                            const { label, statusClass, pointerBg } = currentStatus;
+                        {truckpassList.map((request, id) => {
 
                             return (
                                 <tr key={id}
                                     className={`bg-[#FFFFFF] border-t border-[#E5EBFA] text-[0.8rem] break-words h-[54px] text-[#191919] cursor-pointer`}>
-                                    <td className={`px-6 font-[600]`}>{request.requestId}</td>
+                                    <td className={`px-6 font-[600]`}>{request.driverUin}</td>
                                     <td className={`px-6 w-[360px]`}>{request.driverName}</td>
-                                    <td className={`px-6`}>{request.licenceNumber}</td>
-                                    <td className={`${statusClass} flex space-x-1 border text-xs font-[400] mt-3.5 px-1.5 ml-4 h-[28px] items-center`}>
-                                        <span className={`flex h-1.5 w-1.5 rounded-2xl ${pointerBg}`}></span>
-                                        <p className='font-[600]'>{label}</p>
-                                    </td>
-                                    <td className={`px-6`}>{request.date}</td>
+                                    <td className={`px-6`}>{request.driverLicenseNumber}</td>
+                                    <td className={`px-6`}>{request.emailId}</td>
+                                    <td className={`px-6`}>{request.phoneNumber}</td>
                                 </tr>
                             )
                         })
@@ -131,3 +147,40 @@ export const Dashboard: React.FC = () => {
         </div>
     )
 };
+
+interface TruckpassList {
+    id?: number;
+
+    driverUin?: string;
+    driverName: string;
+
+    phoneNumber?: string;
+    gender?: string;
+    emailId?: string;
+    city?: string;
+
+    faceImagePath?: string;
+    driverLicenseNumber?: string;
+    passportNumber?: string;
+
+    invoiceNumber?: string;
+    cmrWaybill?: string;
+    customsDocumentation?: string;
+    weightCertificatePath?: string;
+
+    vehicleType?: string;
+    axleSize?: string;
+    vehicleRegistrationDocsPath?: string;
+    truckLicensePlate?: string;
+
+    exporterName?: string;
+    importerName?: string;
+    entryExitPoint?: string;
+
+    countryOrigin?: string;
+    countryDestination?: string;
+
+    dateDeparture?: string;
+    dateReturn?: string;
+}
+

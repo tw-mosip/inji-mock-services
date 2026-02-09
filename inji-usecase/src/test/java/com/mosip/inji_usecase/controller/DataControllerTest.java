@@ -295,4 +295,49 @@ class DataControllerTest {
                         .andExpect(jsonPath("$.error")
                                 .value("Service down"));
         }
+
+        @Test
+        void fetchAllData_success() throws Exception {
+
+                Map<String, Object> data = Map.of("name", "Truck Driver");
+
+                when(repositoryServices.get("truckpassRepositoryService"))
+                        .thenReturn(mockFarmerRepositoryService);
+
+                when(mockFarmerRepositoryService.getBySearchCriteria(null))
+                        .thenReturn(List.of(data));
+
+                mockMvc.perform(get("/api/all")
+                                .header("x-source", "truckpass"))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$", hasSize(1)))
+                        .andExpect(jsonPath("$[0].name").value("Truck Driver"));
+        }
+
+        @Test
+        void fetchAllData_notFound() throws Exception {
+
+                when(repositoryServices.get("truckpassRepositoryService"))
+                        .thenReturn(mockFarmerRepositoryService);
+
+                when(mockFarmerRepositoryService.getBySearchCriteria(null))
+                        .thenReturn(Collections.emptyList());
+
+                mockMvc.perform(get("/api/all")
+                                .header("x-source", "truckpass"))
+                        .andExpect(status().isNotFound())
+                        .andExpect(content().string("No data found"));
+        }
+
+        @Test
+        void fetchAllData_invalidSource() throws Exception {
+
+                when(repositoryServices.get("invalidRepositoryService"))
+                        .thenReturn(null);
+
+                mockMvc.perform(get("/api/all")
+                                .header("x-source", "invalid"))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().string("Invalid data source"));
+        }
 }

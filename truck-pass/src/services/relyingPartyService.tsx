@@ -78,6 +78,16 @@ const get_driver_information = async (key: string, value: string) => {
   return response;
 };
 
+const get_truckpass_information = async () => {
+  const response = await axios.get(API_URL + "/all", {
+    headers: {
+      "x-source": "truckpass",
+    },
+  });
+
+  return response;
+};
+
 //API Call to POST the driver details for New Registeration of Driver
 const post_driver_details = async (payload: any): Promise<any> => {
   const formData = new FormData();
@@ -120,7 +130,8 @@ const relyingPartyService = {
   post_driver_registration,
   get_driver_information,
   post_driver_details,
-  post_truckpass_details
+  post_truckpass_details,
+  get_truckpass_information
 };
 
 export default relyingPartyService;
