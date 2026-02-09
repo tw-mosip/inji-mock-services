@@ -102,6 +102,28 @@ public class DataController {
 
     }
 
+    @GetMapping("/api/all")
+    public ResponseEntity<?> fetchAllData(
+            @RequestHeader(name = "x-source") String dataSource) {
+
+        RepositoryService repositoryService =
+                repositoryServices.get(dataSource + "RepositoryService");
+
+        if (repositoryService == null) {
+            return ResponseEntity.badRequest()
+                    .body("Invalid data source");
+        }
+
+        List<Map<String, Object>> result =
+                repositoryService.getBySearchCriteria(null);
+
+        return result.isEmpty()
+                ? ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("No data found")
+                : ResponseEntity.ok(result);
+    }
+
+
     @PostMapping("/api/data")
     public ResponseEntity<?> ingestData(
             @RequestHeader(name = "x-source") String dataSource,
