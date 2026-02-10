@@ -54,7 +54,6 @@ export const SearchDriver = () => {
       setLoading(true);
       setError("");
       const response = await get_driver_information("uin", uin);
-      console.log("*")
       if (response.data && response.data.length > 0) {
         const driver = response.data[0]
         setSelectedriver(driver);
