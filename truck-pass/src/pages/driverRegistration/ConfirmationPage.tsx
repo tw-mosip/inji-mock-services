@@ -22,10 +22,15 @@ export const ConfirmationPage: React.FC = () => {
 
       if (details) {
         const driverDetails = JSON.parse(details);
-        const companyDetails = JSON.parse(companySelected);
+
         setConfirmationDetails(driverDetails);
+
+      }
+      if(companySelected) {
+        const companyDetails = JSON.parse(companySelected);
         setCompany(companyDetails);
       }
+
 
       if (additionalFiles) {
         const additionalDetails = JSON.parse(additionalFiles);
