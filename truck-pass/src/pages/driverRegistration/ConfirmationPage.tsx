@@ -12,15 +12,19 @@ export const ConfirmationPage: React.FC = () => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
   const [confirmationDetails, setConfirmationDetails] = useState<ConfirmationDetails | null>(null);
   const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfo | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
 
   useEffect(() => {
     try {
       const details = localStorage.getItem('driverDetails');
       const additionalFiles = localStorage.getItem('driverAdditionalFiles');
+      const companySelected = localStorage.getItem('companySelected')
 
       if (details) {
         const driverDetails = JSON.parse(details);
+        const companyDetails = JSON.parse(companySelected);
         setConfirmationDetails(driverDetails);
+        setCompany(companyDetails);
       }
 
       if (additionalFiles) {
@@ -94,7 +98,7 @@ export const ConfirmationPage: React.FC = () => {
                   ['email', confirmationDetails?.driverEmailId],
                   ['phoneNumber', confirmationDetails?.phoneNumber],
                   ['city', confirmationDetails?.city],
-                  ['transportCompany', confirmationDetails?.transportCompany],
+                  ['transportCompany', company?.company_name],
                   ['licenseNum', confirmationDetails?.driverLicenseNumber],
                   ['passportNumber', confirmationDetails?.passportNumber],
                   ['cpcCertificate', t('confirmationPage.fileUploaded')],
@@ -138,5 +142,14 @@ interface ConfirmationDetails {
   phoneNumber?: string;
   driverLicenseNumber?: string;
   passportNumber?: string;
-  transportCompany?: string;
+}
+
+interface Company {
+  id: string;
+  company_name: string;
+  registration_type?: string;
+  registration_status?: string;
+  registered_email?: string;
+  name?: string;
+  license_status?: string;
 }
