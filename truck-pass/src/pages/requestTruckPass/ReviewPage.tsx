@@ -96,9 +96,6 @@ export const ReviewPage = () => {
         console.error('Server response:', error.response.data);
       }
     }
-
-    setReviewAndSubmitStatus(false);
-    setShowSuccessScreen(true);
   };
 
   const submitAnotherApplication = () => {

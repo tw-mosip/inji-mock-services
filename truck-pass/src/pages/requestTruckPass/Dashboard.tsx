@@ -27,7 +27,11 @@ export const Dashboard: React.FC = () => {
     // ]
 
     useEffect(() => {
-       fetchTruckpassDB();
+        const timer = setTimeout(() => {
+            fetchTruckpassDB();
+        }, 1000);
+
+        return () => clearTimeout(timer);
     }, []);
 
     const fetchTruckpassDB = async () => {

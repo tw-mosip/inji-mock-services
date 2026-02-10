@@ -91,12 +91,12 @@ export const ConfirmationPage: React.FC = () => {
                   ['fullName', confirmationDetails?.fullName],
                   ['uin', confirmationDetails?.uin],
                   ['gender', confirmationDetails?.gender],
-                  ['email', confirmationDetails?.emailId],
+                  ['email', confirmationDetails?.driverEmailId],
                   ['phoneNumber', confirmationDetails?.phoneNumber],
                   ['city', confirmationDetails?.city],
                   ['transportCompany', confirmationDetails?.transportCompany],
-                  ['licenseNum', confirmationDetails?.driverLicenseNum],
-                  ['passportNumber', confirmationDetails?.passportNum],
+                  ['licenseNum', confirmationDetails?.driverLicenseNumber],
+                  ['passportNumber', confirmationDetails?.passportNumber],
                   ['cpcCertificate', t('confirmationPage.fileUploaded')],
                 ].map(([labelKey, value], id) => (
                   <li key={id} className="flex justify-between py-2.5">
@@ -133,10 +133,10 @@ interface ConfirmationDetails {
   fullName?: string;
   uin?: string;
   gender?: string;
-  emailId?: string;
+  driverEmailId?: string;
   city?: string;
   phoneNumber?: string;
-  driverLicenseNum?: string;
-  passportNum?: string;
+  driverLicenseNumber?: string;
+  passportNumber?: string;
   transportCompany?: string;
 }
