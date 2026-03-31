@@ -54,8 +54,7 @@ const QrScreen = () => {
     const [actualAuthorizationRequestObject, setActualAuthorizationRequestObject] = useState(null);
     const [isByValue, setIsByValue] = useState(true);
     const [isByReference, setIsByReference] = useState(false);
-    const [isDraft23, setIsDraft23] = useState(true);
-    const [isDraft21, setIsDraft21] = useState(false);
+    const [selectedDraft, setSelectedDraft] = useState(Object.values(DRAFT_VERSIONS)[0]);
     const [errorMessage, setErrorMessage] = useState(null);
     const [isRequestSigned, setIsRequestSigned] = useState(false);
 
@@ -104,11 +103,11 @@ const QrScreen = () => {
 
     useEffect(() => {
         const fetchQr = async () => {
-            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, isDraft23 ? DRAFT_VERSIONS.DRAFT_23 : DRAFT_VERSIONS.DRAFT_21, isRequestSigned);
+            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, selectedDraft, isRequestSigned);
         };
 
         void fetchQr();
-    }, [state, isByValue, isByReference, isDraft23, isDraft21, fetchQrCodeData, isRequestSigned]);
+    }, [state, isByValue, isByReference, selectedDraft, fetchQrCodeData, isRequestSigned]);
 
     useEffect(() => {
         document.title = 'Scan';
@@ -121,17 +120,16 @@ const QrScreen = () => {
         setActualAuthorizationRequestObject(null)
     }
 
-    const handleToggle = async (type: "requestMode" | "draftVersion", value) => {
+    const handleToggle = async (type, value) => {
         if (type === 'requestMode') {
             if ((value === REQUEST_MODES.BY_VALUE && isByValue) || (value === REQUEST_MODES.BY_REFERENCE && isByReference)) return;
             setIsByValue(value === REQUEST_MODES.BY_VALUE);
             setIsByReference(value === REQUEST_MODES.BY_REFERENCE);
             resetValues();
-            await fetchQrCodeData(state.name, value, isDraft23 ? DRAFT_VERSIONS.DRAFT_23 : DRAFT_VERSIONS.DRAFT_21);
+            await fetchQrCodeData(state.name, value, selectedDraft);
         } else if (type === 'draftVersion') {
-            if ((value === DRAFT_VERSIONS.DRAFT_23 && isDraft23) || (value === DRAFT_VERSIONS.DRAFT_21 && isDraft21)) return;
-            setIsDraft23(value === DRAFT_VERSIONS.DRAFT_23);
-            setIsDraft21(value === DRAFT_VERSIONS.DRAFT_21);
+            if (value === selectedDraft) return;
+            setSelectedDraft(value);
             resetValues();
             await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, value);
         }
@@ -163,8 +161,7 @@ const QrScreen = () => {
     }
 
     const header = () => {
-        const currentDraft = isDraft23 ? 'draft-23' : 'draft-21';
-        const title = `${state?.name || 'QR Code Image'} - ${currentDraft}`;
+        const title = `${state?.name || 'QR Code Image'} - ${selectedDraft}`;
 
         return <div style={{
             display: 'flex',
@@ -204,18 +201,11 @@ const QrScreen = () => {
         }
     ];
 
-    const draftVersionOptions = [
-        {
-            name: "Draft 23",
-            selected: isDraft23,
-            onChange: () => handleToggle('draftVersion', DRAFT_VERSIONS.DRAFT_23)
-        },
-        {
-            name: "Draft 21",
-            selected: isDraft21,
-            onChange: () => handleToggle('draftVersion', DRAFT_VERSIONS.DRAFT_21)
-        }
-    ];
+    const draftVersionOptions = Object.values(DRAFT_VERSIONS).map((version) => ({
+        name: version,
+        selected: selectedDraft === version,
+        onChange: () => handleToggle('draftVersion', version),
+    }));
 
     const draftToggle = () => <Toggle options={draftVersionOptions}/>
     const requestToggle = () => <Toggle options={requestModeToggleOptions}/>
