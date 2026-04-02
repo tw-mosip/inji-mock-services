@@ -14,6 +14,7 @@ import {Code} from "../components/common/Code";
 import Button from "../components/common/Button";
 import CheckBox from "../components/common/checkBox";
 import DecoderEncoderView from '../components/DecoderEncoderView';
+import Dropdown from "../components/common/Dropdown";
 
 const styles = {
     container: {
@@ -207,7 +208,7 @@ const QrScreen = () => {
         onChange: () => handleToggle('draftVersion', version),
     }));
 
-    const draftToggle = () => <Toggle options={draftVersionOptions}/>
+    const draftDropdown = () => <Dropdown label={"OpenID4VP Draft Version:"} options={draftVersionOptions}/>
     const requestToggle = () => <Toggle options={requestModeToggleOptions}/>
 
     const signRequestToggle = () =>
@@ -243,7 +244,7 @@ const QrScreen = () => {
                 {header()}
                 <div style={{paddingLeft: 40}}>
                     {requestToggle()}
-                    {draftToggle()}
+                    {draftDropdown()}
                     {signRequestToggle()}
                     <Error message={errorMessage}/>
                 </div>
@@ -269,7 +270,7 @@ const QrScreen = () => {
                         paddingBottom: 20,
                     }}>
                         {requestToggle()}
-                        {draftToggle()}
+                        {draftDropdown()}
                         {signRequestToggle()}
                     </div>
                     <div style={{maxWidth: '100%'}}>

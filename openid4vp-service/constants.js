@@ -40,7 +40,8 @@ const CLIENT_ID_SCHEMES = {
 // enum for draft versions
 const DRAFT_VERSIONS = {
     DRAFT_21: "draft-21",
-    DRAFT_23: "draft-23"
+    DRAFT_23: "draft-23",
+    V_1_0: "version-1.0"
 }
 
 // enum for request modes

@@ -3,10 +3,22 @@ const {
     CLIENT_ID_SCHEMES, REQUEST_MODES, DRAFT_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES
 } = require("./constants");
 const clientMetadata = require('./clientMetadataMock.json');
+const VerifierMetadata = require("./VerifierMetadata");
 
 const client_metadata = JSON.stringify(clientMetadata);
 
 // For Pre-registered client, client metadata is known to the Wallet in advance of the authorization request
+const preRegisteredAuthorizationRequestVersion1 = {
+    "client_id": "mock-client",
+    "presentation_definition_uri": presentationDefinitionUri,
+    "response_type": "vp_token",
+    "response_mode": "direct_post.jwt",
+    "nonce": nonce,
+    "state": state,
+    "response_uri": responseUri,
+    "client_metadata": JSON.stringify(VerifierMetadata["v1"]),
+}
+
 const preRegisteredAuthorizationRequestDraft23 = {
     "client_id": "mock-client",
     "presentation_definition_uri": presentationDefinitionUri,
@@ -28,6 +40,17 @@ const preRegisteredAuthorizationRequestDraft21 = {
     "state": state,
     "response_uri": responseUri,
     "client_metadata": client_metadata,
+}
+
+const redirectAuthorizationRequestVersion1 = {
+    "client_id": `redirect_uri:${responseUri}`,
+    "presentation_definition_uri": presentationDefinitionUri,
+    "response_type": "vp_token",
+    "response_mode": "direct_post",
+    "nonce": nonce,
+    "state": state,
+    "response_uri": responseUri,
+    "client_metadata": JSON.stringify(VerifierMetadata["v1"]),
 }
 
 const redirectAuthorizationRequestDraft23 = {
@@ -62,6 +85,16 @@ const didAuthorizationRequestDraft23 = {
     "state": state,
     "response_uri": responseUri,
     "client_metadata": client_metadata,
+}
+
+const didAuthorizationRequestVersion1 = {
+    "client_id": `decentralized_identifier:${didDocumentUrl}`,
+    "response_type": "vp_token",
+    "response_mode": "direct_post.jwt",
+    "nonce": nonce,
+    "state": state,
+    "response_uri": responseUri,
+    "client_metadata": VerifierMetadata["v1"],
 }
 
 const didAuthorizationRequestDraft21 = {
@@ -115,6 +148,12 @@ const redirectUriAuthorizationRequestParamsDraft21 = {
     "request_uri_method": "post"
 }
 
+const didAuthorizationRequestParamsVersion1 = {
+    "client_id": `decentralized_identifier:${didDocumentUrl}`,
+    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?draft=version-1.0`,
+    "request_uri_method": "post"
+}
+
 const didAuthorizationRequestParamsDraft23 = {
     "client_id": didDocumentUrl,
     "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?draft=draft-23`,
@@ -134,10 +173,12 @@ const finalAuthRequestMap = {
         [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED] : true,
         [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED] : true,
         [REQUEST_MODES.BY_REFERENCE]: {
+            [DRAFT_VERSIONS.V_1_0]: preRegisteredAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_23]: preRegisteredAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: preRegisteredAuthorizationRequestParamsDraft21,
         },
         [REQUEST_MODES.BY_VALUE]: {
+            [DRAFT_VERSIONS.V_1_0]: preRegisteredAuthorizationRequestVersion1,
             [DRAFT_VERSIONS.DRAFT_23]: preRegisteredAuthorizationRequestDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: preRegisteredAuthorizationRequestDraft21,
         }
@@ -146,10 +187,12 @@ const finalAuthRequestMap = {
         [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED] : false,
         [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED] : true,
         [REQUEST_MODES.BY_REFERENCE]: {
+            [DRAFT_VERSIONS.V_1_0]: redirectUriAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_23]: redirectUriAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: redirectUriAuthorizationRequestParamsDraft21,
         },
         [REQUEST_MODES.BY_VALUE]: {
+            [DRAFT_VERSIONS.V_1_0]: redirectAuthorizationRequestVersion1,
             [DRAFT_VERSIONS.DRAFT_23]: redirectAuthorizationRequestDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: redirectAuthorizationRequestDraft21,
         }
@@ -158,10 +201,12 @@ const finalAuthRequestMap = {
         [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED] : true,
         [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED] : false,
         [REQUEST_MODES.BY_REFERENCE]: {
+            [DRAFT_VERSIONS.V_1_0]: didAuthorizationRequestParamsVersion1,
             [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestParamsDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: didAuthorizationRequestParamsDraft21,
         },
         [REQUEST_MODES.BY_VALUE]: {
+            [DRAFT_VERSIONS.V_1_0]: didAuthorizationRequestVersion1,
             [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestDraft23,
             [DRAFT_VERSIONS.DRAFT_21]: didAuthorizationRequestDraft21,
         },
