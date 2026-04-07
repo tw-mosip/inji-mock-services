@@ -50,6 +50,11 @@ const REQUEST_MODES = {
     BY_REFERENCE: "by_reference"
 }
 
+const ResponseModes = {
+    DIRECT_POST: "direct_post",
+    DIRECT_POST_JWT: "direct_post.jwt"
+}
+
 // enum for supporting signed request or not
 const REQUEST_SIGNING_SUPPORT_MODES = {
     SIGNED_REQUEST_SUPPORTED : 'signed_request_supported',
@@ -72,6 +77,7 @@ module.exports = {
     jwkSet,
 
     REQUEST_MODES,
+    ResponseModes,
     CLIENT_ID_SCHEMES,
     DRAFT_VERSIONS,
     REQUEST_SIGNING_SUPPORT_MODES

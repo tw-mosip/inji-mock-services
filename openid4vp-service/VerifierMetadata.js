@@ -1,8 +1,9 @@
 const clientMetadata = require('./clientMetadataMock.json');
+const {DRAFT_VERSIONS, ResponseModes} = require("./constants");
 
 const VerifierMetadata = {
-  "draft23": JSON.stringify(clientMetadata),
-  "v1": {
+  "draft-23": JSON.stringify(clientMetadata),
+  "version-1.0": {
     "client_name": "Requester name",
     "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
     "authorization_encrypted_response_alg": "ECDH-ES",
@@ -46,4 +47,20 @@ const VerifierMetadata = {
   }
 }
 
-module.exports = VerifierMetadata;
+
+function getVerifierMetadata(responseMode, version) {
+  let metadata = JSON.parse(JSON.stringify(VerifierMetadata[version] || {}));
+
+  if (responseMode === ResponseModes.DIRECT_POST) {
+    if (version === DRAFT_VERSIONS.V_1_0) {
+      delete metadata["encrypted_response_enc_values_supported"];
+    }
+    if (version === DRAFT_VERSIONS.DRAFT_23) {
+      delete metadata["encrypted_response_enc"];
+    }
+  }
+
+  return metadata;
+}
+
+module.exports = { VerifierMetadata, getVerifierMetadata };
