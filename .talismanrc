@@ -1,0 +1,14 @@
+fileignoreconfig:
+- filename: mock-issuer-service/package-lock.json
+  checksum: 45d17ca4d0e805b22542189d5024afb82680fdef3f6c8c974b6af66c5499298a
+- filename: mock-issuer-service/src/credential/sd-jwt.js
+  checksum: ecac23dc28784ec7be51f46c486553b30112ac27ea37b34652cb507587b4b596
+- filename: mock-issuer-service/package.json
+  checksum: 3bcb89b8a55ea83a200adfe55424e3e7bf633db2a9b5bde5191bf480ccacc14e
+- filename: mock-issuer-service/src/credential/ldp-vc.js
+  checksum: 6459b9607ece31c1e9c25c690e5fae494a7e0768e02490dd6de62faba33fb033
+- filename: mock-issuer-service/src/credential/mdoc.js
+  checksum: f4ea62802e3241c048bffcfc24d9e8b54b148a171d654c7c0abab32aaaa303d2
+- filename: mock-issuer-service/src/credential/endpoint.js
+  checksum: a84335bbc04c8b6cc8981e0d335147d01ef7f5f3fcfc0d56c9312972c29d80d5
+version: ""

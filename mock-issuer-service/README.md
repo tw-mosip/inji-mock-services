@@ -18,6 +18,7 @@ A lightweight **mock OpenID for Verifiable Credential Issuer** built with **Node
 * ✅ Credential Offer endpoint
 * ✅ Authorization + Token flow
 * ✅ Credential issuance endpoint
+* ✅ Support for multiple formats: **LDP-VC, JWT-VC, SD-JWT, and mdoc**
 * ✅ HTTPS support (required by wallets)
 * ✅ QR endpoint for easy testing
 

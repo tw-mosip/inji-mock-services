@@ -1,8 +1,14 @@
 import fs from "fs";
 import path from "path";
+import { hasExplicitVersion, resolveRequestVersion } from "../issuer-profile.js";
 
 export default function authorizeHandler(req, res) {
   const { client_id, redirect_uri, state } = req.query;
+  const version = resolveRequestVersion(req);
+  const flowSegment = req.params?.flow === "pdi" ? "/pdi" : "";
+  const loginAction = hasExplicitVersion(req)
+    ? `/${version}${flowSegment}/as/login`
+    : `${flowSegment}/as/login`;
   console.log("Looking for HTML at:", path.resolve("src/as/login-page.html"));
 
   if (!client_id || !redirect_uri) {
@@ -22,6 +28,7 @@ export default function authorizeHandler(req, res) {
   const html = template
     .replace("{{client_id}}", client_id)
     .replace("{{redirect_uri}}", redirect_uri)
+    .replace("{{form_action}}", loginAction)
     .replace("{{state}}", state || "");
 
   res.set("Content-Type", "text/html");

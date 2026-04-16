@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { iarSessions } from "./iar-store.js";
 import { authCodeStore } from "./authz-store.js";
-import { ISSUER } from "../issuer-metadata.js";
+import { authServerBaseUrl, issuerBaseUrl, resolveRequestVersion } from "../issuer-profile.js";
 function randomSession() {
   return crypto.randomBytes(10).toString("hex");
 }
@@ -11,6 +11,11 @@ function randomCode() {
 }
 
 export default function interactiveAuthorizationHandler(req, res) {
+  const version = resolveRequestVersion(req);
+  const flow = req.params?.flow === "pdi" ? "pdi" : null;
+  const issuer = issuerBaseUrl(version, Boolean(req.params?.version), flow);
+  const authServer = authServerBaseUrl(version, Boolean(req.params?.version), flow);
+
   // --------------------------
   // CASE 1: PHASE 2 (wallet returns VP)
   // --------------------------
@@ -51,7 +56,7 @@ export default function interactiveAuthorizationHandler(req, res) {
       status: "authorization_code_issued",
       code: code,
       state: session.state || null,
-      iss: `${ISSUER}/as`,
+      iss: authServer,
     });
   }
 
@@ -157,6 +162,7 @@ export default function interactiveAuthorizationHandler(req, res) {
     status: "require_interaction",
     type: "openid4vp_presentation",
     auth_session: sessionId,
+    credential_issuer: issuer,
     openid4vp_request: requestObject,
   });
 }
