@@ -23,7 +23,7 @@ const redirectAuthorizationRequestDraft23 = {
     "client_id": `redirect_uri:${responseUri}`,
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
-    "response_mode": ResponseModes.DIRECT_POST,
+    "response_mode": ResponseModes.DIRECT_POST_JWT,
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
@@ -44,14 +44,12 @@ const redirectAuthorizationRequestDraft21 = {
 
 const redirectUriAuthorizationRequestParamsDraft23 = {
     "client_id": redirectAuthorizationRequestDraft23.client_id,
-    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/redirect_uri?draft=draft-23`,
     "request_uri_method": "post"
 }
 
 const redirectUriAuthorizationRequestParamsDraft21 = {
     "client_id": redirectAuthorizationRequestDraft21.client_id,
     "client_id_scheme": "redirect_uri",
-    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/redirect_uri?draft=draft-21`,
     "request_uri_method": "post"
 }
 

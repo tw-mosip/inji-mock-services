@@ -1,24 +1,63 @@
 const clientMetadata = require('./clientMetadataMock.json');
 const {DRAFT_VERSIONS, ResponseModes} = require("./constants");
 
+// Create static JWK from verifierPublicKeys directly to avoid circular dependency
+const verifierPublicKeys = {
+  publicKeyBase64: "Z5a2OjR7a6rOqBdApvDaqR7mBV+OD3VT2UgCdKQScwI=",
+  privateKeyBase64: "Mjxgl/YAh11IxsTZ6b6TD63BGc1FPWe+yAhD96S0IC0="
+};
+
+// Convert base64 to base64url format (just character replacement, no re-encoding)
+function base64ToBase64Url(base64) {
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+const publicKeyB64Url = base64ToBase64Url(verifierPublicKeys.publicKeyBase64);
+const privateKeyB64Url = base64ToBase64Url(verifierPublicKeys.privateKeyBase64);
+
+const staticJWK = {
+  "kty": "OKP",
+  "crv": "X25519",
+  "use": "enc",
+  "x": publicKeyB64Url,     // Public key
+  "d": privateKeyB64Url,    // Private key (needed for decryption)
+  "alg": "ECDH-ES",
+  "kid": "verifier-static-key"
+};
+
 const VerifierMetadata = {
-  "draft-23": JSON.stringify(clientMetadata),
+  "draft-23": JSON.stringify({
+    "client_name": "Requester name",
+    "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
+    "authorization_encrypted_response_alg": "ECDH-ES",
+    "authorization_encrypted_response_enc": "A256GCM",
+    "jwks": {
+      "keys": [
+        staticJWK
+      ]
+    },
+    "vp_formats": {
+      "mso_mdoc": {
+        "alg": [
+          "ES256"
+        ]
+      },
+      "ldp_vp": {
+        "proof_type": [
+          "Ed25519Signature2018",
+          "Ed25519Signature2020",
+          "RsaSignature2018"
+        ]
+      }
+    }
+  }),
   "version-1.0": {
     "client_name": "Requester name",
     "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
     "authorization_encrypted_response_alg": "ECDH-ES",
     "encrypted_response_enc_values_supported": ["A128GCM", "A128CBC-HS256", "A256GCM"],
     "jwks": {
-      "keys": [
-        {
-          "kty": "OKP",
-          "crv": "X25519",
-          "use": "enc",
-          "x": "BVNVdqorpxCCnTOkkw8S2NAYXvfEvkC-8RDObhrAUA4",
-          "alg": "ECDH-ES",
-          "kid": "verifier-key-id"
-        }
-      ]
+      "keys": [staticJWK]
     },
     "vp_formats_supported": {
       "mso_mdoc": {
@@ -63,4 +102,54 @@ function getVerifierMetadata(responseMode, version) {
   return metadata;
 }
 
-module.exports = { VerifierMetadata, getVerifierMetadata };
+/**
+ * Update VerifierMetadata with new encryption key information
+ * @param {Object} encryptionKeyMetadata - Encryption key metadata from encryptionKeyManagement module
+ */
+function updateWithEncryptionKey(encryptionKeyMetadata) {
+  if (VerifierMetadata['version-1.0'] && encryptionKeyMetadata.jwk) {
+    VerifierMetadata['version-1.0'].jwks = {
+      keys: [encryptionKeyMetadata.jwk]
+    };
+    VerifierMetadata['version-1.0'].encrypted_response_enc_values_supported =
+      encryptionKeyMetadata.encryptionMethods;
+
+    console.log(`✓ VerifierMetadata updated with encryption key: ${encryptionKeyMetadata.keyId}`);
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Get the active encryption key from VerifierMetadata
+ * @param {string} version - Metadata version ('version-1.0' or 'draft-23')
+ * @returns {Object|null} JWK object or null if not found
+ */
+function getActiveEncryptionKeyFromMetadata(version = 'version-1.0') {
+  const metadata = VerifierMetadata[version];
+  if (metadata && metadata.jwks && metadata.jwks.keys && metadata.jwks.keys.length > 0) {
+    return metadata.jwks.keys[0];
+  }
+  return null;
+}
+
+/**
+ * Get all encryption key IDs from VerifierMetadata
+ * @param {string} version - Metadata version ('version-1.0' or 'draft-23')
+ * @returns {Array} Array of key IDs
+ */
+function getEncryptionKeyIds(version = 'version-1.0') {
+  const metadata = VerifierMetadata[version];
+  if (metadata && metadata.jwks && metadata.jwks.keys) {
+    return metadata.jwks.keys.map(key => key.kid);
+  }
+  return [];
+}
+
+module.exports = {
+  VerifierMetadata,
+  getVerifierMetadata,
+  updateWithEncryptionKey,
+  getActiveEncryptionKeyFromMetadata,
+  getEncryptionKeyIds
+};

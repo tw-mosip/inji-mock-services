@@ -43,14 +43,12 @@ const preRegisteredAuthorizationRequestDraft21 = {
 
 const preRegisteredAuthorizationRequestParamsDraft23 = {
     "client_id": preRegisteredAuthorizationRequestDraft23.client_id,
-    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/pre-registered?draft=draft-23`,
     "request_uri_method": "post"
 }
 
 const preRegisteredAuthorizationRequestParamsDraft21 = {
     "client_id": preRegisteredAuthorizationRequestDraft21.client_id,
     "client_id_scheme": "pre-registered",
-    "request_uri": `${baseUrl}/verifier/get-auth-request-obj/pre-registered?draft=draft-21`,
     "request_uri_method": "post"
 }
 

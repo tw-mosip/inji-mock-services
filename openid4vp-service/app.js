@@ -6,6 +6,11 @@ const bodyParser = require('body-parser');
 const {createJWT} = require("./jwt");
 const cors = require('cors');
 
+// Import encryption key management
+const { initializeEncryptionKeys, exportKeyInfo, decryptJwe } = require('./encryptionKeyManagement');
+const VerifierMetadataModule = require('./VerifierMetadata');
+const { updateWithEncryptionKey } = VerifierMetadataModule;
+
 const app = express();
 const {
     ContentTypes,
@@ -15,18 +20,31 @@ const {
     REQUEST_SIGNING_SUPPORT_MODES
 } = require("./constants");
 const {
-    preRegisteredAuthorizationRequest,
-    didAuthorizationRequest,
-    redirectAuthorizationRequest,
-    authorizationRequestParams,
     finalAuthRequestMap
 } = require("./inputData");
+
+
 const PORT = 3000;
 
 let responseReceived = false;
 let latestVpResult = null;
+let activeEncryptionKey = null;
+
+// Initialize encryption keys on app startup
+(async () => {
+    try {
+        const { encryptionKey } = await initializeEncryptionKeys(VerifierMetadataModule.VerifierMetadata);
+        activeEncryptionKey = encryptionKey;
+        updateWithEncryptionKey(encryptionKey);
+        console.log(exportKeyInfo(encryptionKey));
+    } catch (error) {
+        console.error('Failed to initialize encryption keys:', error.message);
+        // Continue with default keys if initialization fails
+    }
+})();
 
 app.use(bodyParser.urlencoded({limit: '20mb', extended: true}));
+app.use(bodyParser.json({limit: '20mb'})); // Add JSON body parser
 app.set('view engine', 'ejs');
 
 app.set('views', path.join(__dirname, 'views'));
@@ -65,16 +83,18 @@ app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) =>
 });
 
 // API to generate QR codes for different client_id schemes and request modes
-// API - /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version>&signed=true|false
+// API - /verifier/<client_id_scheme>/<request_mode>?draft=<draft_version>&signed=true|false&response_mode=<response_mode>
 // client_id_scheme = pre-registered, redirect_uri, did
 // request_mode = by_value, by_reference
 // draft_version = draft-21, draft-23 (default draft-23)
+// response_mode = direct_post, direct_post.jwt (default direct_post)
 
 // signed = true|false (default false) - whether the request should be signed or not (only applicable for by_value mode)
 app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
     const {client_id_scheme, request_mode} = req.params;
     const draftVersion = req.query.draft;
     const signed = req.query.signed === 'true';
+    const responseMode = req.query.response_mode || 'direct_post'; // Default to direct_post
 
     if (!draftVersion) {
         res.status(400).send('Bad Request: draft parameter is required');
@@ -112,7 +132,12 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
             return;
         }
 
-        await generateQrCodeResponse(inputData, res)
+        const updatedData = {
+            ...inputData,
+            "request_uri": `${baseUrl}/verifier/get-auth-request-obj/${client_id_scheme}?draft=${draftVersion}&response_mode=${responseMode}`,
+        }
+
+        await generateQrCodeResponse(updatedData, res)
     } else { // By value mode
         let inputData = finalAuthRequestMapElement?.[request_mode]?.[draftVersion];
 
@@ -135,6 +160,9 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
                 return
             }
 
+            // Update inputData with the selected response mode and corresponding metadata
+            inputData = updateVpRequest(inputData, responseMode, draftVersion);
+
             const clientId = inputData.client_id;
             const request = await createJWT(inputData);
 
@@ -144,6 +172,9 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
 
             res.status(400).send(`Bad Request: ${client_id_scheme} does not support unsigned request in ${request_mode} mode\nAction: try switching to signed request`);
             return
+        } else {
+            // Update inputData with the selected response mode and corresponding metadata even for unsigned requests
+            inputData = updateVpRequest(inputData, responseMode, draftVersion);
         }
 
         await generateQrCodeResponse(inputData, res);
@@ -154,75 +185,6 @@ app.get('/.well-known/jwks.json', async (req, res) => {
     res.json(jwkSet);
 })
 
-// Older APIs
-
-app.get('/verifier/generate-auth-request-by-value-redirect-qr', async (req, res) => {
-    try {
-        const qrData = createUrlWithParams(redirectAuthorizationRequest);
-        const qrCodeData = await QRCode.toDataURL(qrData);
-        const inputData = redirectAuthorizationRequest
-        res.json({qrCodeData, qrData, inputData});
-    } catch (error) {
-        console.error('Error generating QR code:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-app.get('/verifier/generate-auth-request-by-value-pre-registered-qr', async (req, res) => {
-    try {
-        const qrData = createUrlWithParams(preRegisteredAuthorizationRequest);
-        const qrCodeData = await QRCode.toDataURL(qrData);
-        const inputData = preRegisteredAuthorizationRequest
-        res.json({qrCodeData, qrData, inputData});
-    } catch (error) {
-        console.error('Error generating QR code:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-app.get('/verifier/generate-auth-request-by-reference-qr', async (req, res) => {
-    try {
-        const qrData = createUrlWithParams(authorizationRequestParams);
-        const qrCodeData = await QRCode.toDataURL(qrData);
-        const inputData = authorizationRequestParams
-        res.json({qrCodeData, qrData, inputData});
-    } catch (error) {
-        console.error('Error generating QR code:', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-app.get('/verifier/get-auth-request-obj', async (req, res) => {
-    try {
-        const jwt = await createJWT(didAuthorizationRequest)
-        res.contentType("application/oauth-authz-req+jwt")
-        res.send(jwt)
-        //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
-
-    } catch (error) {
-        console.error('Error generating JWT :', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-app.post('/verifier/get-auth-request-obj', async (req, res) => {
-    try {
-        console.info("Received request with request body:", req.body);
-        const walletNonce = req.body?.wallet_nonce;
-        const jwt = walletNonce
-            ? await createJWT({...didAuthorizationRequest, wallet_nonce: walletNonce})
-            : await createJWT(didAuthorizationRequest);
-        res.contentType("application/oauth-authz-req+jwt");
-        res.send(jwt);
-        //res.send(btoa(JSON.stringify(didAuthorizationRequest)))
-
-    } catch (error) {
-        console.error('Error generating JWT :', error);
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-// End of older APIs
 let responseCode = "Qaioewrhbfwd=="; // Initialize with a dummy value
 app.get('/verifier/presentation_definition_uri', async (req, res) => {
     res.send(presentationDefinition);
@@ -272,6 +234,37 @@ app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
 
+/**
+ * Update input data with the selected response mode and corresponding metadata
+ * @param {Object} inputData - Original input data
+ * @param {string} responseMode - Selected response mode (direct_post or direct_post.jwt)
+ * @param {string} draftVersion - Selected draft version
+ * @returns {Object} Updated input data with correct response_mode and client_metadata
+ */
+function updateVpRequest(inputData, responseMode, draftVersion) {
+    const { getVerifierMetadata } = require('./VerifierMetadata');
+    const { ResponseModes } = require('./constants');
+
+    // Clone the input data to avoid modifying the original
+    const updatedData = JSON.parse(JSON.stringify(inputData));
+
+    // Update response_mode
+    updatedData.response_mode = responseMode;
+
+    // Determine the ResponseMode enum value for getVerifierMetadata
+    const responseModeEnum = responseMode === 'direct_post.jwt'
+        ? ResponseModes.DIRECT_POST_JWT
+        : ResponseModes.DIRECT_POST;
+
+    // Update client_metadata with the appropriate response mode
+    let verifierMetadata = getVerifierMetadata(responseModeEnum, draftVersion);
+
+    updatedData.client_metadata = verifierMetadata
+
+    console.log(`Updated input data with response_mode: ${responseMode}`);
+    return updatedData;
+}
+
 const createRequestUriResponse = async (req, res, walletNonce = null) => {
     console.log("Time :", Date.now().toLocaleString());
     console.log("received call to request_uri endpoint with header:", req.headers);
@@ -279,6 +272,7 @@ const createRequestUriResponse = async (req, res, walletNonce = null) => {
     try {
         const {client_id_scheme} = req.params;
         const draftVersion = req.query.draft;
+        const responseMode = req.query.response_mode || 'direct_post'; // Default to direct_post
 
         if (!draftVersion) {
             res.status(400).send('Bad Request: draft parameter is required');
@@ -292,7 +286,8 @@ const createRequestUriResponse = async (req, res, walletNonce = null) => {
             return;
         }
 
-        let inputData = finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion];
+
+        let inputData = updateVpRequest(finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion], responseMode, draftVersion);
 
         if (!inputData) {
             console.error('Error generating JWT:', "Provided combination is not supported - ", {
@@ -328,3 +323,51 @@ const generateQrCodeResponse = async (inputData, res) => {
         res.status(500).send('Internal Server Error');
     }
 }
+
+// API to decrypt JWE tokens
+app.post('/verifier/decrypt-jwe', async (req, res) => {
+        console.log('=== JWE Decryption Request ===');
+        console.log('Request body:', JSON.stringify(req.body, null, 2));
+        console.log('Request headers:', req.headers);
+
+        const { jweToken} = req.body;
+
+        console.log('Extracted jweToken:', jweToken ? `${jweToken.substring(0, 50)}...` : 'null');
+        console.log('jweToken type:', typeof jweToken);
+
+        // Decrypt the JWE token using the active encryption key
+        if (!jweToken) {
+            return res.status(400).json({
+                error: 'Missing jweToken in request body',
+                message: 'Please provide a JWE token to decrypt'
+            });
+        }
+
+        if (!activeEncryptionKey) {
+            return res.status(500).json({
+                error: 'Encryption key not initialized',
+                message: 'The server encryption key has not been initialized'
+            });
+        }
+
+        try {
+            const decryptedPayload = await decryptJwe(jweToken, activeEncryptionKey);
+            console.log('Successfully decrypted JWE token');
+            console.log('Decrypted payload:', JSON.stringify(decryptedPayload, null, 2));
+
+            res.status(200).json({
+                success: true,
+                decryptedPayload: decryptedPayload
+            });
+        } catch (error) {
+            console.error('Error decrypting JWE token:', error.message);
+            res.status(400).json({
+                error: 'Failed to decrypt JWE token',
+                message: error.message
+            });
+        }
+});
+
+
+module.exports = app;
+

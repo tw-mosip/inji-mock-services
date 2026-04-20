@@ -6,7 +6,7 @@ import {AccordionSection} from "../components/common/Section";
 import {Loader} from "../components/common/Loader";
 import Toggle from "../components/common/Toggle";
 import {font} from "../styles/palette";
-import {DRAFT_VERSIONS, REQUEST_MODES} from "../constants/constants";
+import {DRAFT_VERSIONS, REQUEST_MODES, RESPONSE_MODES} from "../constants/constants";
 import {ScanResult} from "../components/scan/ScanResult";
 import {Image} from "../components/common/Image";
 import Error from "../components/common/Error";
@@ -56,13 +56,14 @@ const QrScreen = () => {
     const [isByValue, setIsByValue] = useState(true);
     const [isByReference, setIsByReference] = useState(false);
     const [selectedDraft, setSelectedDraft] = useState(Object.values(DRAFT_VERSIONS)[0]);
+    const [selectedResponseMode, setSelectedResponseMode] = useState(Object.values(RESPONSE_MODES)[0]);
     const [errorMessage, setErrorMessage] = useState(null);
     const [isRequestSigned, setIsRequestSigned] = useState(false);
 
-    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion, isRequestSigned = false) => {
+    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion, isRequestSigned = false, responseMode = "direct_post") => {
         try {
-            // /verifier/<client_id_scheme>/<request_mode>-qr?draft=<draft_version>
-            const qrResponse = await axios.get(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}&signed=${isRequestSigned}`, {
+            // /verifier/<client_id_scheme>/<request_mode>?draft=<draft_version>&response_mode=<response_mode>
+            const qrResponse = await axios.get(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}&signed=${isRequestSigned}&response_mode=${responseMode}`, {
                 headers: {
                     'ngrok-skip-browser-warning': 'true'
                 }
@@ -102,17 +103,18 @@ const QrScreen = () => {
         }
     }, []);
 
-    useEffect(() => {
-        const fetchQr = async () => {
-            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, selectedDraft, isRequestSigned);
-        };
+    const fetchQr = async () => {
+        await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, selectedDraft, isRequestSigned, selectedResponseMode);
+    };
 
+    useEffect(() => {
         void fetchQr();
-    }, [state, isByValue, isByReference, selectedDraft, fetchQrCodeData, isRequestSigned]);
+    }, [state, isByValue, isByReference, selectedDraft, fetchQrCodeData, isRequestSigned, selectedResponseMode]);
 
     useEffect(() => {
         document.title = 'Scan';
     }, []);
+
 
     const resetValues = () => {
         setErrorMessage(null)
@@ -127,12 +129,12 @@ const QrScreen = () => {
             setIsByValue(value === REQUEST_MODES.BY_VALUE);
             setIsByReference(value === REQUEST_MODES.BY_REFERENCE);
             resetValues();
-            await fetchQrCodeData(state.name, value, selectedDraft);
+            await fetchQrCodeData(state.name, value, selectedDraft, isRequestSigned, selectedResponseMode);
         } else if (type === 'draftVersion') {
             if (value === selectedDraft) return;
             setSelectedDraft(value);
             resetValues();
-            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, value);
+            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, value, isRequestSigned, selectedResponseMode);
         }
     };
 
@@ -208,7 +210,18 @@ const QrScreen = () => {
         onChange: () => handleToggle('draftVersion', version),
     }));
 
+    const responseModeOptions = Object.values(RESPONSE_MODES).map((mode) => ({
+        name: mode,
+        selected: selectedResponseMode === mode,
+        onChange: () => {
+            if (mode === selectedResponseMode) return;
+            setSelectedResponseMode(mode);
+            resetValues();
+        }
+    }));
+
     const draftDropdown = () => <Dropdown label={"OpenID4VP Draft Version:"} options={draftVersionOptions}/>
+    const responseModesDropdown = () => <Dropdown label={"Response Mode:"} options={responseModeOptions}/>
     const requestToggle = () => <Toggle options={requestModeToggleOptions}/>
 
     const signRequestToggle = () =>
@@ -245,6 +258,7 @@ const QrScreen = () => {
                 <div style={{paddingLeft: 40}}>
                     {requestToggle()}
                     {draftDropdown()}
+                    {responseModesDropdown()}
                     {signRequestToggle()}
                     <Error message={errorMessage}/>
                 </div>
@@ -271,6 +285,7 @@ const QrScreen = () => {
                     }}>
                         {requestToggle()}
                         {draftDropdown()}
+                        {responseModesDropdown()}
                         {signRequestToggle()}
                     </div>
                     <div style={{maxWidth: '100%'}}>

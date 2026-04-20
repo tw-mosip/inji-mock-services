@@ -9,19 +9,19 @@ const client_metadata = JSON.stringify(clientMetadata);
 const didAuthorizationRequestVersion1 = {
   "client_id": `decentralized_identifier:${didDocumentUrl}`,
   "response_type": "vp_token",
-  "response_mode": "direct_post.jwt",
+  "response_mode": "direct_post",
   "dcql_query": {},
   "nonce": nonce,
   "state": state,
   "response_uri": responseUri,
-  "client_metadata": getVerifierMetadata(ResponseModes.DIRECT_POST_JWT, DRAFT_VERSIONS.V_1_0),
+  "client_metadata": getVerifierMetadata(ResponseModes.DIRECT_POST, DRAFT_VERSIONS.V_1_0),
 }
 
 const didAuthorizationRequestDraft23 = {
   "client_id": didDocumentUrl,
   "presentation_definition_uri": presentationDefinitionUri,
   "response_type": "vp_token",
-  "response_mode": "direct_post.jwt",
+  "response_mode": "direct_post",
   "nonce": nonce,
   "state": state,
   "response_uri": responseUri,
@@ -48,14 +48,12 @@ const didAuthorizationRequestParamsVersion1 = {
 
 const didAuthorizationRequestParamsDraft23 = {
   "client_id": didDocumentUrl,
-  "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?draft=draft-23`,
   "request_uri_method": "post"
 }
 
 const didAuthorizationRequestParamsDraft21 = {
   "client_id": didDocumentUrl,
   "client_id_scheme": "did",
-  "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?draft=draft-21`,
   "request_uri_method": "post"
 }
 
