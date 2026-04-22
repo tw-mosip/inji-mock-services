@@ -110,7 +110,7 @@ Add:
 ### 6️⃣ Start the Server
 
 ```bash
-node index.js
+node server.js
 ```
 
 You should see:
@@ -253,7 +253,7 @@ Issues the credential.
 │   └── server.cert
 ├── qr.js
 ├── issuer-metadata.js
-├── index.js
+├── server.js
 └── package.json
 ```
 
@@ -264,7 +264,7 @@ Issues the credential.
 * Update credential claims in `credential/endpoint.js`
 * Modify issuer metadata in `issuer-metadata.js`
 * Adjust flows in `as/*` handlers
-* Change port or domain in `index.js`
+* Change port or domain in `server.js`
 
 ---
 
@@ -320,7 +320,7 @@ If you're running a separate OpenID4VP verifier service on **port 3000**:
 
 ```bash
 cd /path/to/openid4vp-service
-node index.js
+node server.js
 ```
 
 **3. Link Services**
