@@ -1,7 +1,7 @@
 import jsonld from 'jsonld';
 import jsigs from 'jsonld-signatures';
 import { Ed25519Signature2018 } from '@digitalbazaar/ed25519-signature-2018';
-import { Ed25519VerificationKey2018 } from '@digitalbazaar/ed25519-verification-key-2018';
+import { getStaticKey } from './static-key.js';
 
 const { AssertionProofPurpose } = jsigs.purposes;
 
@@ -157,10 +157,7 @@ export const documentLoader = async (url) => {
 };
 
 export async function signLdpVc(credential, issuerDid) {
-  const key = await Ed25519VerificationKey2018.generate({
-    id: `${issuerDid}#key-0`,
-    controller: issuerDid
-  });
+  const key = await getStaticKey(issuerDid);
 
   const suite = new Ed25519Signature2018({
     key,

@@ -18,7 +18,19 @@ const CONFIG_TO_FORMAT = {
   MdocVerifiableCredential: "mso_mdoc",
 };
 
+const retriedTokens = new Set();
+
 export default async function credentialEndpoint(req, res) {
+  const authHeader = req.headers["authorization"] || "";
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+
+  if (token && !retriedTokens.has(token)) {
+    retriedTokens.add(token);
+    return res.status(400).json({
+      error: "invalid_nonce",
+      error_description: "Nonce Transaction could not be found.",
+    });
+  }
   const body = req.body || {};
   const explicitVersion = hasExplicitVersion(req);
   const version = resolveRequestVersion(req);
@@ -83,13 +95,14 @@ export default async function credentialEndpoint(req, res) {
 
   try {
     if (format === "ldp_vc") {
-        let host;
+        let parsed;
         try {
-            host = new URL(issuerUrl).host;
+            parsed = new URL(issuerUrl);
         } catch (e) {
-            host = "mock-issuer.local";
+            parsed = new URL("https://mock-issuer.local:4000");
         }
-        const issuerDid = `did:web:${host}`;
+        const portSuffix = parsed.port ? `%3A${parsed.port}` : "";
+        const issuerDid = `did:web:${parsed.hostname}${portSuffix}`;
         
         const { proof, ...unsignedVc } = STATIC_LDP_VC;
         unsignedVc.issuer = issuerDid;

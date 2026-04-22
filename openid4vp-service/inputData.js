@@ -5,10 +5,10 @@ const {
 const clientMetadata = require('./clientMetadataMock.json');
 
 const client_metadata = JSON.stringify(clientMetadata);
-
+const presentationDefinition = require('./presentationDefinitionMock.json');
 // For Pre-registered client, client metadata is known to the Wallet in advance of the authorization request
 const preRegisteredAuthorizationRequestDraft23 = {
-    "client_id": "mock-client",
+    "client_id": "test-client-1",
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
     "response_mode": "direct_post.jwt",
@@ -16,10 +16,11 @@ const preRegisteredAuthorizationRequestDraft23 = {
     "state": state,
     "response_uri": responseUri,
     "client_metadata": client_metadata,
+    "redirect_uri": "https://www.scanqr.org"
 }
 
 const preRegisteredAuthorizationRequestDraft21 = {
-    "client_id": "mock-client",
+    "client_id": "test-client-1",
     "client_id_scheme": "pre-registered",
     "presentation_definition_uri": presentationDefinitionUri,
     "response_type": "vp_token",
@@ -27,7 +28,7 @@ const preRegisteredAuthorizationRequestDraft21 = {
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": client_metadata,
+    "client_metadata": client_metadata
 }
 
 const redirectAuthorizationRequestDraft23 = {
@@ -38,7 +39,7 @@ const redirectAuthorizationRequestDraft23 = {
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": client_metadata,
+    "client_metadata": client_metadata
 }
 
 const redirectAuthorizationRequestDraft21 = {
@@ -50,7 +51,7 @@ const redirectAuthorizationRequestDraft21 = {
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": client_metadata,
+    "client_metadata": client_metadata
 }
 
 const didAuthorizationRequestDraft23 = {

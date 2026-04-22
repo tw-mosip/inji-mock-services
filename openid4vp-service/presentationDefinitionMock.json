@@ -10,6 +10,18 @@
   },
   "input_descriptors": [
     {
+      "id": "id card credential",
+      "format": {
+        "ldp_vc": {
+          "proof_type": [
+            "Ed25519Signature2020"
+          ]
+        }
+      },
+      "constraints": {
+      }
+    },
+    {
       "id": "sdjwt-vc-any",
       "name": "Any SD-JWT VC",
       "purpose": "Accept any Verifiable Credential in SD-JWT format.",

@@ -12,6 +12,7 @@ import tokenHandler from "./as/token.js";
 import credentialHandler from "./credential/endpoint.js";
 import loginHandler from "./as/login.js";
 import nonceHandler from "./nonce.js";
+import didDocumentHandler from "./did-document.js";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -26,6 +27,7 @@ app.get("/qr", qrPageHandler);
 app.get("/qr/image", qrImageHandler);
 
 // ---- WELL-KNOWN ---- //
+app.get("/.well-known/did.json", didDocumentHandler);
 app.get("/.well-known/openid-credential-issuer", issuerMetadata);
 app.get("/:flow(pdi)/.well-known/openid-credential-issuer", issuerMetadata);
 app.get("/:version(v1|draft13)/.well-known/openid-credential-issuer", issuerMetadata);

@@ -16,7 +16,7 @@ const jwkSet = {
     ]
 }
 //update this baseurl with the localtunnel url
-const baseUrl = "https://129e4f0672b6.ngrok-free.app"
+const baseUrl = "https://unenvying-oleta-shrinkingly.ngrok-free.dev"
 const requestUri = `${baseUrl}/verifier/get-auth-request-obj`
 const responseUri = `${baseUrl}/verifier/vp-response`
 const presentationDefinitionUri  = `${baseUrl}/verifier/presentation_definition_uri`

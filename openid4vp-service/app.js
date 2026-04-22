@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
 
 function createUrlWithParams(params) {
-    const baseUrl = "openid4vp://authorize";
+    const baseUrl = "https://unenvying-oleta-shrinkingly.ngrok-free.dev";
     const paramStrings = [];
 
     for (const [key, value] of Object.entries(params)) {
@@ -241,6 +241,7 @@ app.post('/verifier/vp-response', (req, res) => {
 
     const response = {
         redirect_uri: `${baseUrl}/verifier/callback#response_code=${responseCode}`,
+//        redirect_uri: "https://www.google.com",
         message: `Verifiable presentation is not right`,
     };
     console.log("Response to be sent:", response);

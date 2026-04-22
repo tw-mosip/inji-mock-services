@@ -11,7 +11,6 @@ export default function nonceHandler(req, res) {
 
   res.setHeader('Cache-Control', 'no-store');
   res.json({
-    c_nonce: randomUUID(),
-    c_nonce_expires_in: 300,
+    c_nonce: randomUUID()
   });
 }

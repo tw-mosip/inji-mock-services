@@ -21,9 +21,20 @@ const BASE_CREDENTIAL_CONFIGURATIONS = {
       "@context": ["https://www.w3.org/2018/credentials/v1"],
     },
     credential_metadata: {
-      display: [
-        { name: "Farmer Credential", locale: "en" },
-        { name: "किसान क्रेडेंशियल", locale: "hi" },
+      "display": [
+        {
+          "logo": {
+            "url": "https://inji.github.io/inji-config/logos/mosipid-logo.png",
+            "alt_text": "a square logo of a MOSIP"
+          },
+          "name": "Mock Issuer Local",
+          "locale": "en",
+          "text_color": "#FFFFFF",
+          "background_color": "#12107c",
+          "background_image": {
+            "uri": "https://inji.github.io/inji-config/vcbackground/default-background.png"
+          }
+        }
       ],
       claims: [
         {
@@ -79,127 +90,7 @@ const BASE_CREDENTIAL_CONFIGURATIONS = {
         },
       ],
     },
-  },
-  JwtVerifiableCredential: {
-    format: "jwt_vc_json",
-    scope: "jwt_vc_json.read",
-    cryptographic_binding_methods_supported: ["did:jwk"],
-    credential_signing_alg_values_supported: ["ES256"],
-    proof_types_supported: {
-      jwt: {
-        proof_signing_alg_values_supported: ["ES256", "RS256"],
-      },
-    },
-    credential_definition: {
-      type: ["VerifiableCredential", "EmployeeCredential"],
-    },
-    credential_metadata: {
-      display: [
-        { name: "Employee Credential", locale: "en" },
-        { name: "Kredensyal ng Empleyado", locale: "fil" },
-        { name: "कर्मचारी क्रेडेंशियल", locale: "hi" },
-        { name: "ಉದ್ಯೋಗಿ ರುಜುವಾತು", locale: "kn" },
-        { name: "பணியாளர் நற்சான்றிதழ்", locale: "ta" },
-        { name: "اعتماد الموظف", locale: "ar" },
-      ],
-      claims: [
-        {
-          path: ["credentialSubject", "employeeId"],
-          display: [
-            { name: "कर्मचारी पहचान", locale: "hi" },
-            { name: "Employee ID", locale: "en" },
-            { name: "ID ng Empleyado", locale: "fil" },
-            { name: "ಉದ್ಯೋಗಿ ಗುರುತು", locale: "kn" },
-            { name: "பணியாளர் அடையாளம்", locale: "ta" },
-            { name: "معرف الموظف", locale: "ar" },
-          ],
-        },
-        {
-          path: ["credentialSubject", "name"],
-          display: [
-            { name: "पूरा नाम", locale: "hi" },
-            { name: "Name", locale: "en" },
-            { name: "Buong Pangalan", locale: "fil" },
-            { name: "ಪೂರ್ಣ ಹೆಸರು", locale: "kn" },
-            { name: "முழு பெயர்", locale: "ta" },
-            { name: "الاسم الكامل", locale: "ar" },
-          ],
-        },
-        {
-          path: ["credentialSubject", "role"],
-          display: [
-            { name: "भूमिका", locale: "hi" },
-            { name: "Role", locale: "en" },
-            { name: "Tungkulin", locale: "fil" },
-            { name: "ಪಾತ್ರ", locale: "kn" },
-            { name: "பணிப்பொறுப்பு", locale: "ta" },
-            { name: "الدور الوظيفي", locale: "ar" },
-          ],
-        },
-        {
-          path: ["credentialSubject", "address", "city"],
-          display: [{ name: "City", locale: "en" }],
-        },
-        {
-          path: ["credentialSubject", "nationalities", null],
-          display: [{ name: "Nationalities", locale: "en" }],
-        },
-        {
-          path: ["credentialSubject", "degrees", 0, "type"],
-          display: [{ name: "Primary Degree", locale: "en" }],
-        },
-      ],
-    },
-  },
-  SdJwtVerifiableCredential: {
-    format: "vc+sd-jwt",
-    scope: "sd_jwt_vc.read",
-    cryptographic_binding_methods_supported: ["did:jwk"],
-    credential_signing_alg_values_supported: ["ES256"],
-    proof_types_supported: {
-      jwt: {
-        proof_signing_alg_values_supported: ["ES256", "RS256"],
-      },
-    },
-    vct: "EmployeeCredential",
-    credential_metadata: {
-      display: [
-        { name: "SD-JWT Employee Credential", locale: "en" },
-      ],
-      claims: [
-        {
-          path: ["employeeId"],
-          display: [{ name: "Employee ID", locale: "en" }],
-        },
-        {
-          path: ["name"],
-          display: [{ name: "Name", locale: "en" }],
-        },
-      ],
-    },
-  },
-  MdocVerifiableCredential: {
-    format: "mso_mdoc",
-    scope: "mdoc.read",
-    cryptographic_binding_methods_supported: ["jwk"],
-    credential_signing_alg_values_supported: ["ES256"],
-    doctype: "org.iso.18013.5.1.mDL",
-    credential_metadata: {
-      display: [
-        { name: "Mobile Driving License", locale: "en" },
-      ],
-      claims: [
-        {
-          path: ["org.iso.18013.5.1", "given_name"],
-          display: [{ name: "Given Name", locale: "en" }],
-        },
-        {
-          path: ["org.iso.18013.5.1", "family_name"],
-          display: [{ name: "Family Name", locale: "en" }],
-        },
-      ],
-    },
-  },
+  }
 };
 
 function toDraft13Configuration(configuration) {
