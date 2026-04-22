@@ -55,7 +55,7 @@ node -v
 
 ```bash
 git clone <your-repo-url>
-cd mock-issuer
+cd mock-issuer-service
 ```
 
 ---
@@ -87,7 +87,7 @@ openssl req -x509 -newkey rsa:2048 -nodes \
 
 > 💡 When prompted:
 >
-> * **Common Name** → `mock-issuer.local`
+> * **Common Name** → `mock-issuer-service.local`
 
 ---
 
