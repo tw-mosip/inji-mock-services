@@ -3,6 +3,7 @@ const {
 } = require("../constants");
 const clientMetadata = require('../clientMetadataMock.json');
 const {getVerifierMetadata} = require("../VerifierMetadata");
+const {dcqlQuery} = require("../presentation-exchange-request/DCQLQuery");
 
 const client_metadata = JSON.stringify(clientMetadata);
 
@@ -10,7 +11,7 @@ const didAuthorizationRequestVersion1 = {
   "client_id": `decentralized_identifier:${didDocumentUrl}`,
   "response_type": "vp_token",
   "response_mode": "direct_post",
-  "dcql_query": {},
+  "dcql_query": dcqlQuery,
   "nonce": nonce,
   "state": state,
   "response_uri": responseUri,

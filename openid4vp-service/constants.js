@@ -22,7 +22,7 @@ const responseUri = `${baseUrl}/verifier/vp-response`
 const presentationDefinitionUri  = `${baseUrl}/verifier/presentation_definition_uri`
 const didDocumentUrl = "did:web:inji.github.io:inji-mock-services:openid4vp-service:docs"
 const clientId  = "http://mock-verifier"
-const nonce = crypto.randomBytes(16).toString('base64');
+const nonce = crypto.randomBytes(16).toString('base64url');
 const state = crypto.randomBytes(16).toString('base64');
 
 const ContentTypes = {

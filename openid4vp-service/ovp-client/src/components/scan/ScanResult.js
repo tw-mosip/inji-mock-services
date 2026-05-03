@@ -155,6 +155,10 @@ export function ScanResult() {
     const showDecoded = isDecoded && !!decryptedResult;
     const displayedPayload = showDecoded ? decryptedResult : scanResult;
 
+    function isEncodedData() {
+        return typeof scanResult === 'string' && scanResult.includes('.') && scanResult.split('.').length === 5;
+    }
+
     return <div style={{flex: 1}}>
         <div style={{
             display: "flex",
@@ -167,22 +171,55 @@ export function ScanResult() {
 
         {scanResult ? (
             <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-                <div style={{display: 'flex', justifyContent: 'flex-start'}}>
-
-                    <Toggle options={[
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px'}}>
+                    <div style={{display: 'flex', justifyContent: 'flex-start'}}>
                         {
-                            name: 'Decoded',
-                            selected: isDecoded,
-                            onChange: handleDecrypt
-                        },
-                        {
-                            name: 'Encoded',
-                            selected: !isDecoded,
-                            onChange: () => setIsDecoded(false)
+                          isEncodedData() && (
+                            <Toggle options={[
+                                {
+                                    name: 'Decoded',
+                                    selected: isDecoded,
+                                    onChange: handleDecrypt
+                                },
+                                {
+                                    name: 'Encoded',
+                                    selected: !isDecoded,
+                                    onChange: () => setIsDecoded(false)
+                                }
+                            ]}/>
+                          )
                         }
-                    ]} />
-                </div>
+                        {decryptedResult && (
+                          <div style={{
+                              background: Palette.success,
+                              padding: '12px 16px',
+                              borderRadius: '6px',
+                              color: 'white',
+                              fontSize: '14px'
+                          }}>
+                              ✓ JWE successfully decrypted {viewMode === 'decoded' ? '(showing decoded payload)' : ''}
+                          </div>
+                        )}
 
+                        {decryptError && (
+                          <div style={{
+                              background: Palette.danger,
+                              padding: '12px 16px',
+                              borderRadius: '6px',
+                              color: 'white',
+                              fontSize: '14px'
+                          }}>
+                              ✗ Decryption error: {decryptError}
+                          </div>
+                        )}
+                    </div>
+                    <Button
+                      variant={"tertiary"}
+                      onClick={() => setScanResult(null)}
+                    >
+                        Clear
+                    </Button>
+                </div>
                 <div
                     style={{
                         background: displayedPayload?.error ? Palette.danger : Palette.success,
@@ -198,66 +235,6 @@ export function ScanResult() {
                 >
                     <Section value={JSON.stringify(prettyScanResult(displayedPayload), null, 2)}/>
                 </div>
-
-                {!decryptedResult && (
-                    <div style={{display: 'flex', gap: '8px', flexWrap: 'wrap'}}>
-                        <Button
-                            variant="primary"
-                            onClick={handleDecrypt}
-                            style={{
-                                opacity: isDecrypting ? 0.6 : 1,
-                                cursor: isDecrypting ? 'not-allowed' : 'pointer'
-                            }}
-                            disabled={isDecrypting}
-                        >
-                            {isDecrypting ? 'Decrypting...' : 'Decrypt JWE'}
-                        </Button>
-
-                        <Button
-                            variant="secondary"
-                            onClick={() => {
-                                console.log('=== DEBUG: Raw Scan Result ===');
-                                console.log('Type:', typeof scanResult);
-                                console.log('Content:', scanResult);
-                                if (scanResult && typeof scanResult === 'object') {
-                                    console.log('Keys:', Object.keys(scanResult));
-                                    console.log('All values:', Object.values(scanResult));
-                                }
-                                console.log('=== END DEBUG ===');
-                            }}
-                            style={{
-                                fontSize: '12px',
-                                padding: '8px 12px'
-                            }}
-                        >
-                            Debug
-                        </Button>
-                    </div>
-                )}
-
-                {decryptedResult && (
-                    <div style={{
-                        background: Palette.success,
-                        padding: '12px 16px',
-                        borderRadius: '6px',
-                        color: 'white',
-                        fontSize: '14px'
-                    }}>
-                        ✓ JWE successfully decrypted {viewMode === 'decoded' ? '(showing decoded payload)' : ''}
-                    </div>
-                )}
-
-                {decryptError && (
-                    <div style={{
-                        background: Palette.danger,
-                        padding: '12px 16px',
-                        borderRadius: '6px',
-                        color: 'white',
-                        fontSize: '14px'
-                    }}>
-                        ✗ Decryption error: {decryptError}
-                    </div>
-                )}
             </div>
         ) : (
             <div

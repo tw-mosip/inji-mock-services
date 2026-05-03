@@ -1,5 +1,3 @@
-const crypto = require('crypto');
-const { x25519 } = require('@noble/curves/ed25519');
 
 // jose will be loaded dynamically since it's ESM-only
 let jose = null;
@@ -26,27 +24,11 @@ function base64ToBase64Url(base64) {
 }
 
 /**
- * Convert base64url to base64 format
- * @param {string} base64url - Base64url encoded string
- * @returns {string} Standard base64 string
- */
-function base64UrlToBase64(base64url) {
-    let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-    const padding = base64.length % 4;
-    if (padding) {
-        base64 += '='.repeat(4 - padding);
-    }
-    return base64;
-}
-
-/**
  * Initialize encryption keys for the verifier
- * @param {Object} verifierMetadata - The verifier metadata object to update
  * @returns {Object} Object containing the encryption key info
  */
-async function initializeEncryptionKeys(verifierMetadata) {
+async function initializeEncryptionKeys() {
     const publicKeyB64Url = base64ToBase64Url(defaultVerifierKeys.publicKeyBase64);
-    const privateKeyB64Url = base64ToBase64Url(defaultVerifierKeys.privateKeyBase64);
 
     const encryptionKey = {
         jwk: {
@@ -54,13 +36,12 @@ async function initializeEncryptionKeys(verifierMetadata) {
             crv: "X25519",
             use: "enc",
             x: publicKeyB64Url,
-            d: privateKeyB64Url,
             alg: "ECDH-ES",
             kid: "verifier-static-key"
         },
         keyId: "verifier-static-key",
         algorithm: "ECDH-ES",
-        encryptionMethods: ["A128GCM", "A128CBC-HS256", "A256GCM"],
+        encryptionMethods: ["A256GCM"],
         publicKeyBase64: defaultVerifierKeys.publicKeyBase64,
         privateKeyBase64: defaultVerifierKeys.privateKeyBase64
     };
@@ -116,7 +97,7 @@ async function decryptJwe(jweToken, encryptionKey) {
         // Decrypt the JWE token
         const { plaintext, protectedHeader } = await jose.compactDecrypt(jweToken, privateKey);
 
-        console.log('JWE Header:', JSON.stringify(protectedHeader, null, 2));
+        console.debug('JWE Header:', JSON.stringify(protectedHeader, null, 2));
 
         // Convert plaintext to string
         const payloadString = new TextDecoder().decode(plaintext);
@@ -134,81 +115,8 @@ async function decryptJwe(jweToken, encryptionKey) {
     }
 }
 
-/**
- * Concat KDF as per RFC 7518 (JOSE)
- * @param {Uint8Array} sharedSecret - ECDH shared secret
- * @param {number} keyLengthBits - Desired key length in bits
- * @param {string} algorithm - Algorithm identifier (e.g., "A256GCM")
- * @param {string} apu - Agreement PartyU Info (base64url encoded, optional)
- * @param {string} apv - Agreement PartyV Info (base64url encoded, optional)
- * @returns {Buffer} Derived key
- */
-function concatKdf(sharedSecret, keyLengthBits, algorithm, apu, apv) {
-    const keyLengthBytes = keyLengthBits / 8;
-
-    // AlgorithmID = algorithm name in UTF-8
-    const algId = Buffer.from(algorithm, 'utf8');
-    const algIdLength = Buffer.alloc(4);
-    algIdLength.writeUInt32BE(algId.length, 0);
-
-    // PartyUInfo - apu is base64url encoded in the header
-    // Some implementations may include padding (=), so handle both cases
-    let apuData = Buffer.alloc(0);
-    if (apu) {
-        // Normalize: remove padding and convert to proper base64url if needed
-        const normalizedApu = apu.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-        apuData = Buffer.from(normalizedApu, 'base64url');
-    }
-    const apuLength = Buffer.alloc(4);
-    apuLength.writeUInt32BE(apuData.length, 0);
-
-    // PartyVInfo - apv is base64url encoded in the header
-    // Some implementations may include padding (=), so handle both cases
-    let apvData = Buffer.alloc(0);
-    if (apv) {
-        // Normalize: remove padding and convert to proper base64url if needed
-        const normalizedApv = apv.replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
-        apvData = Buffer.from(normalizedApv, 'base64url');
-    }
-    const apvLength = Buffer.alloc(4);
-    apvLength.writeUInt32BE(apvData.length, 0);
-
-    // SuppPubInfo = keydatalen in bits as 4 bytes big endian
-    const suppPubInfo = Buffer.alloc(4);
-    suppPubInfo.writeUInt32BE(keyLengthBits, 0);
-
-    // SuppPrivInfo = empty
-    const suppPrivInfo = Buffer.alloc(0);
-
-    // OtherInfo = AlgorithmID || PartyUInfo || PartyVInfo || SuppPubInfo || SuppPrivInfo
-    const otherInfo = Buffer.concat([
-        algIdLength, algId,
-        apuLength, apuData,
-        apvLength, apvData,
-        suppPubInfo,
-        suppPrivInfo
-    ]);
-
-    // Single-pass KDF for keys <= 256 bits
-    // round1 = Hash(counter || Z || OtherInfo)
-    const counter = Buffer.alloc(4);
-    counter.writeUInt32BE(1, 0);
-
-    const hash = crypto.createHash('sha256');
-    hash.update(counter);
-    hash.update(Buffer.from(sharedSecret));
-    hash.update(otherInfo);
-
-    const derivedKey = hash.digest();
-
-    return derivedKey.slice(0, keyLengthBytes);
-}
-
 module.exports = {
     initializeEncryptionKeys,
     exportKeyInfo,
-    decryptJwe,
-    base64ToBase64Url,
-    base64UrlToBase64
-};
-
+    decryptJwe
+}

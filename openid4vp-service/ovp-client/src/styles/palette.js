@@ -53,24 +53,32 @@ export const buttonStyles = {
         fontFamily: font.primary,
         fontWeight: 600,
         fontSize: "15px",
-        padding: "10px 18px",
         borderRadius: "12px",
         border: "none",
         cursor: "pointer",
         transition: "all 0.3s ease",
-        boxShadow: `0 4px 10px ${Palette.primaryShadow}`,
     },
 
     primary: {
         background: backgroundStyle.primaryGradient,
+        boxShadow: `0 4px 10px ${Palette.primaryShadow}`,
         color: Palette.primaryText,
+        padding: "10px 18px",
     },
 
     secondary: {
         background: "#fff",
         color: Palette.primary,
+        padding: "10px 18px",
         border: `1px solid ${Palette.primary}`,
         boxShadow: `0 4px 8px ${Palette.secondaryShadow}`,
+    },
+
+    tertiary: {
+        background: "#fff",
+        color: Palette.primary,
+        border: 0,
+        padding: 2
     },
 
     hoverPrimary: {

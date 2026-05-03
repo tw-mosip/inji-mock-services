@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const QRCode = require('qrcode');
-const presentationDefinition = require('./presentationDefinitionMock.json');
+const presentationDefinition = require('./presentation-exchange-request/presentationDefinitionMock.json');
 const bodyParser = require('body-parser');
 const {createJWT} = require("./jwt");
 const cors = require('cors');
@@ -33,7 +33,7 @@ let activeEncryptionKey = null;
 // Initialize encryption keys on app startup
 (async () => {
     try {
-        const { encryptionKey } = await initializeEncryptionKeys(VerifierMetadataModule.VerifierMetadata);
+        const { encryptionKey } = await initializeEncryptionKeys();
         activeEncryptionKey = encryptionKey;
         updateWithEncryptionKey(encryptionKey);
         console.log(exportKeyInfo(encryptionKey));

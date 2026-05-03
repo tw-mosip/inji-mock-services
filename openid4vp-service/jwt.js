@@ -1,6 +1,5 @@
 const ed = require('@noble/ed25519');
 const forge = require('node-forge');
-const presentationDefinition = require('./presentationDefinitionMock.json');
 
 const {ed25519PrivateKey, publicKeyId} = require("./constants");
 

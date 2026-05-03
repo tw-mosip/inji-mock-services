@@ -10,6 +10,30 @@
   },
   "input_descriptors": [
     {
+      "id": "id card credential",
+      "format": {
+        "ldp_vc": {
+          "proof_type": [
+            "Ed25519Signature2020",
+            "RsaSignature2018"
+          ]
+        }
+      },
+      "constraints": {
+        "fields": [
+          {
+            "path": [
+              "$.credentialSubject.email"
+            ],
+            "filter": {
+              "type": "string",
+              "pattern": "@gmail.com"
+            }
+          }
+        ]
+      }
+    },
+    {
       "id": "sdjwt-vc-any",
       "name": "Any SD-JWT VC",
       "purpose": "Accept any Verifiable Credential in SD-JWT format.",
