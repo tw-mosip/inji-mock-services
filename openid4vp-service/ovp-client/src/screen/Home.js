@@ -136,6 +136,14 @@ const Home = () => {
                     ))}
                 </div>
             </div>
+            <div>
+                <p>For simple Verification purpose open Verify screen</p>
+                <Button onClick={() => {
+                    navigate('/verify')
+                }}>
+                    Open Verify Screen
+                </Button>
+            </div>
         </div>
     );
 };

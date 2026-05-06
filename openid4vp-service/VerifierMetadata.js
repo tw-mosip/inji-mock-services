@@ -26,7 +26,7 @@ const staticJWK = {
 };
 
 const VerifierMetadata = {
-  "draft-23": JSON.stringify({
+  "draft-23": {
     "client_name": "Requester name",
     "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
     "authorization_encrypted_response_alg": "ECDH-ES",
@@ -50,7 +50,7 @@ const VerifierMetadata = {
         ]
       }
     }
-  }),
+  },
   "version-1.0": {
     "client_name": "Requester name",
     "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
@@ -95,7 +95,8 @@ function getVerifierMetadata(responseMode, version) {
       delete metadata["encrypted_response_enc_values_supported"];
     }
     if (version === DRAFT_VERSIONS.DRAFT_23) {
-      delete metadata["encrypted_response_enc"];
+      delete metadata["authorization_encrypted_response_enc"];
+      delete metadata["authorization_encrypted_response_alg"];
     }
   }
 
@@ -150,6 +151,4 @@ module.exports = {
   VerifierMetadata,
   getVerifierMetadata,
   updateWithEncryptionKey,
-  getActiveEncryptionKeyFromMetadata,
-  getEncryptionKeyIds
 };

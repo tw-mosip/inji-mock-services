@@ -1,0 +1,58 @@
+{
+  "holder": "did:jwk:eyJrdHkiOiJPS1AiLCJ1c2UiOiJzaWciLCJjcnYiOiJFZDI1NTE5IiwieCI6IlhtdDBlTnE1TWNtLUZvbV9tbTAteHUxZTEtLWpJcXUtcUpuZTlOU25LRkUifQ==",
+  "type": [
+    "VerifiablePresentation"
+  ],
+  "verifiableCredential": [
+    {
+      "proof": {
+        "proofValue": "z2FqVDA5z2t9rYL2XENYkoFNHN2kmdD7EnyRBLPwEtJwTABgWYU86drQkXajyLeCBAgpAKSSVeYZwp63mzT3Kn2H",
+        "proofPurpose": "assertionMethod",
+        "type": "Ed25519Signature2020",
+        "created": "2026-04-30T03:05:05Z",
+        "verificationMethod": "did:web:api.collab.mosip.net:identity-service:56de166e-0e2f-4734-b8e7-be42b3117d39#key-0"
+      },
+      "expirationDate": "2026-05-30T03:05:05.328Z",
+      "credentialSubject": {
+        "policyIssuedOn": "2023-04-20",
+        "email": "abcd@gmail.com",
+        "fullName": "wallet",
+        "id": "did:jwk:eyJrdHkiOiJPS1AiLCJ1c2UiOiJzaWciLCJjcnYiOiJFZDI1NTE5IiwieCI6IlhtdDBlTnE1TWNtLUZvbV9tbTAteHUxZTEtLWpJcXUtcUpuZTlOU25LRkUifQ==",
+        "policyExpiresOn": "2033-04-20",
+        "policyNumber": "5555",
+        "gender": "Male",
+        "dob": "2025-01-01",
+        "policyName": "wallet",
+        "benefits": [
+          "Critical Surgery",
+          "Full body checkup"
+        ],
+        "mobile": "0123456789"
+      },
+      "issuer": "did:web:api.collab.mosip.net:identity-service:56de166e-0e2f-4734-b8e7-be42b3117d39",
+      "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://inji.github.io/inji-config/contexts/insurance-context.json",
+        "https://w3id.org/security/suites/ed25519-2020/v1"
+      ],
+      "type": [
+        "VerifiableCredential",
+        "InsuranceCredential"
+      ],
+      "issuanceDate": "2026-04-30T03:05:05.333Z",
+      "id": "did:rcw:4c48ef7b-a52e-4019-9d92-4b0e935e9d2e"
+    }
+  ],
+  "id": "urn:uuid:a3f95401-7c8b-47b2-9fa1-6aa662ff2c0c",
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/security/suites/jws-2020/v1"
+  ],
+  "proof": {
+    "challenge": "XO5osYTevFROgSBpqmGJWQ",
+    "verificationMethod": "did:jwk:eyJrdHkiOiJPS1AiLCJ1c2UiOiJzaWciLCJjcnYiOiJFZDI1NTE5IiwieCI6IlhtdDBlTnE1TWNtLUZvbV9tbTAteHUxZTEtLWpJcXUtcUpuZTlOU25LRkUifQ==",
+    "jws": "qu3x-N3QL5PqAsA2L6wOu6RcecbQ21kDUzK7t8Isv3ZA2vGHoR3gwKzLemmnYaMV9MSuJBOwrbotCjsGjmeaBw",
+    "type": "JsonWebSignature2020",
+    "domain": "decentralized_identifier:did:web:inji.github.io:inji-mock-services:openid4vp-service:docs"
+  }
+}
