@@ -156,7 +156,8 @@ export function ScanResult() {
     const displayedPayload = showDecoded ? decryptedResult : scanResult;
 
     function isEncodedData() {
-        return typeof scanResult === 'string' && scanResult.includes('.') && scanResult.split('.').length === 5;
+        let vpResponse = scanResult["response"]
+        return typeof vpResponse === 'string' && vpResponse.includes('.') && vpResponse.split('.').length === 5;
     }
 
     return <div style={{flex: 1}}>

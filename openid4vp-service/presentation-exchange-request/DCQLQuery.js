@@ -1,71 +1,54 @@
 const dcqlQuery = {
   "credentials": [
-    // {
-    //     "id": "mvrc",
-    //     "format": "mso_mdoc",
-    //     "meta": {
-    //         "doctype_value": "org.iso.7367.1.mVRC"
-    //     },
-    //     "require_cryptographic_holder_binding": true,
-    //     "claims": [
-    //         {
-    //             "path": [
-    //                 "org.iso.7367.1",
-    //                 "vehicle_holder"
-    //             ],
-    //             "intent_to_retain": false
-    //         },
-    //         {
-    //             "path": [
-    //                 "org.iso.18013.5.1",
-    //                 "first_name"
-    //             ],
-    //             "intent_to_retain": true
-    //         }
-    //     ],
-    //     "trusted_authorities": [
-    //         {
-    //             "type": "aki",
-    //             "values": [
-    //                 "one",
-    //                 "two"
-    //             ]
-    //         }
-    //     ]
-    // }
+    {
+        "id": "mvrc",
+        "format": "mso_mdoc",
+        "meta": {
+            "doctype_value": "org.iso.18013.5.1.mDL"
+        },
+        "require_cryptographic_holder_binding": true,
+        "claims": [
+          {
+            "path": [
+              "given_name"
+            ],
+            "intent_to_retain": false
+          }
+        ]
+    },
     // Mock SD_JWT
-    // {
-    //   "id": "mvrc",
-    //   "format": "vc+sd-jwt",
-    //   "meta": {},
-    //   "require_cryptographic_holder_binding": true,
-    //   "claims": [
-    //     {
-    //       "path": [
-    //         "credentialSubject",
-    //         "VID"
-    //       ],
-    //     },
-    //     {
-    //       "path": [
-    //         "credentialSubject",
-    //         "dateOfBirth"
-    //       ],
-    //     }
-    //   ]
-    // },
-    // // Health ID SD_JWT
-    // {
-    //   "id": "mvrc2",
-    //   "format": "vc+sd-jwt",
-    //   "meta": {
-    //     "vct_values": ["eu.europa.ec.eudi.hiid.1"]
-    //   },
-    //   "require_cryptographic_holder_binding": false,
-    // }
+    {
+      "id": "mvrc",
+      "format": "vc+sd-jwt",
+      "meta": {},
+      "require_cryptographic_holder_binding": true,
+      "claims": [
+        {
+          "path": [
+            "credentialSubject",
+            "VID"
+          ],
+        },
+        {
+          "path": [
+            "credentialSubject",
+            "dateOfBirth"
+          ],
+        }
+      ]
+    },
+    // Health ID SD_JWT
+    {
+      "id": "mvrc2",
+      "format": "vc+sd-jwt",
+      "meta": {
+        "vct_values": ["eu.europa.ec.eudi.hiid.1"]
+      },
+      "require_cryptographic_holder_binding": false,
+    },
     // ldp_vc
     {
-      "id": "insurance_credential",
+      "id": "mvrc",
       "format": "ldp_vc",
       "meta": {
         "type_values": [
@@ -85,14 +68,14 @@ const dcqlQuery = {
         ]
       },
       "require_cryptographic_holder_binding": true,
-      // "claims": [
-      //   {
-      //     "path": [
-      //       "credentialSubject",
-      //       "policyNumber"
-      //     ],
-      //   }
-      //   ]
+      "claims": [
+        {
+          "path": [
+            "credentialSubject",
+            "policyNumber"
+          ],
+        }
+      ]
     }
   ]
 }

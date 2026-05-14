@@ -15,10 +15,6 @@ module.exports = {
     didAuthorizationRequest: did.didAuthorizationRequestDraft23,
     redirectAuthorizationRequest: redirectUri.redirectAuthorizationRequestDraft23,
     authorizationRequestParams: did.didAuthorizationRequestParamsDraft23,
-    preRegisteredAuthorizationRequestDraft21: preRegistered.preRegisteredAuthorizationRequestDraft21,
-    didAuthorizationRequestDraft21: did.didAuthorizationRequestDraft21,
-    redirectAuthorizationRequestDraft21: redirectUri.redirectAuthorizationRequestDraft21,
-    authorizationRequestParamsDraft21: did.didAuthorizationRequestParamsDraft21,
 
     finalAuthRequestMap
 }

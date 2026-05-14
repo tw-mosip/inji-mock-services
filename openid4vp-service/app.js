@@ -239,9 +239,10 @@ app.listen(PORT, () => {
  * @param {Object} inputData - Original input data
  * @param {string} responseMode - Selected response mode (direct_post or direct_post.jwt)
  * @param {string} draftVersion - Selected draft version
+ * @param byReferenceMode
  * @returns {Object} Updated input data with correct response_mode and client_metadata
  */
-function updateVpRequest(inputData, responseMode, draftVersion) {
+function updateVpRequest(inputData, responseMode, draftVersion, byReferenceMode = false) {
     const { getVerifierMetadata } = require('./VerifierMetadata');
     const { ResponseModes } = require('./constants');
 
@@ -259,7 +260,10 @@ function updateVpRequest(inputData, responseMode, draftVersion) {
     // Update client_metadata with the appropriate response mode
     let verifierMetadata = getVerifierMetadata(responseModeEnum, draftVersion);
 
-    updatedData.client_metadata = verifierMetadata
+    if(byReferenceMode)
+        updatedData.client_metadata = verifierMetadata
+    else
+        updatedData.client_metadata = JSON.stringify(verifierMetadata);
 
     console.log(`Updated input data with response_mode: ${responseMode}`);
     return updatedData;
@@ -267,6 +271,7 @@ function updateVpRequest(inputData, responseMode, draftVersion) {
 
 const createRequestUriResponse = async (req, res, walletNonce = null) => {
     console.log("Time :", Date.now().toLocaleString());
+    console.log("received call to request_uri endpoint with method:", req.method);
     console.log("received call to request_uri endpoint with header:", req.headers);
     console.log("received call to request_uri endpoint with body:", req.body);
     try {
@@ -287,7 +292,7 @@ const createRequestUriResponse = async (req, res, walletNonce = null) => {
         }
 
 
-        let inputData = updateVpRequest(finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion], responseMode, draftVersion);
+        let inputData = updateVpRequest(finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion], responseMode, draftVersion, true);
 
         if (!inputData) {
             console.error('Error generating JWT:', "Provided combination is not supported - ", {

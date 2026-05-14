@@ -1,9 +1,7 @@
 const {
-    nonce, state, responseUri, baseUrl, presentationDefinitionUri,
-    CLIENT_ID_SCHEMES, REQUEST_MODES, DRAFT_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES, ResponseModes
+    nonce, state, responseUri, baseUrl, presentationDefinitionUri,REQUEST_MODES, DRAFT_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES, ResponseModes
 } = require("../constants");
 const clientMetadata = require('../clientMetadataMock.json');
-const VerifierMetadata = require("../VerifierMetadata");
 const {getVerifierMetadata} = require("../VerifierMetadata");
 
 const client_metadata = JSON.stringify(clientMetadata);
