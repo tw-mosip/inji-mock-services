@@ -3,7 +3,7 @@ const {
 } = require("../constants");
 const clientMetadata = require('../clientMetadataMock.json');
 const {getVerifierMetadata} = require("../VerifierMetadata");
-const {dcqlQuery} = require("../presentation-exchange-request/DCQLQuery");
+const {dcqlQuery} = require("../presentation-request/DCQLQuery");
 
 const client_metadata = JSON.stringify(clientMetadata);
 

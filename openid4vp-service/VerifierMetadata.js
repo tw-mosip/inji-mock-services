@@ -27,7 +27,7 @@ const staticJWK = {
 
 const VerifierMetadata = {
   "draft-23": {
-    "client_name": "Requester name",
+    "client_name": "Inji Mock Verifier",
     "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
     "authorization_encrypted_response_alg": "ECDH-ES",
     "authorization_encrypted_response_enc": "A256GCM",
@@ -52,7 +52,7 @@ const VerifierMetadata = {
     }
   },
   "version-1.0": {
-    "client_name": "Requester name",
+    "client_name": "Inji Mock Verifier",
     "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
     "authorization_encrypted_response_alg": "ECDH-ES",
     "encrypted_response_enc_values_supported": ["A128GCM", "A128CBC-HS256", "A256GCM"],

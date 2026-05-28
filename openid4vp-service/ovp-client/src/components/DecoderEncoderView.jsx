@@ -18,7 +18,7 @@ const DecoderEncoderView = ({ input, actualSignedData = null }) => {
             const parts = jwt.split('.');
             if (parts.length < 2) return jwt;
             const payload = parts[1];
-            return JSON.stringify(JSON.parse(atob(payload)), null, 2);
+            return JSON.parse(atob(payload));
         } catch (e) {
             return 'Invalid JWT';
         }

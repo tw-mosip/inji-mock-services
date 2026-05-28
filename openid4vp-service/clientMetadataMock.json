@@ -1,5 +1,5 @@
 {
-  "client_name": "Requester name",
+  "client_name": "Inji Mock Verifier",
   "logo_uri": "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
   "authorization_encrypted_response_alg": "ECDH-ES",
   "authorization_encrypted_response_enc": "A256GCM",
