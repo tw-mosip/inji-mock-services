@@ -15,36 +15,6 @@ export const STATIC_LDP_VC = {
     landOwnershipType: "Leased",
     primaryCropType: "Rice",
     secondaryCropType: "Pulses",
-    address: {
-      village: "Koppal",
-      district: "Koppal"
-    },
-    farmProfile: {
-      landRecord: {
-        surveyNumber: "SRV-2025-0091",
-        registry: {
-          office: "Koppal Land Records Office",
-          district: "Koppal",
-        },
-      },
-      irrigation: {
-        source: {
-          type: "Canal",
-          provider: "Tungabhadra Channel Board",
-        },
-      },
-    },
-    cooperative: {
-      membership: {
-        membershipNumber: "KOP-FARM-4421",
-        since: "2019-06-01",
-      },
-    },
-    crops: ["Rice", "Pulses", "Millet"],
-    plots: [
-      { soilType: "Alluvial", areaAcres: 15.5 },
-      { soilType: "Black", areaAcres: 10.25 }
-    ],
   },
   proof: {
     type: "Ed25519Signature2018",

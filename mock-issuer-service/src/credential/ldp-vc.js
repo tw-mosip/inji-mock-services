@@ -2,8 +2,150 @@ import jsonld from 'jsonld';
 import jsigs from 'jsonld-signatures';
 import { Ed25519Signature2018 } from '@digitalbazaar/ed25519-signature-2018';
 import { Ed25519VerificationKey2018 } from '@digitalbazaar/ed25519-verification-key-2018';
+import crypto from 'node:crypto';
 
 const { AssertionProofPurpose } = jsigs.purposes;
+const { LinkedDataSignature } = jsigs.suites;
+
+// Configurable via env: "rsa" or "ed25519" (default)
+const LDP_SIGNATURE_SUITE = (process.env.LDP_SIGNATURE_SUITE || 'ed25519').toLowerCase();
+
+// Cached RSA key pair (persisted for the lifetime of the process so that
+// the /.well-known/did.json endpoint can serve the matching public key)
+let _rsaKeyCache = null;
+
+function getRsaKey(issuerDid) {
+  if (_rsaKeyCache && _rsaKeyCache.controller === issuerDid) {
+    return _rsaKeyCache;
+  }
+
+  const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+    modulusLength: 2048,
+    publicKeyEncoding: { type: 'pkcs1', format: 'pem' },
+    privateKeyEncoding: { type: 'pkcs1', format: 'pem' },
+  });
+
+  const publicKeyObj = crypto.createPublicKey(publicKey);
+  const publicKeyJwk = publicKeyObj.export({ format: 'jwk' });
+
+  _rsaKeyCache = {
+    id: `${issuerDid}#key-0`,
+    controller: issuerDid,
+    privateKeyPem: privateKey,
+    publicKeyJwk,
+  };
+
+  return _rsaKeyCache;
+}
+
+/**
+ * Returns the DID Document for the current RSA key.
+ * Used by the /.well-known/did.json Express route.
+ */
+export function getDidDocument(issuerDid) {
+  const key = getRsaKey(issuerDid);
+  return {
+    "@context": [
+      "https://www.w3.org/ns/did/v1",
+      "https://w3id.org/security/v2"
+    ],
+    id: issuerDid,
+    verificationMethod: [{
+      id: key.id,
+      type: 'RsaVerificationKey2018',
+      controller: issuerDid,
+      publicKeyJwk: key.publicKeyJwk,
+    }],
+    assertionMethod: [key.id],
+    authentication: [key.id],
+  };
+}
+
+/**
+ * RsaSignature2018 implementation using Node crypto.
+ * Produces a detached JWS (RS256) per the W3C Linked Data Proofs spec.
+ */
+class RsaSignature2018 extends LinkedDataSignature {
+  constructor({ key, date } = {}) {
+    const signer = {
+      id: key.id,
+      sign: async ({ data }) => {
+        return crypto.sign('sha256', data, key.privateKeyPem);
+      }
+    };
+    super({
+      type: 'RsaSignature2018',
+      algorithm: 'RS256',
+      date,
+      signer,
+      // credentials/v1 already defines RsaSignature2018; point contextUrl there
+      // so ensureSuiteContext() sees it's already included and won't inject another
+      contextUrl: 'https://www.w3.org/2018/credentials/v1',
+    });
+    this.rsaKey = key;
+  }
+
+  async sign({ verifyData, proof }) {
+    const header = Buffer.from(
+      JSON.stringify({ alg: 'RS256', b64: false, crit: ['b64'] })
+    ).toString('base64url');
+    // JWS signing input: ASCII(header) + "." + raw payload bytes
+    const signingInput = Buffer.concat([
+      Buffer.from(header + '.', 'ascii'),
+      verifyData
+    ]);
+    const signature = crypto.sign('sha256', signingInput, this.rsaKey.privateKeyPem);
+    proof.jws = `${header}..${signature.toString('base64url')}`;
+    return proof;
+  }
+
+  async getVerificationMethod() {
+    return {
+      id: this.rsaKey.id,
+      type: 'RsaVerificationKey2018',
+      controller: this.rsaKey.controller,
+      publicKeyJwk: this.rsaKey.publicKeyJwk,
+    };
+  }
+
+  async canonizeProof(proof, { document, documentLoader }) {
+    proof = {
+      '@context': document['@context'] || 'https://w3id.org/security/v2',
+      ...proof
+    };
+    delete proof.jws;
+    delete proof.signatureValue;
+    delete proof.proofValue;
+    return this.canonize(proof, { documentLoader, skipExpansion: false });
+  }
+
+  async canonize(input, { documentLoader, skipExpansion }) {
+    const jsonld = (await import('jsonld')).default;
+    const rdfCanonize = (await import('rdf-canonize')).default;
+    const opts = {
+      algorithm: 'RDFC-1.0',
+      base: null,
+      format: 'application/n-quads',
+      documentLoader,
+      safe: false,
+      skipExpansion,
+      produceGeneralizedRdf: false,
+      rdfDirection: 'i18n-datatype',
+    };
+    delete opts.format;
+    const dataset = await jsonld.toRDF(input, opts);
+    return rdfCanonize.canonize(dataset, {
+      algorithm: 'RDFC-1.0',
+      format: 'application/n-quads',
+    });
+  }
+
+  async assertVerificationMethod({ verificationMethod }) {
+    if (!verificationMethod || !verificationMethod.id) {
+      throw new Error('Missing verificationMethod id');
+    }
+  }
+}
 
 // Predefined contexts to avoid network calls
 const CONTEXTS = {
@@ -105,36 +247,26 @@ const CONTEXTS = {
   },
   "https://piyush7034.github.io/my-files/farmer.json": {
     "@context": {
-      "id": "@id",
+      "@version": 1.1,
       "type": "@type",
-      "@vocab": "https://piyush7034.github.io/my-files/farmer.json#",
-      "fullName": "https://schema.org/name",
-      "mobileNumber": "https://schema.org/telephone",
-      "dateOfBirth": "https://schema.org/birthDate",
-      "landArea": "https://example.org/landArea",
-      "landOwnershipType": "https://example.org/landOwnershipType",
-      "address": "https://schema.org/address",
-      "village": "https://schema.org/addressLocality",
-      "district": "https://schema.org/addressRegion",
-      "farmProfile": "https://example.org/farmProfile",
-      "landRecord": "https://example.org/landRecord",
-      "surveyNumber": "https://example.org/surveyNumber",
-      "registry": "https://example.org/registry",
-      "office": "https://example.org/registryOffice",
-      "irrigation": "https://example.org/irrigation",
-      "source": "https://example.org/source",
-      "provider": "https://example.org/provider",
-      "cooperative": "https://example.org/cooperative",
-      "membership": "https://example.org/membership",
-      "membershipNumber": "https://example.org/membershipNumber",
-      "since": {
-        "@id": "https://example.org/memberSince",
-        "@type": "http://www.w3.org/2001/XMLSchema#date"
+      "schema": "https://schema.org/",
+      "FarmerCredential": {
+        "@id": "https://piyush7034.github.io/my-files/farmer.json#FarmerCredential"
       },
-      "crops": "https://example.org/crops",
-      "plots": "https://example.org/plots",
-      "soilType": "https://example.org/soilType",
-      "areaAcres": "https://example.org/areaAcres"
+      "fullName": "schema:name",
+      "mobileNumber": "schema:telephone",
+      "dateOfBirth": "schema:birthDate",
+      "gender": "schema:gender",
+      "state": "schema:addressRegion",
+      "district": "schema:addressLocality",
+      "villageOrTown": "schema:addressLocality",
+      "postalCode": "schema:postalCode",
+      "landArea": "schema:Number",
+      "landOwnershipType": "schema:Text",
+      "primaryCropType": "schema:Text",
+      "secondaryCropType": "schema:Text",
+      "face": "schema:Text",
+      "farmerID": "schema:Text"
     }
   }
 };
@@ -156,7 +288,24 @@ export const documentLoader = async (url) => {
   };
 };
 
-export async function signLdpVc(credential, issuerDid) {
+async function signWithRsa(credential, issuerDid) {
+  const rsaKey = getRsaKey(issuerDid);
+
+  const suite = new RsaSignature2018({
+    key: rsaKey,
+    date: new Date().toISOString(),
+  });
+
+  const signedVc = await jsigs.sign(credential, {
+    suite,
+    purpose: new AssertionProofPurpose(),
+    documentLoader,
+  });
+
+  return signedVc;
+}
+
+async function signWithEd25519(credential, issuerDid) {
   const key = await Ed25519VerificationKey2018.generate({
     id: `${issuerDid}#key-0`,
     controller: issuerDid
@@ -174,4 +323,11 @@ export async function signLdpVc(credential, issuerDid) {
   });
 
   return signedVc;
+}
+
+export async function signLdpVc(credential, issuerDid) {
+  if (LDP_SIGNATURE_SUITE === 'rsa') {
+    return signWithRsa(credential, issuerDid);
+  }
+  return signWithEd25519(credential, issuerDid);
 }
