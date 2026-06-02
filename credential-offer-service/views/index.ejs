@@ -9,5 +9,12 @@
   <body>
     <p><%= body %></p>
     <img src="<%= qrCodeData %>" alt="QR Code" />
+    <% if (typeof deeplink !== 'undefined' && deeplink) { %>
+      <div style="margin-top: 12px;">
+        <a href="<%= deeplink %>">
+          <button type="button">Open in Wallet</button>
+        </a>
+      </div>
+    <% } %>
   </body>
 </html>

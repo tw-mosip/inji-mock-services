@@ -16,13 +16,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.get("/credential-offer/by-reference", async (req, res) => {
   try {
     const credentialOfferEndPoint = `https://openid.pre.vc-dts.sicpa.com/credential-offer/0195128b-3d2f-7c8c-824f-60c3a395f753`;
-    const qrCodeData = await QRCode.toDataURL(
-      `openid-credential-offer://?credential_offer_uri=${credentialOfferEndPoint}`
-    );
+    const deeplink = `openid-credential-offer://?credential_offer_uri=${credentialOfferEndPoint}`;
+    const qrCodeData = await QRCode.toDataURL(deeplink);
 
     res.render("index", {
       title: "Credential Offer End point",
       qrCodeData,
+      deeplink,
       body: "Credential Offer URI",
     });
   } catch (error) {
@@ -53,13 +53,13 @@ app.get("/credential-offer/by-value", async (req, res) => {
       JSON.stringify(credentialOffer)
     );
 
-    const qrCodeData = await QRCode.toDataURL(
-      `openid-credential-offer://?credential_offer=${credentialOfferEncoded}`
-    );
+    const deeplink = `openid-credential-offer://?credential_offer=${credentialOfferEncoded}`;
+    const qrCodeData = await QRCode.toDataURL(deeplink);
 
     res.render("index", {
       title: "Credential Offer End point",
       qrCodeData,
+      deeplink,
       body: "Credential Offer Data",
     });
   } catch (error) {
@@ -89,6 +89,7 @@ app.get("/credential-offer/by-reference/curl", async (req, res) => {
     res.render("index", {
       title: "Credential Offer Endpoint",
       qrCodeData,
+      deeplink: credentialOffer,
       body: "Credential Offer Data",
     });
   } catch (error) {
