@@ -17,11 +17,13 @@ const {
     REQUEST_MODES,
     baseUrl,
     jwkSet,
-    REQUEST_SIGNING_SUPPORT_MODES
+    REQUEST_SIGNING_SUPPORT_MODES,
+    DRAFT_VERSIONS
 } = require("./constants");
 const {
     finalAuthRequestMap
 } = require("./inputData");
+const { dcqlQuery: defaultDcqlQuery } = require('./presentation-request/DCQLQuery');
 
 
 const PORT = 3000;
@@ -59,7 +61,8 @@ function createUrlWithParams(params) {
 
     for (const [key, value] of Object.entries(params)) {
         const encodedKey = encodeURIComponent(key);
-        const encodedValue = encodeURIComponent(value.toString());
+        const valueToEncode = typeof value === 'object' ? JSON.stringify(value) : value.toString();
+        const encodedValue = encodeURIComponent(valueToEncode);
         paramStrings.push(`${encodedKey}=${encodedValue}`);
     }
 
@@ -79,7 +82,8 @@ app.get('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => 
 
 app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) => {
     const walletNonce = req.body?.wallet_nonce;
-    await createRequestUriResponse(req, res, walletNonce);
+    const dcqlQueryOverride = req.body?.dcql_query;
+    await createRequestUriResponse(req, res, walletNonce, dcqlQueryOverride);
 });
 
 // API to generate QR codes for different client_id schemes and request modes
@@ -91,13 +95,47 @@ app.post('/verifier/get-auth-request-obj/:client_id_scheme', async (req, res) =>
 
 // signed = true|false (default false) - whether the request should be signed or not (only applicable for by_value mode)
 app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
-    const {client_id_scheme, request_mode} = req.params;
+    await generateQrCode(req, res);
+});
+
+app.post('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
+    await generateQrCode(req, res);
+});
+
+const generateQrCode = async (req, res) => {
+    const {client_id_scheme: pathClientIdScheme, request_mode: pathRequestMode} = req.params;
+    const bodyClientIdScheme = req.body?.client_id_scheme;
+    const bodyRequestMode = req.body?.request_mode;
+    const client_id_scheme = pathClientIdScheme || bodyClientIdScheme;
+    const request_mode = pathRequestMode || bodyRequestMode;
     const draftVersion = req.query.draft;
-    const signed = req.query.signed === 'true';
-    const responseMode = req.query.response_mode || 'direct_post'; // Default to direct_post
+    const signedValue = req.method === 'POST' ? req.body?.signed : req.query.signed;
+    const signed = signedValue === true || signedValue === 'true';
+    const responseMode = (req.method === 'POST' ? req.body?.response_mode : req.query.response_mode) || 'direct_post'; // Default to direct_post
+    let dcqlQueryOverride;
+    try {
+        dcqlQueryOverride = extractDcqlQueryOverride(req);
+    } catch (error) {
+        if (error.message === 'INVALID_DCQL_QUERY') {
+            res.status(400).send('Bad Request: dcql_query should be a valid JSON object');
+            return;
+        }
+
+        throw error;
+    }
 
     if (!draftVersion) {
         res.status(400).send('Bad Request: draft parameter is required');
+        return;
+    }
+
+    if (!client_id_scheme || !request_mode) {
+        res.status(400).send('Bad Request: client_id_scheme and request_mode are required');
+        return;
+    }
+
+    if (dcqlQueryOverride !== undefined && !isValidDcqlOverride(dcqlQueryOverride)) {
+        res.status(400).send('Bad Request: dcql_query should be a valid JSON object');
         return;
     }
 
@@ -134,7 +172,7 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
 
         const updatedData = {
             ...inputData,
-            "request_uri": `${baseUrl}/verifier/get-auth-request-obj/${client_id_scheme}?draft=${draftVersion}&response_mode=${responseMode}`,
+            "request_uri": buildRequestUri(client_id_scheme, draftVersion, responseMode, dcqlQueryOverride),
         }
 
         await generateQrCodeResponse(updatedData, res)
@@ -151,6 +189,8 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
             res.status(400).send(providedCombinationIsNotSupported);
             return
         }
+
+        inputData = applyDcqlQueryOverride(inputData, draftVersion, dcqlQueryOverride);
 
         if (signed) {
             if( !finalAuthRequestMapElement[REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]) {
@@ -179,7 +219,7 @@ app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
 
         await generateQrCodeResponse(inputData, res);
     }
-});
+};
 
 app.get('/.well-known/jwks.json', async (req, res) => {
     res.json(jwkSet);
@@ -269,7 +309,7 @@ function updateVpRequest(inputData, responseMode, draftVersion, byReferenceMode 
     return updatedData;
 }
 
-const createRequestUriResponse = async (req, res, walletNonce = null) => {
+const createRequestUriResponse = async (req, res, walletNonce = null, providedDcqlQuery = undefined) => {
     console.log("Time :", Date.now().toLocaleString());
     console.log("received call to request_uri endpoint with method:", req.method);
     console.log("received call to request_uri endpoint with header:", req.headers);
@@ -278,9 +318,26 @@ const createRequestUriResponse = async (req, res, walletNonce = null) => {
         const {client_id_scheme} = req.params;
         const draftVersion = req.query.draft;
         const responseMode = req.query.response_mode || 'direct_post'; // Default to direct_post
+        let queryDcqlOverride;
+        try {
+            queryDcqlOverride = extractDcqlQueryOverride(req);
+        } catch (error) {
+            if (error.message === 'INVALID_DCQL_QUERY') {
+                res.status(400).send('Bad Request: dcql_query should be a valid JSON object');
+                return;
+            }
+
+            throw error;
+        }
+        const dcqlOverride = providedDcqlQuery !== undefined ? providedDcqlQuery : queryDcqlOverride;
 
         if (!draftVersion) {
             res.status(400).send('Bad Request: draft parameter is required');
+            return;
+        }
+
+        if (dcqlOverride !== undefined && !isValidDcqlOverride(dcqlOverride)) {
+            res.status(400).send('Bad Request: dcql_query should be a valid JSON object');
             return;
         }
 
@@ -293,6 +350,7 @@ const createRequestUriResponse = async (req, res, walletNonce = null) => {
 
 
         let inputData = updateVpRequest(finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion], responseMode, draftVersion, true);
+        inputData = applyDcqlQueryOverride(inputData, draftVersion, dcqlOverride);
 
         if (!inputData) {
             console.error('Error generating JWT:', "Provided combination is not supported - ", {
@@ -327,6 +385,53 @@ const generateQrCodeResponse = async (inputData, res) => {
         console.error('Error generating QR code:', error);
         res.status(500).send('Internal Server Error');
     }
+}
+
+function extractDcqlQueryOverride(req) {
+    if (req.body && req.body.dcql_query !== undefined) {
+        return req.body.dcql_query;
+    }
+
+    const rawQueryDcql = req.query?.dcql_query;
+    if (rawQueryDcql === undefined) {
+        return undefined;
+    }
+
+    if (typeof rawQueryDcql === 'string') {
+        try {
+            return JSON.parse(rawQueryDcql);
+        } catch (error) {
+            throw new Error('INVALID_DCQL_QUERY');
+        }
+    }
+
+    return rawQueryDcql;
+}
+
+function isValidDcqlOverride(dcql) {
+    return !!dcql && typeof dcql === 'object' && !Array.isArray(dcql);
+}
+
+function applyDcqlQueryOverride(inputData, draftVersion, dcqlOverride) {
+    if (!inputData || draftVersion !== DRAFT_VERSIONS.V_1_0 || !('dcql_query' in inputData)) {
+        return inputData;
+    }
+
+    const updatedInputData = JSON.parse(JSON.stringify(inputData));
+    updatedInputData.dcql_query = dcqlOverride !== undefined ? dcqlOverride : defaultDcqlQuery;
+    return updatedInputData;
+}
+
+function buildRequestUri(clientIdScheme, draftVersion, responseMode, dcqlOverride) {
+    const requestUri = new URL(`${baseUrl}/verifier/get-auth-request-obj/${clientIdScheme}`);
+    requestUri.searchParams.set('draft', draftVersion);
+    requestUri.searchParams.set('response_mode', responseMode);
+
+    if (draftVersion === DRAFT_VERSIONS.V_1_0 && dcqlOverride !== undefined) {
+        requestUri.searchParams.set('dcql_query', JSON.stringify(dcqlOverride));
+    }
+
+    return requestUri.toString();
 }
 
 // API to decrypt JWE tokens

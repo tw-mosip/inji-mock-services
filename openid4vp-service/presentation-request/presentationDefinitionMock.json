@@ -1,55 +1,29 @@
 {
-  "id": "vp token example",
-  "purpose": "Relying party is requesting your digital ID for the purpose of Self-Authentication",
-  "format": {
-    "ldp_vc": {
-      "proof_type": [
-        "RsaSignature2018"
-      ]
-    }
-  },
-  "input_descriptors": [
-    {
-      "id": "id card credential",
-      "format": {
-        "ldp_vc": {
-          "proof_type": [
-            "Ed25519Signature2020",
-            "RsaSignature2018"
-          ]
-        }
-      },
-      "constraints": {
-        "fields": [
-          {
-            "path": [
-              "$.credentialSubject.email"
-            ],
-            "filter": {
-              "type": "string",
-              "pattern": "@gmail.com"
-            }
+    "id": "c4822b58-7fb4-454e-b827-f8758fe27f9a",
+    "purpose": "Relying party is requesting your digital ID for the purpose of Self-Authentication",
+    "input_descriptors": [
+      {
+        "id": "Mock Identity card credential",
+        "format": {
+          "vc+sd-jwt": {
+            "sd-jwt_alg_values": [
+              "ES256"
+            ]
           }
-        ]
-      }
-    },
-    {
-      "id": "sdjwt-vc-any",
-      "name": "Any SD-JWT VC",
-      "purpose": "Accept any Verifiable Credential in SD-JWT format.",
-      "format": {
-        "vc+sd-jwt": {
-          "sd-jwt_alg_values": [
-            "ES256",
-            "EdDSA",
-            "RS256",
-            "ES256K"
+        },
+        "constraints": {
+          "fields": [
+            {
+              "path": [
+                "$.vct"
+              ],
+              "filter": {
+                "type": "string",
+                "pattern": "MockVerifiableCredential_SD_JWT"
+              }
+            }
           ]
         }
-      },
-      "constraints": {
-
       }
-    }
-  ]
-}
+    ]
+  }

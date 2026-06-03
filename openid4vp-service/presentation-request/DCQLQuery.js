@@ -80,6 +80,19 @@ const dcqlQuery = {
       ]
     },
     {
+      /**
+       *   address: {
+    city: "Bengaluru",
+    country: {
+      name: "India",
+      postalCode: "560001"
+    }
+  },
+  degrees: [
+    { type: "B.Tech", university: "IIT" },
+    { type: "M.S.", university: "NUS" }
+  ]
+       */
       "id": "employee-sd_jwt",
       "format": "vc+sd-jwt",
       "meta": {
@@ -89,14 +102,29 @@ const dcqlQuery = {
         {
           "path": ["address", "city"]
         },
+        // {
+        //   "path": ["address", 0, "city"]
+        // },
         {
-          "path": ["address", 0, "city"]
-        },
-        {
-          "path": ["address", null, "state"]
+          "path": ["degrees", 0, "type"]
         }
       ]
     },
+    /**
+     * selected disclosure - path to disclosure - match
+     * 
+     * address.city.name  - adress.city
+     *                    - address.city.name  
+     *                    - address
+     * 
+     * degrees[0].type - degrees.0.type
+     *                 - degrees
+     * 
+     * degrees[*].type - degrees.0.type and degrees.1.type (degrees[*].type means all the items in the array, so it can match with any of the items in the array)
+     *                 - degrees
+     *                 - degrees.0
+     * 
+     */
     {
       "id": "tax-id",
       "format": "vc+sd-jwt",
@@ -110,7 +138,7 @@ const dcqlQuery = {
         },
         {
           "path": ["issuing_authority"],
-          "values": ["DE"]
+          // "values": ["DE"]
         }
       ]
     },
@@ -129,7 +157,7 @@ const dcqlQuery = {
         },
         {
           "path": ["issuing_organization"],
-          "values": ["DE", "TelOrg"]
+          // "values": ["DE", "TelOrg"]
         }
       ]
     },
@@ -158,6 +186,12 @@ const dcqlQuery = {
       "id": "national-id",
       "format": "ldp_vc",
       "meta": {
+        "type_values": [
+          [
+            "https://www.w3.org/2018/credentials#VerifiableCredential", 
+            "https://inji.github.io/inji-config/contexts/mosip-identity-context.json#MOSIPVerifiableCredential"
+          ]
+        ]
         // Meta can be empty as well if there are no specific requirements for the type values
         // "type_values": [
         //   [
@@ -176,7 +210,7 @@ const dcqlQuery = {
         // reference https://openid.net/specs/openid-4-verifiable-presentations-1_0.html#name-claims-path-pointer-example
         {
           "path": [
-            "credentialSubject",
+            "credentialSubject", // UIN
             "UIN"
           ],
         },
@@ -192,44 +226,44 @@ const dcqlQuery = {
   "credential_sets": [
     {
       "options": [
-        ["sd-jwt"],
+        ["sd-jwt"], // hid, dl
         ["national-id"]
       ],
       "required": true
     },
-    {
-      "options": [
-        ["vehicle-registration_mso_mdoc"], // wallet does not have this
-        ["national-id"],
-        ["driving-license"],
-        ["land", "age-proof"]
-      ],
-      "required": false
-    },
-    {
-      "options": [
-        ["tax-id"],
+    // {
+    //   "options": [
+    //     ["vehicle-registration_mso_mdoc"], // wallet does not have this
+    //     ["tax-id"], // tax id
+    //     ["driving-license"],
+    //     ["land", "age-proof"]
+    //   ],
+    //   "required": true
+    // },
+    // {
+    //   "options": [
+    //     ["tax-id"], // tax id
 
-      ],
-      "required": false
-    },
+    //   ],
+    //   "required": false
+    // },
+    // {
+    //   "options": [
+    //     ["msisdn"] // msisdn
+    //   ],
+    //   "required": false
+    // },
+    // {
+    //   "options": [
+    //     ["health-id"] // hid
+    //   ],
+    //   "required": true
+    // },
     {
       "options": [
-        ["msisdn"]
+        ["employee-sd_jwt"] 
       ],
-      "required": false
-    },
-    {
-      "options": [
-        ["health-id"]
-      ],
-      "required": false
-    },
-    {
-      "options": [
-        ["employee-sd_jwt"]
-      ],
-      "required": false
+      "required": true
     }
   ]
 }

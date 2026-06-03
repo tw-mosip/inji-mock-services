@@ -4,7 +4,6 @@ import axios from 'axios';
 import {BACKEND_URL, INJIWEB_URL} from "../constants/mockui-constants";
 import {AccordionSection} from "../components/common/Section";
 import {Loader} from "../components/common/Loader";
-import Toggle from "../components/common/Toggle";
 import {font} from "../styles/palette";
 import {DRAFT_VERSIONS, REQUEST_MODES, RESPONSE_MODES} from "../constants/constants";
 import {ScanResult} from "../components/scan/ScanResult";
@@ -12,9 +11,16 @@ import {Image} from "../components/common/Image";
 import Error from "../components/common/Error";
 import {Code} from "../components/common/Code";
 import Button from "../components/common/Button";
-import CheckBox from "../components/common/checkBox";
 import DecoderEncoderView from '../components/DecoderEncoderView';
-import Dropdown from "../components/common/Dropdown";
+import {DCQL_PRESETS} from "../constants/dcql-presets";
+import {cloneQuery, ensureDcqlShape} from "../utility/dcqlHelper";
+import QrScreenHeader from "../components/qr/QrScreenHeader";
+import DownloadQRButton from "../components/qr/DownloadQRButton";
+import QrControls from "../components/qr/QrControls";
+import PresentationRequestModal from "../components/qr/PresentationRequestModal";
+
+const EMPTY_QUERY = { credentials: [], credential_sets: [] };
+const emptyPreset = DCQL_PRESETS.find((preset) => preset.value === "empty");
 
 const styles = {
     container: {
@@ -27,22 +33,6 @@ const styles = {
         flexDirection: 'row',
         gap: 20,
         justifyItems: 'flex-start',
-    },
-    // Media query styles for mobile
-    '@media (max-width: 768px)': {
-        container: {
-            padding: '10px 5px',
-        },
-        content: {
-            flexDirection: 'column',
-            paddingLeft: 0,
-            gap: 4,
-        },
-        header: {
-            flexDirection: 'column',
-            gap: '10px',
-            fontSize: 'large',
-        },
     },
 };
 const QrScreen = () => {
@@ -59,11 +49,27 @@ const QrScreen = () => {
     const [selectedResponseMode, setSelectedResponseMode] = useState(Object.values(RESPONSE_MODES)[0]);
     const [errorMessage, setErrorMessage] = useState(null);
     const [isRequestSigned, setIsRequestSigned] = useState(false);
+    const [showPresentationRequestDetails, setShowPresentationRequestDetails] = useState(false);
+    const [dcqlQueryValue, setDcqlQueryValue] = useState(cloneQuery(emptyPreset?.query || EMPTY_QUERY));
+    const [draftDcqlQueryValue, setDraftDcqlQueryValue] = useState(cloneQuery(emptyPreset?.query || EMPTY_QUERY));
+    const [hasSubmittedDcqlQuery, setHasSubmittedDcqlQuery] = useState(false);
+    const [allowInvalidDcqlRequest, setAllowInvalidDcqlRequest] = useState(false);
 
-    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion, isRequestSigned = false, responseMode = "direct_post") => {
+    const selectedDraftIsV10 = selectedDraft === DRAFT_VERSIONS.V_1_0;
+
+    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion, isRequestSigned = false, responseMode = "direct_post", dcqlQueryOverride) => {
         try {
-            // /verifier/<client_id_scheme>/<request_mode>?draft=<draft_version>&response_mode=<response_mode>
-            const qrResponse = await axios.get(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}&signed=${isRequestSigned}&response_mode=${responseMode}`, {
+            const qrRequestBody = {
+                signed: isRequestSigned,
+                response_mode: responseMode,
+            };
+
+            if (dcqlQueryOverride !== undefined) {
+                qrRequestBody.dcql_query = dcqlQueryOverride;
+            }
+
+            // draft is intentionally kept as query param for backend compatibility
+            const qrResponse = await axios.post(`${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}`, qrRequestBody, {
                 headers: {
                     'ngrok-skip-browser-warning': 'true'
                 }
@@ -84,6 +90,7 @@ const QrScreen = () => {
                 const uriResponse = await axios({
                     method: requestUriMethod,
                     url: requestUri,
+                    data: dcqlQueryOverride !== undefined ? { dcql_query: dcqlQueryOverride } : undefined,
                     headers: {
                         'ngrok-skip-browser-warning': 'true'
                     }
@@ -103,8 +110,45 @@ const QrScreen = () => {
         }
     }, []);
 
+    const normalizeDcqlForSubmission = (query, allowInvalid = false) => {
+        if (allowInvalid) {
+            return cloneQuery(query && typeof query === 'object' ? query : {});
+        }
+
+        const normalized = ensureDcqlShape(query);
+        const result = {
+            credentials: normalized.credentials,
+        };
+
+        if (Array.isArray(normalized.credential_sets) && normalized.credential_sets.length > 0) {
+            result.credential_sets = normalized.credential_sets;
+        }
+
+        return result;
+    }
+
+    const getDcqlQueryOverride = () => {
+        if (!selectedDraftIsV10 || !hasSubmittedDcqlQuery) {
+            return undefined;
+        }
+
+        return normalizeDcqlForSubmission(dcqlQueryValue, allowInvalidDcqlRequest);
+    }
+
     const fetchQr = async () => {
-        await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, selectedDraft, isRequestSigned, selectedResponseMode);
+        const dcqlQueryOverride = getDcqlQueryOverride();
+        if (dcqlQueryOverride === null) {
+            return;
+        }
+
+        await fetchQrCodeData(
+            state.name,
+            isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE,
+            selectedDraft,
+            isRequestSigned,
+            selectedResponseMode,
+            dcqlQueryOverride
+        );
     };
 
     useEffect(() => {
@@ -123,39 +167,39 @@ const QrScreen = () => {
         setActualAuthorizationRequestObject(null)
     }
 
-    const handleToggle = async (type, value) => {
-        if (type === 'requestMode') {
-            if ((value === REQUEST_MODES.BY_VALUE && isByValue) || (value === REQUEST_MODES.BY_REFERENCE && isByReference)) return;
-            setIsByValue(value === REQUEST_MODES.BY_VALUE);
-            setIsByReference(value === REQUEST_MODES.BY_REFERENCE);
-            resetValues();
-            await fetchQrCodeData(state.name, value, selectedDraft, isRequestSigned, selectedResponseMode);
-        } else if (type === 'draftVersion') {
-            if (value === selectedDraft) return;
-            setSelectedDraft(value);
-            resetValues();
-            await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, value, isRequestSigned, selectedResponseMode);
-        }
-    };
+    const handleDcqlQueryChange = (value) => {
+        setDraftDcqlQueryValue(value);
+    }
 
-    const downloadQRCode = () => {
-        return <a
-            href={qrCodeData}
-            download="qr-code.png"
-            style={{
-                display: 'inline-block',
-                padding: '8px 16px',
-                fontSize: '14px',
-                borderRadius: '4px',
-                border: '1px solid #ccc',
-                background: '#e0f7fa',
-                textDecoration: 'none',
-                color: '#000',
-                cursor: 'pointer',
-            }}
-        >
-            ⬇ Download QR
-        </a>;
+    const openPresentationRequestDetails = () => {
+        setDraftDcqlQueryValue(cloneQuery(dcqlQueryValue));
+        setShowPresentationRequestDetails(true);
+    }
+
+    const closePresentationRequestDetails = () => {
+        setDraftDcqlQueryValue(cloneQuery(dcqlQueryValue));
+        setShowPresentationRequestDetails(false);
+    }
+
+    const submitPresentationRequestDetails = async () => {
+        if (!selectedDraftIsV10) {
+            setShowPresentationRequestDetails(false);
+            return;
+        }
+
+        const nextQuery = normalizeDcqlForSubmission(draftDcqlQueryValue, allowInvalidDcqlRequest);
+        setDcqlQueryValue(cloneQuery(nextQuery));
+        setHasSubmittedDcqlQuery(true);
+        setShowPresentationRequestDetails(false);
+
+        await fetchQrCodeData(
+            state.name,
+            isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE,
+            selectedDraft,
+            isRequestSigned,
+            selectedResponseMode,
+            nextQuery
+        );
     }
 
     const handleOpenInjiWeb = () => {
@@ -163,79 +207,35 @@ const QrScreen = () => {
         window.open(`${INJIWEB_URL}?${strippedRequest}`, '_blank');
     }
 
-    const header = () => {
-        const title = `${state?.name || 'QR Code Image'} - ${selectedDraft}`;
+    const handleRequestModeChange = async (mode) => {
+        if ((mode === REQUEST_MODES.BY_VALUE && isByValue) || (mode === REQUEST_MODES.BY_REFERENCE && isByReference)) return;
+        setIsByValue(mode === REQUEST_MODES.BY_VALUE);
+        setIsByReference(mode === REQUEST_MODES.BY_REFERENCE);
+        resetValues();
+        const dcqlQueryOverride = getDcqlQueryOverride();
+        if (dcqlQueryOverride === null) return;
+        await fetchQrCodeData(state.name, mode, selectedDraft, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
+    };
 
-        return <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: '20px',
-            borderRadius: '4px',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-            marginBottom: 20,
-        }}>
-            <div
-                style={{
-                    cursor: 'pointer',
-                    fontSize: 'xx-large',
-                    padding: ' 8px'
-                }}
-                onClick={() => navigate('/')}
+    const handleDraftVersionChange = async (version) => {
+        if (version === selectedDraft) return;
+        setSelectedDraft(version);
+        resetValues();
+        const dcqlQueryOverride = (version === DRAFT_VERSIONS.V_1_0 && hasSubmittedDcqlQuery) ? getDcqlQueryOverride() : undefined;
+        if (dcqlQueryOverride === null) return;
+        await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, version, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
+    };
 
-            >
-                ←
-            </div>
-            <h1>Scan screen</h1>
-            <h2> ({title})</h2>
-        </div>;
-    }
+    const handleResponseModeChange = (mode) => {
+        if (mode === selectedResponseMode) return;
+        setSelectedResponseMode(mode);
+        resetValues();
+    };
 
-    const requestModeToggleOptions = [
-        {
-            name: "By Value",
-            selected: isByValue,
-            onChange: () => handleToggle('requestMode', REQUEST_MODES.BY_VALUE)
-        },
-        {
-            name: "By Reference",
-            selected: isByReference,
-            onChange: () => handleToggle('requestMode', REQUEST_MODES.BY_REFERENCE)
-        }
-    ];
+    const title = `${state?.name || 'QR Code Image'} - ${selectedDraft}`;
 
-    const draftVersionOptions = Object.values(DRAFT_VERSIONS).map((version) => ({
-        name: version,
-        selected: selectedDraft === version,
-        onChange: () => handleToggle('draftVersion', version),
-    }));
-
-    const responseModeOptions = Object.values(RESPONSE_MODES).map((mode) => ({
-        name: mode,
-        selected: selectedResponseMode === mode,
-        onChange: () => {
-            if (mode === selectedResponseMode) return;
-            setSelectedResponseMode(mode);
-            resetValues();
-        }
-    }));
-
-    const draftDropdown = () => <Dropdown label={"OpenID4VP Draft Version:"} options={draftVersionOptions}/>
-    const responseModesDropdown = () => <Dropdown label={"Response Mode:"} options={responseModeOptions}/>
-    const requestToggle = () => <Toggle options={requestModeToggleOptions}/>
-
-    const signRequestToggle = () =>
-        isByValue ? (
-            <CheckBox
-                onClick={(isChecked) => setIsRequestSigned(isChecked)}
-                checked={isRequestSigned}
-                label={"Sign the request"}
-                id={"signed"}
-            />
-        ) : null;
-
-    const renderDecoderAccordion = (title, value, actualSignedData) => (
-        <AccordionSection title={title}>
+    const renderDecoderAccordion = (sectionTitle, value, actualSignedData) => (
+        <AccordionSection title={sectionTitle}>
             <DecoderEncoderView input={value} actualSignedData={actualSignedData}/>
         </AccordionSection>
     );
@@ -246,74 +246,89 @@ const QrScreen = () => {
             : <AccordionSection title={"Input Data"}><Code value={inputData}/></AccordionSection>
     );
 
-    const renderActualAuthorizationObject = () => renderDecoderAccordion("Actual Authorization Request Object", actualAuthorizationRequestObject);
+    const renderActualAuthorizationObject = () =>
+        renderDecoderAccordion("Actual Authorization Request Object", actualAuthorizationRequestObject);
 
-    const renderPayload = () => {
-        return <AccordionSection title={"Payload"} value={qrData}/>;
-    }
+    const renderPayload = () => <AccordionSection title={"Payload"} value={qrData}/>;
+
+    const sharedControls = (
+        <QrControls
+            isByValue={isByValue}
+            isByReference={isByReference}
+            selectedDraft={selectedDraft}
+            selectedResponseMode={selectedResponseMode}
+            isRequestSigned={isRequestSigned}
+            onRequestModeChange={handleRequestModeChange}
+            onDraftVersionChange={handleDraftVersionChange}
+            onResponseModeChange={handleResponseModeChange}
+            onSignedChange={(isChecked) => setIsRequestSigned(isChecked)}
+            onOpenPresentationDetails={openPresentationRequestDetails}
+        />
+    );
+
+    const presentationModal = (
+        <PresentationRequestModal
+            isOpen={showPresentationRequestDetails}
+            onClose={closePresentationRequestDetails}
+            onSubmit={submitPresentationRequestDetails}
+            draftDcqlQueryValue={draftDcqlQueryValue}
+            onDcqlQueryChange={handleDcqlQueryChange}
+            selectedDraftIsV10={selectedDraftIsV10}
+            allowInvalidRequest={allowInvalidDcqlRequest}
+            onAllowInvalidRequestChange={setAllowInvalidDcqlRequest}
+        />
+    );
+
     if (errorMessage) {
         return (
             <div style={{padding: '20px 30px'}}>
-                {header()}
+                <QrScreenHeader title={title} onBack={() => navigate('/')}/>
                 <div style={{paddingLeft: 40}}>
-                    {requestToggle()}
-                    {draftDropdown()}
-                    {responseModesDropdown()}
-                    {signRequestToggle()}
+                    {sharedControls}
                     <Error message={errorMessage}/>
                 </div>
+                {presentationModal}
             </div>
-        )
+        );
     }
 
     if (!(qrData && qrCodeData)) {
         return (
             <Fragment>
-                {header()}
+                <QrScreenHeader title={title} onBack={() => navigate('/')}/>
                 <Loader>Loading...</Loader>
             </Fragment>
-        )
+        );
     }
 
     return (
         <div style={styles.container}>
-            {header()}
+            <QrScreenHeader title={title} onBack={() => navigate('/')}/>
             <div style={styles.content}>
                 <div style={{flex: 1}}>
-                    <div style={{
-                        paddingBottom: 20,
-                    }}>
-                        {requestToggle()}
-                        {draftDropdown()}
-                        {responseModesDropdown()}
-                        {signRequestToggle()}
-                    </div>
+                    {sharedControls}
                     <div style={{maxWidth: '100%'}}>
-                        <div>
-                            <a href={qrData} target="_blank" rel="noopener noreferrer">
-                                <Image src={qrCodeData} alt={"QR code"}/>
-                            </a>
-                            <div style={{display: 'flex', gap: '10px', marginTop: '10px', alignItems: 'center'}}>
-                                {downloadQRCode()}
-                                <Button
-                                    onClick={handleOpenInjiWeb}
-                                    variant={"primary"}
-                                    style={{
-                                        padding: '8px 16px',
-                                        fontSize: '14px',
-                                    }}
-                                >
-                                    Open InjiWeb
-                                </Button>
-                            </div>
-                            {inputData && renderInputData()}
-                            {qrData && renderPayload()}
-                            {actualAuthorizationRequestObject && renderActualAuthorizationObject()}
+                        <a href={qrData} target="_blank" rel="noopener noreferrer">
+                            <Image src={qrCodeData} alt={"QR code"}/>
+                        </a>
+                        <div style={{display: 'flex', gap: '10px', marginTop: '10px', alignItems: 'center'}}>
+                            <DownloadQRButton qrCodeData={qrCodeData}/>
+                            <Button
+                                onClick={handleOpenInjiWeb}
+                                variant={"primary"}
+                                style={{padding: '8px 16px', fontSize: '14px'}}
+                            >
+                                Open InjiWeb
+                            </Button>
                         </div>
+                        {inputData && renderInputData()}
+                        {qrData && renderPayload()}
+                        {actualAuthorizationRequestObject && renderActualAuthorizationObject()}
                     </div>
                 </div>
                 <ScanResult/>
             </div>
+            {presentationModal}
         </div>
     );
 };

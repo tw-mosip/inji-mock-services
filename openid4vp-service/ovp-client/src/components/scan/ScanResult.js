@@ -172,6 +172,7 @@ export function ScanResult() {
 
         {scanResult ? (
             <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
+                <div>Timestamp: {new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', hour12: true })}</div>
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '12px'}}>
                     <div style={{display: 'flex', justifyContent: 'flex-start'}}>
                         {

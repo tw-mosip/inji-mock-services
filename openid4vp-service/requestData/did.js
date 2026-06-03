@@ -20,11 +20,12 @@ const didAuthorizationRequestVersion1 = {
 
 const didAuthorizationRequestDraft23 = {
   "client_id": didDocumentUrl,
+  // "dcql_query": dcqlQuery,
   "presentation_definition_uri": presentationDefinitionUri,
   "response_type": "vp_token",
   "response_mode": "direct_post",
   "nonce": nonce,
-  "state": state,
+  // "state": state,
   "response_uri": responseUri,
   "client_metadata": client_metadata,
 }

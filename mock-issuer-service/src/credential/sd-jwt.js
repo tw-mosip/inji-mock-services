@@ -31,6 +31,8 @@ export async function createSdJwt(payload, privateKey, issuer, holderDid) {
 
   newPayload._sd = sdHashes.sort();
   newPayload._sd_alg = 'sha-256';
+  newPayload.keyName = "Simon"
+  newPayload.residence = "Bangalore";
 
   const jwt = await new SignJWT(newPayload)
     .setProtectedHeader({ alg: 'ES256', typ: 'vc+sd-jwt', kid: issuer })

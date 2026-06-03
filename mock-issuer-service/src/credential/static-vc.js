@@ -88,10 +88,21 @@ export const STATIC_JWT_VC = {
 export const STATIC_SD_JWT_VC = {
   vct: "EmployeeCredential",
   employeeId: "E12345",
-  name: "Anup Kumar",
+  name: "Simon Kelleher",
   role: "Software Engineer",
   department: "R&D",
-  location: "Bangalore"
+  location: "Bangalore",
+  address: {
+    city: "Bengaluru",
+    country: {
+      name: "India",
+      postalCode: "560001"
+    }
+  },
+  degrees: [
+    { type: "B.Tech", university: "IIT" },
+    { type: "M.S.", university: "NUS" }
+  ]
 };
 
 export const STATIC_MDL_MDOC = {
