@@ -19,7 +19,40 @@ import DownloadQRButton from "../components/qr/DownloadQRButton";
 import QrControls from "../components/qr/QrControls";
 import PresentationRequestModal from "../components/qr/PresentationRequestModal";
 
+const presentationDefinitionMock = {
+    "id": "c4822b58-7fb4-454e-b827-f8758fe27f9a",
+    "purpose": "Relying party is requesting your digital ID for the purpose of Self-Authentication",
+    "input_descriptors": [
+      {
+        "id": "Mock Identity card credential",
+        "format": {
+          "vc+sd-jwt": {
+            "sd-jwt_alg_values": [
+              "ES256"
+            ]
+          }
+        },
+        "constraints": {
+          "fields": [
+            {
+              "path": [
+                "$.vct"
+              ],
+              "filter": {
+                "type": "string",
+                "pattern": "MockVerifiableCredential_SD_JWT"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+
+
 const EMPTY_QUERY = { credentials: [], credential_sets: [] };
+const EMPTY_PRESENTATION_DEFINITION = { id: "", purpose: "", input_descriptors: [] };
+const DEFAULT_PRESENTATION_DEFINITION = JSON.parse(JSON.stringify(presentationDefinitionMock));
 const emptyPreset = DCQL_PRESETS.find((preset) => preset.value === "empty");
 
 const styles = {
@@ -54,10 +87,13 @@ const QrScreen = () => {
     const [draftDcqlQueryValue, setDraftDcqlQueryValue] = useState(cloneQuery(emptyPreset?.query || EMPTY_QUERY));
     const [hasSubmittedDcqlQuery, setHasSubmittedDcqlQuery] = useState(false);
     const [allowInvalidDcqlRequest, setAllowInvalidDcqlRequest] = useState(false);
+    const [presentationDefinitionValue, setPresentationDefinitionValue] = useState(DEFAULT_PRESENTATION_DEFINITION);
+    const [draftPresentationDefinitionValue, setDraftPresentationDefinitionValue] = useState(DEFAULT_PRESENTATION_DEFINITION);
+    const [hasSubmittedPresentationDefinition, setHasSubmittedPresentationDefinition] = useState(false);
 
     const selectedDraftIsV10 = selectedDraft === DRAFT_VERSIONS.V_1_0;
 
-    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion, isRequestSigned = false, responseMode = "direct_post", dcqlQueryOverride) => {
+    const fetchQrCodeData = useCallback(async (clientIdScheme, requestMode, draftVersion, isRequestSigned = false, responseMode = "direct_post", dcqlQueryOverride, presentationDefinitionOverride) => {
         try {
             const qrRequestBody = {
                 signed: isRequestSigned,
@@ -66,6 +102,10 @@ const QrScreen = () => {
 
             if (dcqlQueryOverride !== undefined) {
                 qrRequestBody.dcql_query = dcqlQueryOverride;
+            }
+
+            if (presentationDefinitionOverride !== undefined) {
+                qrRequestBody.presentation_definition = presentationDefinitionOverride;
             }
 
             // draft is intentionally kept as query param for backend compatibility
@@ -90,7 +130,10 @@ const QrScreen = () => {
                 const uriResponse = await axios({
                     method: requestUriMethod,
                     url: requestUri,
-                    data: dcqlQueryOverride !== undefined ? { dcql_query: dcqlQueryOverride } : undefined,
+                    data: (dcqlQueryOverride !== undefined || presentationDefinitionOverride !== undefined) ? { 
+                        ...(dcqlQueryOverride !== undefined ? { dcql_query: dcqlQueryOverride } : {}),
+                        ...(presentationDefinitionOverride !== undefined ? { presentation_definition: presentationDefinitionOverride } : {})
+                    } : undefined,
                     headers: {
                         'ngrok-skip-browser-warning': 'true'
                     }
@@ -135,8 +178,17 @@ const QrScreen = () => {
         return normalizeDcqlForSubmission(dcqlQueryValue, allowInvalidDcqlRequest);
     }
 
+    const getPresentationDefinitionOverride = () => {
+        if (selectedDraftIsV10 || !hasSubmittedPresentationDefinition) {
+            return undefined;
+        }
+
+        return presentationDefinitionValue && typeof presentationDefinitionValue === 'object' ? presentationDefinitionValue : {};
+    }
+
     const fetchQr = async () => {
         const dcqlQueryOverride = getDcqlQueryOverride();
+        const presentationDefinitionOverride = getPresentationDefinitionOverride();
         if (dcqlQueryOverride === null) {
             return;
         }
@@ -147,7 +199,8 @@ const QrScreen = () => {
             selectedDraft,
             isRequestSigned,
             selectedResponseMode,
-            dcqlQueryOverride
+            dcqlQueryOverride,
+            presentationDefinitionOverride
         );
     };
 
@@ -171,26 +224,40 @@ const QrScreen = () => {
         setDraftDcqlQueryValue(value);
     }
 
+    const handlePresentationDefinitionChange = (value) => {
+        setDraftPresentationDefinitionValue(value);
+    }
+
     const openPresentationRequestDetails = () => {
-        setDraftDcqlQueryValue(cloneQuery(dcqlQueryValue));
+        if (selectedDraftIsV10) {
+            setDraftDcqlQueryValue(cloneQuery(dcqlQueryValue));
+        } else {
+            setDraftPresentationDefinitionValue(JSON.parse(JSON.stringify(presentationDefinitionValue)));
+        }
         setShowPresentationRequestDetails(true);
     }
 
     const closePresentationRequestDetails = () => {
         setDraftDcqlQueryValue(cloneQuery(dcqlQueryValue));
+        setDraftPresentationDefinitionValue(JSON.parse(JSON.stringify(presentationDefinitionValue)));
         setShowPresentationRequestDetails(false);
     }
 
     const submitPresentationRequestDetails = async () => {
-        if (!selectedDraftIsV10) {
-            setShowPresentationRequestDetails(false);
-            return;
+        if (selectedDraftIsV10) {
+            // Handle DCQL submission
+            const nextQuery = normalizeDcqlForSubmission(draftDcqlQueryValue, allowInvalidDcqlRequest);
+            setDcqlQueryValue(cloneQuery(nextQuery));
+            setHasSubmittedDcqlQuery(true);
+        } else {
+            // Handle presentation definition submission
+            setPresentationDefinitionValue(JSON.parse(JSON.stringify(draftPresentationDefinitionValue)));
+            setHasSubmittedPresentationDefinition(true);
         }
-
-        const nextQuery = normalizeDcqlForSubmission(draftDcqlQueryValue, allowInvalidDcqlRequest);
-        setDcqlQueryValue(cloneQuery(nextQuery));
-        setHasSubmittedDcqlQuery(true);
         setShowPresentationRequestDetails(false);
+
+        const dcqlQueryOverride = selectedDraftIsV10 ? normalizeDcqlForSubmission(draftDcqlQueryValue, allowInvalidDcqlRequest) : undefined;
+        const presentationDefinitionOverride = !selectedDraftIsV10 ? draftPresentationDefinitionValue : undefined;
 
         await fetchQrCodeData(
             state.name,
@@ -198,7 +265,8 @@ const QrScreen = () => {
             selectedDraft,
             isRequestSigned,
             selectedResponseMode,
-            nextQuery
+            dcqlQueryOverride,
+            presentationDefinitionOverride
         );
     }
 
@@ -273,6 +341,8 @@ const QrScreen = () => {
             onSubmit={submitPresentationRequestDetails}
             draftDcqlQueryValue={draftDcqlQueryValue}
             onDcqlQueryChange={handleDcqlQueryChange}
+            draftPresentationDefinitionValue={draftPresentationDefinitionValue}
+            onPresentationDefinitionChange={handlePresentationDefinitionChange}
             selectedDraftIsV10={selectedDraftIsV10}
             allowInvalidRequest={allowInvalidDcqlRequest}
             onAllowInvalidRequestChange={setAllowInvalidDcqlRequest}

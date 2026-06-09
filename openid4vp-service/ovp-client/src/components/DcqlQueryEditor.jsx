@@ -10,6 +10,7 @@ import {
   parseJsonSafely,
   toPrettyJson,
   validateDcqlQuery,
+  validateClaimsArray,
   cloneQuery,
 } from "../utility/dcqlHelper";
 
@@ -119,13 +120,37 @@ export default function DcqlQueryEditor({
 
   const commitCredentialClaimsText = (index, claimsText) => {
     const parsed = parseJsonSafely(claimsText || "[]");
-    if (parsed.error || !Array.isArray(parsed.value)) {
+    if (parsed.error) {
       setJsonError(`Credential ${index + 1} claims must be a JSON array`);
+      return;
+    }
+
+    const claimsValidationError = validateClaimsArray(parsed.value);
+    if (claimsValidationError) {
+      setJsonError(`Credential ${index + 1} ${claimsValidationError}`);
       return;
     }
 
     setJsonError(null);
     updateCredential(index, "claims", parsed.value);
+    setClaimsDraftByIndex((prev) => {
+      const next = { ...prev };
+      delete next[index];
+      return next;
+    });
+  };
+
+  const removeCredentialClaims = (index) => {
+    if (disabled) return;
+
+    const nextQuery = cloneQuery(safeValue);
+    if (!nextQuery.credentials[index]) {
+      return;
+    }
+
+    delete nextQuery.credentials[index].claims;
+    applyQuery(nextQuery, false);
+    setJsonError(null);
     setClaimsDraftByIndex((prev) => {
       const next = { ...prev };
       delete next[index];
@@ -402,7 +427,10 @@ export default function DcqlQueryEditor({
                   }}
                 />
 
-                <label style={{ display: "block", marginTop: 8, marginBottom: 4 }}>Claims JSON Array</label>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8, marginBottom: 4 }}>
+                  <label style={{ display: "block", marginBottom: 0 }}>Claims JSON Array</label>
+                  <Button variant={"tertiary"} onClick={() => removeCredentialClaims(index)} style={{ padding: "4px 10px" }}>Delete Claims</Button>
+                </div>
                 <textarea
                   value={claimsDraftByIndex[index] ?? toPrettyJson(credential.claims || [])}
                   disabled={disabled}

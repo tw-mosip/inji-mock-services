@@ -30,6 +30,44 @@ export const getCredentialIds = (query) => {
     .filter((id) => typeof id === "string" && id.trim());
 };
 
+const isEmptyValue = (value) => {
+  if (value === null || value === undefined) {
+    return true;
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length === 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length === 0 || value.some((item) => isEmptyValue(item));
+  }
+
+  if (typeof value === "object") {
+    const entries = Object.entries(value);
+    return entries.length === 0 || entries.some(([, nestedValue]) => isEmptyValue(nestedValue));
+  }
+
+  return false;
+};
+
+export const validateClaimsArray = (claims) => {
+  if (!Array.isArray(claims)) {
+    return "claims must be a JSON array";
+  }
+
+  if (claims.length === 0) {
+    return "claims array cannot be empty";
+  }
+
+  const hasInvalidClaim = claims.some((claim) => isEmptyValue(claim));
+  if (hasInvalidClaim) {
+    return "claims values cannot be empty or null";
+  }
+
+  return null;
+};
+
 export const validateDcqlQuery = (query) => {
   const errors = [];
   const safeQuery = ensureDcqlShape(query);
@@ -45,6 +83,15 @@ export const validateDcqlQuery = (query) => {
   if (uniqueIds.size !== ids.length) {
     errors.push("Credential IDs must be unique.");
   }
+
+  safeQuery.credentials.forEach((credential, credentialIndex) => {
+    if (credential && Object.prototype.hasOwnProperty.call(credential, "claims")) {
+      const claimValidationError = validateClaimsArray(credential.claims);
+      if (claimValidationError) {
+        errors.push(`Credential ${credentialIndex + 1} ${claimValidationError}.`);
+      }
+    }
+  });
 
   safeQuery.credential_sets.forEach((setItem, setIndex) => {
     const options = Array.isArray(setItem?.options) ? setItem.options : [];

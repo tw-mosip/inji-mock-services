@@ -2,7 +2,6 @@ import { Fragment } from "react";
 
             export default function CheckBox({ onClick, label, id, checked }) {
                 const handleChange = (e) => {
-                    e.preventDefault();
                     onClick(e.target.checked);
                 };
 

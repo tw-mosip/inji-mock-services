@@ -49,7 +49,7 @@ export default function QrControls({
                 />
             )}
             <Button onClick={onOpenPresentationDetails} variant={"secondary"} style={{ marginTop: 10 }}>
-                Open Presentation Request Details
+                Edit Presentation Request Details
             </Button>
         </div>
     );
