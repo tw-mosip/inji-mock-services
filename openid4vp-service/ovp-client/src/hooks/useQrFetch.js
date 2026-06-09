@@ -1,0 +1,99 @@
+import {useCallback, useState} from 'react';
+import axios from 'axios';
+import {BACKEND_URL} from '../constants/mockui-constants';
+import {REQUEST_MODES} from '../constants/constants';
+
+export const useQrFetch = () => {
+    const [qrData, setQrData] = useState(null);
+    const [inputData, setInputData] = useState(null);
+    const [qrCodeData, setQrCodeData] = useState(null);
+    const [actualAuthorizationRequestObject, setActualAuthorizationRequestObject] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    const resetValues = useCallback(() => {
+        setErrorMessage(null);
+        setQrData(null);
+        setQrCodeData(null);
+        setActualAuthorizationRequestObject(null);
+    }, []);
+
+    const fetchQrCodeData = useCallback(async (
+        clientIdScheme,
+        requestMode,
+        draftVersion,
+        isRequestSigned = false,
+        responseMode = 'direct_post',
+        dcqlQueryOverride,
+        presentationDefinitionOverride,
+    ) => {
+        try {
+            const qrRequestBody = {
+                signed: isRequestSigned,
+                response_mode: responseMode,
+            };
+
+            if (dcqlQueryOverride !== undefined) {
+                qrRequestBody.dcql_query = dcqlQueryOverride;
+            }
+
+            if (presentationDefinitionOverride !== undefined) {
+                qrRequestBody.presentation_definition = presentationDefinitionOverride;
+            }
+
+            // draft is intentionally kept as query param for backend compatibility
+            const qrResponse = await axios.post(
+                `${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}`,
+                qrRequestBody,
+                {headers: {'ngrok-skip-browser-warning': 'true'}},
+            );
+
+            if (qrResponse.status !== 200) {
+                setErrorMessage('Error fetching QR code data');
+            }
+
+            setQrCodeData(qrResponse.data.qrCodeData);
+            setQrData(qrResponse.data.qrData);
+            const inputDataValue = qrResponse.data.inputData;
+            setInputData(inputDataValue);
+
+            if (requestMode === REQUEST_MODES.BY_REFERENCE) {
+                const requestUri = inputDataValue?.request_uri;
+                const requestUriMethod = inputDataValue?.request_uri_method ?? 'get';
+                const uriResponse = await axios({
+                    method: requestUriMethod,
+                    url: requestUri,
+                    data: (dcqlQueryOverride !== undefined || presentationDefinitionOverride !== undefined)
+                        ? {
+                            ...(dcqlQueryOverride !== undefined ? {dcql_query: dcqlQueryOverride} : {}),
+                            ...(presentationDefinitionOverride !== undefined ? {presentation_definition: presentationDefinitionOverride} : {}),
+                        }
+                        : undefined,
+                    headers: {'ngrok-skip-browser-warning': 'true'},
+                });
+                setActualAuthorizationRequestObject(uriResponse.data);
+            }
+
+            setErrorMessage(null);
+        } catch (error) {
+            setQrData(null);
+            setQrCodeData(null);
+            setActualAuthorizationRequestObject(null);
+            console.error('Error fetching QR code data:', error);
+            if (error?.response?.data) {
+                setErrorMessage(error.response.data);
+            } else {
+                setErrorMessage(error?.message ?? 'Error fetching QR code data');
+            }
+        }
+    }, []);
+
+    return {
+        qrData,
+        qrCodeData,
+        inputData,
+        actualAuthorizationRequestObject,
+        errorMessage,
+        fetchQrCodeData,
+        resetValues,
+    };
+};

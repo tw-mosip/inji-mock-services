@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Toggle from '../components/common/Toggle';
 import {Code} from "./common/Code";
+import { decodeJwt } from '../utility/util';
 
 /**
  * DecoderEncoderView
@@ -12,21 +13,10 @@ const DecoderEncoderView = ({ input, actualSignedData = null }) => {
     const [isDecoded, setIsDecoded] = useState(false);
     const [decodedJwt, setDecodedJwt] = useState('');
 
-    // Decodes JWT (simple base64 decode, customize as needed)
-    const decodeJwt = (jwt) => {
-        try {
-            const parts = jwt.split('.');
-            if (parts.length < 2) return jwt;
-            const payload = parts[1];
-            return JSON.parse(atob(payload));
-        } catch (e) {
-            return 'Invalid JWT';
-        }
-    };
-
     const handleDecode = () => {
         const dataToDecode = actualSignedData || input;
-        setDecodedJwt(decodeJwt(dataToDecode));
+        const decoded = decodeJwt(dataToDecode);
+        setDecodedJwt(decoded !== null ? decoded.payload : 'Invalid JWT');
         setIsDecoded(true);
     };
 
