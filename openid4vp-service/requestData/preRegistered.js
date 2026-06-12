@@ -16,7 +16,7 @@ const preRegisteredAuthorizationRequestVersion1 = {
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": JSON.stringify(getVerifierMetadata(ResponseModes.DIRECT_POST, DRAFT_VERSIONS.V_1_0)),
+    "client_metadata": JSON.stringify(getVerifierMetadata(ResponseModes.DIRECT_POST_JWT, DRAFT_VERSIONS.V_1_0)),
 }
 
 const preRegisteredAuthorizationRequestDraft23 = {

@@ -116,6 +116,7 @@ async function decryptJwe(jweToken, encryptionKey) {
 }
 
 module.exports = {
+    defaultVerifierKeys,
     initializeEncryptionKeys,
     exportKeyInfo,
     decryptJwe

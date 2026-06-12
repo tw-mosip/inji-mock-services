@@ -1,19 +1,14 @@
 const clientMetadata = require('./clientMetadataMock.json');
 const {DRAFT_VERSIONS, ResponseModes} = require("./constants");
-
-// Create static JWK from verifierPublicKeys directly to avoid circular dependency
-const verifierPublicKeys = {
-  publicKeyBase64: "Z5a2OjR7a6rOqBdApvDaqR7mBV+OD3VT2UgCdKQScwI=",
-  privateKeyBase64: "Mjxgl/YAh11IxsTZ6b6TD63BGc1FPWe+yAhD96S0IC0="
-};
+const { defaultVerifierKeys } = require('./encryptionKeyManagement');
 
 // Convert base64 to base64url format (just character replacement, no re-encoding)
 function base64ToBase64Url(base64) {
   return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
-const publicKeyB64Url = base64ToBase64Url(verifierPublicKeys.publicKeyBase64);
-const privateKeyB64Url = base64ToBase64Url(verifierPublicKeys.privateKeyBase64);
+const publicKeyB64Url = base64ToBase64Url(defaultVerifierKeys.publicKeyBase64);
+const privateKeyB64Url = base64ToBase64Url(defaultVerifierKeys.privateKeyBase64);
 
 const staticJWK = {
   "kty": "OKP",
