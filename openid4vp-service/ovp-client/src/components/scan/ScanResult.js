@@ -49,9 +49,6 @@ export function ScanResult() {
         setDecryptError(null);
 
         try {
-            console.log('Scan result type:', typeof scanResult);
-            console.log('Scan result content:', scanResult);
-
             // Enhanced JWE token extraction with better debugging
             let jweToken = null;
 
@@ -61,7 +58,6 @@ export function ScanResult() {
                 console.log('Extracted token from direct string');
             } else if (scanResult && typeof scanResult === 'object') {
                 // Object case - try multiple extraction methods
-                console.log('Scan result keys:', Object.keys(scanResult));
 
                 // Try common JWT/JWE fields first
                 jweToken = scanResult.response; // Keep the response field as one option
@@ -69,7 +65,6 @@ export function ScanResult() {
                 if (!jweToken) {
                     // Try to find any string value that looks like a JWE token (has dots)
                     const allValues = Object.values(scanResult);
-                    console.log('All values in scan result:', allValues);
 
                     jweToken = allValues.find(value =>
                         typeof value === 'string' &&
@@ -89,15 +84,12 @@ export function ScanResult() {
                             const nestedToken = value.vp || value.presentation || value.vp_token || value.token || value.response;
                             if (nestedToken && typeof nestedToken === 'string') {
                                 jweToken = nestedToken;
-                                console.log(`Found token in nested object: ${key}`);
                                 break;
                             }
                         }
                     }
                 }
             }
-
-            console.log('Extracted token:', jweToken ? `${jweToken.substring(0, 50)}...` : 'null');
 
             if (!jweToken || typeof jweToken !== 'string') {
                 throw new Error(`No JWE token found in scan result. Available keys: ${scanResult && typeof scanResult === 'object' ? Object.keys(scanResult).join(', ') : 'N/A'}`);
@@ -110,14 +102,10 @@ export function ScanResult() {
 
             // Check if it looks like a JWE token (5 parts)
             const parts = jweToken.split('.');
-            console.log(`Token has ${parts.length} parts`);
 
             if (parts.length !== 5) {
                 throw new Error(`Invalid JWE format. Expected 5 parts separated by dots, got ${parts.length}. Token preview: ${jweToken.substring(0, 100)}...`);
             }
-
-            console.log('Attempting to decrypt JWE token...');
-            console.log('Request body to be sent:', JSON.stringify({ jweToken }, null, 2));
 
             // Call backend to decrypt the JWE
             const response = await axios.post(`${BACKEND_URL}/verifier/decrypt-jwe`,
@@ -132,7 +120,7 @@ export function ScanResult() {
 
             if (response.data.success) {
                 setDecryptedResult(JSON.parse(JSON.stringify(response.data.decryptedPayload)));
-                console.log('JWE decrypted successfully:', response.data.decryptedPayload);
+                console.log('JWE decrypted successfully');
             } else {
                 throw new Error(response.data.error || 'Decryption failed');
             }

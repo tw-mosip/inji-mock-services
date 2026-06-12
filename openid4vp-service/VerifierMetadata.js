@@ -20,7 +20,6 @@ const staticJWK = {
   "crv": "X25519",
   "use": "enc",
   "x": publicKeyB64Url,     // Public key
-  "d": privateKeyB64Url,    // Private key (needed for decryption)
   "alg": "ECDH-ES",
   "kid": "verifier-static-key"
 };

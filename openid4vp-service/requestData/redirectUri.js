@@ -3,12 +3,13 @@ const {
 } = require("../constants");
 const clientMetadata = require('../clientMetadataMock.json');
 const {getVerifierMetadata} = require("../VerifierMetadata");
+const {dcqlQuery} = require("../presentation-request/DCQLQuery");
 
 const client_metadata = JSON.stringify(clientMetadata);
 
 const redirectAuthorizationRequestVersion1 = {
     "client_id": `redirect_uri:${responseUri}`,
-    "dcql_query": {},
+    "dcql_query": dcqlQuery,
     "response_type": "vp_token",
     "response_mode": ResponseModes.DIRECT_POST,
     "nonce": nonce,
