@@ -1,9 +1,11 @@
-import React, {useState} from "react";
-import {Palette} from "../../styles/palette";
+import React, { useState } from "react";
+import { Palette } from "../../styles/palette";
 import Button from "./Button";
-import {handleCopy} from "../../utility/util";
-import {JsonView, darkStyles, collapseAllNested, allExpanded} from "react-json-view-lite";
+import { handleCopy } from "../../utility/util";
+import { JsonView, darkStyles, collapseAllNested, allExpanded } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
+import { TbCopyCheckFilled, TbCopy } from "react-icons/tb";
+
 
 const codeFontStack = "Menlo, Monaco, Consolas, 'Courier New', monospace";
 const monoTypography = "font-family: " + codeFontStack + "; font-size: 13px; line-height: 1.6;";
@@ -36,61 +38,27 @@ function isJson(value) {
     return value !== null && typeof value === "object";
 }
 
-export function Code({value}) {
+export function Code({ value }) {
     const [copied, setCopied] = useState(false);
     const [expandAllNodes, setExpandAllNodes] = useState(false);
     const json = isJson(value);
 
     return (
-        <div style={{maxWidth: "100%"}}>
-            <div style={{display: "flex", justifyContent: "flex-end", marginBottom: "6px"}}>
+        <div style={{ maxWidth: "100%" }}>
+            <div style={{ display: "flex",gap: 6 , justifyContent: "flex-end", marginBottom: "6px", alignContent: "center"}}>
                 {json && (
                     <>
-                        <button
-                            type="button"
-                            onClick={() => setExpandAllNodes(true)}
-                            title="Open all"
-                            style={{
-                                marginRight: "6px",
-                                background: "transparent",
-                                color: Palette.codeText,
-                                border: `1px solid ${Palette.codeText}`,
-                                borderRadius: "4px",
-                                width: "24px",
-                                height: "24px",
-                                cursor: "pointer",
-                                fontFamily: codeFontStack,
-                                fontSize: "12px",
-                                lineHeight: "1",
-                            }}
+                        <Button
+                            onClick={() => setExpandAllNodes((prev) => !prev)}
+                            variant="tertiary"
                         >
-                            +
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setExpandAllNodes(false)}
-                            title="Fold all"
-                            style={{
-                                marginRight: "6px",
-                                background: "transparent",
-                                color: Palette.codeText,
-                                border: `1px solid ${Palette.codeText}`,
-                                borderRadius: "4px",
-                                width: "24px",
-                                height: "24px",
-                                cursor: "pointer",
-                                fontFamily: codeFontStack,
-                                fontSize: "12px",
-                                lineHeight: "1",
-                            }}
-                        >
-                            -
-                        </button>
+                            {expandAllNodes ? "Fold all" : "Unfold all"}
+                        </Button>
                     </>
                 )}
                 <Button
                     onClick={() => handleCopy(typeof value === "string" ? value : JSON.stringify(value, null, 2), setCopied)}
-                    variant={"secondary"}>{copied ? "Copied" : "Copy"}</Button>
+                    variant={"tertiary"}>{copied ? <TbCopyCheckFilled/> : <TbCopy/>}</Button>
             </div>
             <div
                 style={{

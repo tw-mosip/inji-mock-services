@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Toggle from '../components/common/Toggle';
-import {Code} from "./common/Code";
+import { Code } from "./common/Code";
 import { decodeJwt } from '../utility/util';
 
 /**
@@ -22,7 +22,7 @@ const DecoderEncoderView = ({ input, actualSignedData = null }) => {
 
     return (
         <div>
-            <Toggle options={[
+            {actualSignedData && <Toggle options={[
                 {
                     name: 'Decoded',
                     selected: isDecoded,
@@ -33,7 +33,7 @@ const DecoderEncoderView = ({ input, actualSignedData = null }) => {
                     selected: !isDecoded,
                     onChange: () => setIsDecoded(false)
                 }
-            ]} />
+            ]} />}
             <div style={{ marginTop: 10 }}>
                 {isDecoded ? <Code value={decodedJwt} /> : <Code value={input} />}
             </div>

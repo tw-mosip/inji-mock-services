@@ -63,9 +63,9 @@ async function generateQrCodeResponse(QRCode, inputData, res) {
     try {
         const qrData = createUrlWithParams(inputData);
         const qrDataBytes = Buffer.byteLength(qrData, 'utf8');
-        console.log(`QR payload size: ${qrDataBytes} bytes`);
+        console.info(`QR payload size: ${qrDataBytes} bytes`);
         const qrCodeData = await QRCode.toDataURL(qrData);
-        res.json({ qrCodeData, qrData, inputData });
+        res.json({ qrCodeData, qrData, inputData, qrSize: qrDataBytes });
     } catch (error) {
         if (typeof error?.message === 'string' && error.message.includes('amount of data is too big')) {
             res.status(400).send(
@@ -311,6 +311,7 @@ function registerVerifierRoutes(app, deps) {
 
     const handleSessionRequestUri = async (req, res) => {
         const { sessionId } = req.params;
+        console.info("Recieved request to /request-uri with request body as ", JSON.stringify(req.body, null, 2))
         const walletNonce = resolveWalletNonce(req);
 
         const vpRequest = await getVPRequestFromSession(sessionId);

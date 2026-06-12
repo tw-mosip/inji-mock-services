@@ -1,8 +1,15 @@
 const dcqlQuery = {
   "credentials": [
     {
-      "id": "sd-jwt",
-      "format": "vc+sd-jwt", // This is the format for SD-JWT - vc+sd-jwt / dc+sd-jwt
+      "id": "vc-sd-jwt",
+      "format": "dc+sd-jwt", // This is the format for SD-JWT - vc+sd-jwt / dc+sd-jwt
+      "meta": {},
+      "require_cryptographic_holder_binding": false,
+      "multiple": true
+    },
+    {
+      "id": "dc-sd-jwt",
+      "format": "dc+sd-jwt", // This is the format for SD-JWT - vc+sd-jwt / dc+sd-jwt
       "meta": {},
       "require_cryptographic_holder_binding": false,
       "multiple": true
@@ -58,7 +65,24 @@ const dcqlQuery = {
       ]
     },
     {
-      "id": "age-proof",
+      "id": "age-proof-18",
+      "format": "vc+sd-jwt",
+      "meta": {
+      },
+      "multiple": false,
+      "require_cryptographic_holder_binding": false,
+      "claims": [
+        {
+          "id": "age-18-proof",
+          "path": ["age_over_18"]
+        }
+      ],
+      "claim_sets": [
+        ["age-18-proof"]
+      ]
+    },
+    {
+      "id": "age-proof-21",
       "format": "vc+sd-jwt",
       "meta": {
       },
@@ -68,15 +92,10 @@ const dcqlQuery = {
         {
           "id": "age-21-proof",
           "path": ["age_over_21"]
-        },
-        {
-          "id": "age-18-proof",
-          "path": ["age_over_18"]
         }
       ],
       "claim_sets": [
         ["age-21-proof"],
-        ["age-18-proof"]
       ]
     },
     {
@@ -138,7 +157,7 @@ const dcqlQuery = {
         },
         {
           "path": ["issuing_authority"],
-          // "values": ["DE"]
+          "values": ["DE"]
         }
       ]
     },
@@ -157,7 +176,7 @@ const dcqlQuery = {
         },
         {
           "path": ["issuing_organization"],
-          // "values": ["DE", "TelOrg"]
+          "values": ["DE", "TelOrg"]
         }
       ]
     },
@@ -188,7 +207,7 @@ const dcqlQuery = {
       "meta": {
         "type_values": [
           [
-            "https://www.w3.org/2018/credentials#VerifiableCredential", 
+            "https://www.w3.org/2018/credentials#VerifiableCredential",
             "https://inji.github.io/inji-config/contexts/mosip-identity-context.json#MOSIPVerifiableCredential"
           ]
         ]
@@ -226,8 +245,15 @@ const dcqlQuery = {
   "credential_sets": [
     {
       "options": [
-        ["sd-jwt"], // hid, dl
-        ["national-id"]
+        ["age-proof-18"], // age over 18 proof
+        ["age-proof-21"], // age over 21 proof
+      ],
+      "required": true
+    },
+    {
+      "options": [
+        ["tax-id"], // hid, dl
+        ["msisdn", "national-id"], // hid, dl
       ],
       "required": true
     },
@@ -236,17 +262,17 @@ const dcqlQuery = {
     //     ["vehicle-registration_mso_mdoc"], // wallet does not have this
     //     ["tax-id"], // tax id
     //     ["driving-license"],
-    //     ["land", "age-proof"]
-    //   ],
-    //   "required": true
-    // },
-    // {
-    //   "options": [
-    //     ["tax-id"], // tax id
-
+    //     ["land", "age-proof-18"]
     //   ],
     //   "required": false
     // },
+    {
+      "options": [
+        ["tax-id"], // tax id
+
+      ],
+      "required": false
+    },
     // {
     //   "options": [
     //     ["msisdn"] // msisdn
@@ -261,9 +287,9 @@ const dcqlQuery = {
     // },
     {
       "options": [
-        ["employee-sd_jwt"] 
+        ["employee-sd_jwt"]
       ],
-      "required": true
+      "required": false
     }
   ]
 }

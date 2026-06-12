@@ -7,36 +7,6 @@ import PresentationDefinitionEditor from '../PresentationDefinitionEditor';
 import DcqlInstructionsModal from './DcqlInstructionsModal';
 import { Palette } from '../../styles/palette';
 
-const defaultValue = {
-    "id": "c4822b58-7fb4-454e-b827-f8758fe27f9a",
-    "purpose": "Relying party is requesting your digital ID for the purpose of Self-Authentication",
-    "input_descriptors": [
-      {
-        "id": "Mock Identity card credential",
-        "format": {
-          "vc+sd-jwt": {
-            "sd-jwt_alg_values": [
-              "ES256"
-            ]
-          }
-        },
-        "constraints": {
-          "fields": [
-            {
-              "path": [
-                "$.vct"
-              ],
-              "filter": {
-                "type": "string",
-                "pattern": "MockVerifiableCredential_SD_JWT"
-              }
-            }
-          ]
-        }
-      }
-    ]
-  }
-
 export default function PresentationRequestModal({
     isOpen,
     onClose,
@@ -104,7 +74,7 @@ export default function PresentationRequestModal({
                 />
             ) : (
                 <PresentationDefinitionEditor
-                    value={defaultValue}
+                    value={draftPresentationDefinitionValue}
                     disabled={false}
                     onEdited={() => {}}
                     onChange={onPresentationDefinitionChange}

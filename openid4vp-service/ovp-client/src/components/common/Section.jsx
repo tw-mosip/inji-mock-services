@@ -1,8 +1,8 @@
-import React, {Fragment, useState} from 'react';
+import React, {useState} from 'react';
 import {Code} from "./Code";
-import {Palette} from "../../styles/palette";
+import {Palette, spacing, cardStyles} from "../../styles/palette";
 
-export function Section(props: { value: string }) {
+export function Section(props) {
     return <div
         style={{
             padding: "1px 8px",
@@ -20,39 +20,34 @@ export function Section(props: { value: string }) {
     </div>;
 }
 
-export function AccordionSection({title, value, background = Palette.surface, children}) {
-    const [isOpen, setIsOpen] = useState(false);
+export function AccordionSection({title, children, defaultOpen = false}) {
+    const [isOpen, setIsOpen] = useState(defaultOpen);
 
     return (
-        <div style={{
-            margin: '16px',
-            marginLeft: '0px',
-            borderRadius: '12px',
-            border: `3px solid ${Palette.surfaceDark}`,
-            background: Palette.surface
-        }}>
-            <div
+        <div style={cardStyles.base}>
+            <button
+                type="button"
                 onClick={() => setIsOpen(!isOpen)}
-                style={{
-                    cursor: 'pointer',
-                    background,
-                    padding: '12px 16px',
-                    borderRadius: '8px',
-                    marginBottom: '8px',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                }}
+                style={cardStyles.accordionHeader}
+                aria-expanded={isOpen}
             >
-                <span style={{fontWeight: '600'}}>{title}</span>
-                <span style={{transform: isOpen ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform 0.2s'}}>
+                <span>{title}</span>
+                <span style={{
+                    color: Palette.tertiaryText,
+                    transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s',
+                    fontSize: '14px',
+                    display: 'inline-block',
+                }}>
                     ▶
                 </span>
-            </div>
-            {isOpen && (
-                <div style={{padding: '0 16px 16px 16px'}}>
-                    {children && <Fragment>{children}</Fragment>}
-                    {value && <Section value={value}/>}
+            </button>
+            {isOpen && children && (
+                <div style={{
+                    padding: `${spacing.md}px ${spacing.xl}px ${spacing.lg}px`,
+                    borderTop: `1px solid ${Palette.borderLight}`,
+                }}>
+                    {children}
                 </div>
             )}
         </div>

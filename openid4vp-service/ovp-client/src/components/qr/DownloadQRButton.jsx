@@ -19,7 +19,7 @@ export default function DownloadQRButton({ qrCodeData }) {
                 cursor: 'pointer',
             }}
         >
-            ⬇ Download QR
+            ⬇️ Download QR
         </a>
     );
 }

@@ -5,7 +5,7 @@ import {Palette, font} from "../../styles/palette";
  * Dropdown component — mirrors the Toggle options shape:
  *   options: Array<{ name: string, selected: boolean, onChange: () => void }>
  */
-const Dropdown = ({label, options}) => {
+const Dropdown = ({label, options, fullWidth = false, light = false}) => {
   const selected = options.find(o => o.selected) ?? options[0];
 
   const handleChange = (e) => {
@@ -18,8 +18,9 @@ const Dropdown = ({label, options}) => {
       display: 'flex',
       alignItems: 'center',
       gap: 8,
-      marginBottom: 10,
+      marginBottom: fullWidth ? 0 : 10,
       fontFamily: font.primary,
+      width: fullWidth ? '100%' : undefined,
     }}>
       {label && (
         <label style={{
@@ -34,17 +35,19 @@ const Dropdown = ({label, options}) => {
         value={selected?.name}
         onChange={handleChange}
         style={{
-          background: Palette.surfaceDark,
-          color: Palette.primaryText,
-          border: 'none',
+          background: light ? Palette.surface : Palette.surfaceDark,
+          color: light ? Palette.headingText : Palette.primaryText,
+          border: `1px solid ${Palette.border}`,
           borderRadius: '8px',
           padding: '8px 12px',
           fontFamily: font.primary,
-          fontSize: '14px',
+          fontSize: '12px',
           cursor: 'pointer',
           outline: 'none',
-          boxShadow: `0 3px 6px ${Palette.primaryShadow}`,
+          boxShadow: fullWidth ? 'none' : `0 3px 6px ${Palette.primaryShadow}`,
           appearance: 'auto',
+          width: fullWidth ? '100%' : undefined,
+          boxSizing: 'border-box',
         }}
       >
         {options.map(option => (

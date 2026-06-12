@@ -7,9 +7,9 @@ export const CLIENT_ID_SCHEMES = {
 
 // enum for draft versions
 export const DRAFT_VERSIONS = {
-    // DRAFT_21: "draft-21",
+    V_1_0: "version-1.0",
     DRAFT_23: "draft-23",
-    V_1_0: "version-1.0"
+    // DRAFT_21: "draft-21",
 }
 
 // enum for request modes

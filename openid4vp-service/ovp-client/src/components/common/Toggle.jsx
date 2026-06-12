@@ -38,12 +38,13 @@ const Toggle: React.FC<ToggleProps> = ({ options }) => {
                         onClick={() => handleToggle(option)}
                         className="flex-1 py-2 px-4 text-sm font-medium rounded-xl transition-all duration-300"
                         style={{
-                            border: `none`,
-                            background: isActive
-                                ? backgroundStyle.primaryGradient
+                            border: "1px solid",
+                            borderColor: Palette.border,
+                            background: !isActive
+                                ? Palette.surface
                                 : Palette.surfaceDark,
                             padding: '8px 16px',
-                            color: isActive ? Palette.primaryText : Palette.secondaryText,
+                            color: !isActive ? Palette.disabledText : Palette.secondaryText,
                             boxShadow: isActive ? `0 3px 6px ${Palette.primaryShadow}` : "none",
                             cursor: 'pointer',
                         }}

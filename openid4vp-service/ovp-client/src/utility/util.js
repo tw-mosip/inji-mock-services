@@ -20,3 +20,5 @@ export const handleCopy = (textSetter, setToast) => {
     setToast(true);
     setTimeout(() => setToast(false), 2000);
 };
+
+export const isMobileLayout = () => window.matchMedia('(max-width: 768px)').matches;

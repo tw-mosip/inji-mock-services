@@ -2,6 +2,8 @@ import crypto from "crypto";
 import { iarSessions } from "./iar-store.js";
 import { authCodeStore } from "./authz-store.js";
 import { authServerBaseUrl, issuerBaseUrl, resolveRequestVersion } from "../issuer-profile.js";
+import { verifierConfig } from "./verifier-config.js";
+
 function randomSession() {
   return crypto.randomBytes(10).toString("hex");
 }
@@ -10,7 +12,70 @@ function randomCode() {
   return crypto.randomBytes(16).toString("hex");
 }
 
-export default function interactiveAuthorizationHandler(req, res) {
+/**
+ * Fetch VP request info from verifier QR API and build a VP request object
+ * @returns {Promise<Object>} The VP request object
+ */
+async function fetchVPRequest() {
+  const clientIdScheme = verifierConfig.clientIdScheme;
+  const draftVersion = verifierConfig.specVersion;
+  const responseMode = verifierConfig.responseMode;
+  const requestMode = verifierConfig.requestMode;
+  const signedRequest = verifierConfig.signedRequest;
+
+  const requestBody = {
+    signed: signedRequest,
+    response_mode: responseMode,
+  };
+
+  if (draftVersion === "version-1.0") {
+    requestBody.dcql_query = verifierConfig.dcqlQuery;
+  } else {
+    requestBody.presentation_definition = verifierConfig.presentationDefinition;
+  }
+
+  try {
+    const requestUrl = new URL(
+      `${verifierConfig.verifierBaseUrl}/verifier/${clientIdScheme}/${requestMode}`
+    );
+    requestUrl.searchParams.set("draft", draftVersion);
+
+    console.log(
+      `Fetching VP request info from: ${requestUrl.toString()}`
+    );
+
+    const response = await fetch(requestUrl.toString(), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to fetch VP request info: ${response.status} ${response.statusText}${errorText ? ` - ${errorText}` : ""}`
+      );
+    }
+
+    const payload = await response.json();
+    const inputData = payload?.inputData;
+    if (!inputData || typeof inputData !== "object") {
+      throw new Error("Verifier response does not contain inputData");
+    }
+
+    console.log("Successfully fetched VP request info");
+    console.debug("VP request:", JSON.stringify(inputData, null, 2));
+  
+    return inputData;
+  } catch (error) {
+    console.error("Error fetching VP request info:", error);
+    throw error;
+  }
+}
+
+export default async function interactiveAuthorizationHandler(req, res) {
   const version = resolveRequestVersion(req);
   const flow = req.params?.flow === "pdi" ? "pdi" : null;
   const issuer = issuerBaseUrl(version, Boolean(req.params?.version), flow);
@@ -72,39 +137,6 @@ export default function interactiveAuthorizationHandler(req, res) {
     authorization_details,
   } = req.body;
 
-  // Create presentation definition / DCQL query
-  const pd = {
-    id: "vp token example",
-    purpose:
-      "Relying party is requesting your digital ID for the purpose of Self-Authentication",
-    format: {
-      ldp_vc: {
-        proof_type: ["RsaSignature2018"],
-      },
-    },
-    input_descriptors: [
-      {
-        id: "id card credential",
-        format: {
-          ldp_vc: {
-            proof_type: ["Ed25519Signature2020", "RsaSignature2018"],
-          },
-        },
-        constraints: {
-          fields: [
-            {
-              path: ["$.credentialSubject.email"],
-              filter: {
-                type: "string",
-                pattern: "@gmail.com",
-              },
-            },
-          ],
-        },
-      },
-    ],
-  };
-
   const sessionId = randomSession();
 
   iarSessions.set(sessionId, {
@@ -113,56 +145,29 @@ export default function interactiveAuthorizationHandler(req, res) {
     state,
     issuer_state,
     authorization_details,
-    pd,
+    pd: verifierConfig.presentationDefinition,
+    dcqlQuery: verifierConfig.dcqlQuery,
   });
-  const requestObject = {
-    client_id:
-      "redirect_uri:https://129e4f0672b6.ngrok-free.app/verifier/vp-response",
-    presentation_definition_uri:
-      "https://129e4f0672b6.ngrok-free.app/verifier/presentation_definition_uri",
-    response_type: "vp_token",
-    response_mode: "iar-post",
-    nonce: "9OKP62PdHCD71Z04LfXthA==",
-    state: "0jKDA07LVeVoMznct2gJZg==",
-    response_uri: "https://129e4f0672b6.ngrok-free.app/verifier/vp-response",
-    client_metadata: {
-      client_name: "Requester name",
-      logo_uri:
-        "https://mosip.github.io/inji-config/logos/StayProtectedInsurance.png",
-      authorization_encrypted_response_alg: "ECDH-ES",
-      authorization_encrypted_response_enc: "A256GCM",
-      jwks: {
-        keys: [
-          {
-            kty: "OKP",
-            crv: "X25519",
-            use: "enc",
-            x: "BVNVdqorpxCCnTOkkw8S2NAYXvfEvkC-8RDObhrAUA4",
-            alg: "ECDH-ES",
-            kid: "verifier-key-id",
-          },
-        ],
-      },
-      vp_formats: {
-        mso_mdoc: {
-          alg: ["ES256"],
-        },
-        ldp_vp: {
-          proof_type: [
-            "Ed25519Signature2018",
-            "Ed25519Signature2020",
-            "RsaSignature2018",
-          ],
-        },
-      },
-    },
-  };
-  // Respond with a presentation request
-  return res.json({
-    status: "require_interaction",
-    type: "openid4vp_presentation",
-    auth_session: sessionId,
-    credential_issuer: issuer,
-    openid4vp_request: requestObject,
-  });
+
+  try {
+    // Fetch the VP request object from the verifier service
+    const requestObject = await fetchVPRequest();
+
+    const interactionRequiredResponse = {
+      status: "require_interaction",
+      type: "openid4vp_presentation",
+      auth_session: sessionId,
+      credential_issuer: issuer,
+      openid4vp_request: requestObject,
+    };
+    console.debug("Respondingw ith interaction requried response : ", JSON.stringify(interactionRequiredResponse, null, 2))
+    // Respond with a presentation request
+    return res.json(interactionRequiredResponse);
+  } catch (error) {
+    console.error("Error in interactive authorization handler:", error);
+    return res.status(500).json({
+      error: "server_error",
+      error_description: "Failed to fetch VP request object",
+    });
+  }
 }

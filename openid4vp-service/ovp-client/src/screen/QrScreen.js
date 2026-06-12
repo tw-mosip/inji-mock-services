@@ -1,27 +1,65 @@
-import React, {Fragment, useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import {INJIWEB_URL} from '../constants/mockui-constants';
 import {Loader} from '../components/common/Loader';
-import {font} from '../styles/palette';
+import {Palette, font, spacing} from '../styles/palette';
 import {DRAFT_VERSIONS, REQUEST_MODES, RESPONSE_MODES} from '../constants/constants';
 import {ScanResult} from '../components/scan/ScanResult';
 import Error from '../components/common/Error';
 import QrScreenHeader from '../components/qr/QrScreenHeader';
 import QrControls from '../components/qr/QrControls';
 import PresentationRequestModal from '../components/qr/PresentationRequestModal';
-import QrCodeDisplay from '../components/qr/QrCodeDisplay';
+import QrCodeDisplay, {QrCodeCard, QrDataSections} from '../components/qr/QrCodeDisplay';
 import {useQrFetch} from '../hooks/useQrFetch';
 import {usePresentationRequest} from '../hooks/usePresentationRequest';
 import {downloadDebugDetails} from '../utility/debugDetails';
+import {isMobileLayout} from '../utility/util';
 
-const styles = {
-    container: {padding: '20px 30px', color: font.primary},
-    content: {paddingLeft: 40, display: 'flex', flexDirection: 'row', gap: 20, justifyItems: 'flex-start'},
+const getPageStyles = () => {
+    const isMobile = isMobileLayout();
+    return {
+        page: {
+            minHeight: '100vh',
+            background: Palette.appBackground,
+            fontFamily: font.primary,
+            color: Palette.headingText,
+            minWidth: '100vw',
+        },
+        content: {
+            maxWidth: isMobile ? '100%' : '85%',
+            margin: '0 auto',
+            padding: isMobile
+                ? `${spacing.xl}px ${spacing.lg}px`
+                : `${spacing.xxxl}px ${spacing.xxl}px`,
+            display: isMobile ? 'flex' : 'grid',
+            flexDirection: isMobile ? 'column' : undefined,
+            gridTemplateColumns: isMobile ? undefined : '1fr 1fr',
+            columnGap: isMobile ? undefined : '2%',
+            rowGap: isMobile ? spacing.lg : spacing.xl,
+            gap: isMobile ? spacing.lg : spacing.xl,
+            boxSizing: 'border-box',
+        },
+        leftColumn: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: spacing.xl,
+            minWidth: 0,
+        },
+        errorContent: {
+            maxWidth: 1152,
+            margin: '0 auto',
+            padding: `${spacing.xxxl}px ${spacing.xxl}px`,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: spacing.xl,
+        },
+    };
 };
 
 const QrScreen = () => {
     const {state} = useLocation();
     const navigate = useNavigate();
+    const [, setLayoutTick] = useState(0);
 
     const [isByValue, setIsByValue] = useState(true);
     const [isByReference, setIsByReference] = useState(false);
@@ -32,7 +70,7 @@ const QrScreen = () => {
     const selectedDraftIsV10 = selectedDraft === DRAFT_VERSIONS.V_1_0;
 
     const {
-        qrData, qrCodeData, inputData, actualAuthorizationRequestObject, errorMessage,
+        qrData, qrSize, qrCodeData, inputData, actualAuthorizationRequestObject, errorMessage,
         fetchQrCodeData, resetValues,
     } = useQrFetch();
 
@@ -59,6 +97,13 @@ const QrScreen = () => {
 
     useEffect(() => {
         document.title = 'Scan';
+    }, []);
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+        const handleResize = () => setLayoutTick((tick) => tick + 1);
+        mediaQuery.addEventListener('change', handleResize);
+        return () => mediaQuery.removeEventListener('change', handleResize);
     }, []);
 
     const handleRequestModeChange = async (mode) => {
@@ -93,7 +138,8 @@ const QrScreen = () => {
         window.open(`${INJIWEB_URL}?${strippedRequest}`, '_blank');
     };
 
-    const title = `${state?.name || 'QR Code Image'} - ${selectedDraft}`;
+    const subtitle = `${state?.name || 'QR Code Image'} · ${selectedDraft}`;
+    const styles = getPageStyles();
 
     const controls = (
         <QrControls
@@ -127,9 +173,9 @@ const QrScreen = () => {
 
     if (errorMessage) {
         return (
-            <div style={{padding: '20px 30px'}}>
-                <QrScreenHeader title={title} onBack={() => navigate('/')}/>
-                <div style={{paddingLeft: 40}}>
+            <div style={styles.page}>
+                <QrScreenHeader subtitle={subtitle} onBack={() => navigate('/')}/>
+                <div style={styles.errorContent}>
                     {controls}
                     <Error message={errorMessage}/>
                 </div>
@@ -140,30 +186,47 @@ const QrScreen = () => {
 
     if (!(qrData && qrCodeData)) {
         return (
-            <Fragment>
-                <QrScreenHeader title={title} onBack={() => navigate('/')}/>
+            <div style={styles.page}>
+                <QrScreenHeader subtitle={subtitle} onBack={() => navigate('/')}/>
                 <Loader>Loading...</Loader>
-            </Fragment>
+            </div>
         );
     }
 
+    const qrDisplayProps = {
+        qrData,
+        qrCodeData,
+        inputData,
+        actualAuthorizationRequestObject,
+        isRequestSigned,
+        qrSize,
+
+        onDownloadDebugDetails: () => downloadDebugDetails(qrData, qrCodeData, inputData, actualAuthorizationRequestObject),
+        onOpenInjiWeb: handleOpenInjiWeb,
+    };
+
+    const isMobile = isMobileLayout();
+
     return (
-        <div style={styles.container}>
-            <QrScreenHeader title={title} onBack={() => navigate('/')}/>
+        <div style={styles.page}>
+            <QrScreenHeader subtitle={subtitle} onBack={() => navigate('/')}/>
             <div style={styles.content}>
-                <div style={{flex: 1}}>
+                <div style={styles.leftColumn}>
                     {controls}
-                    <QrCodeDisplay
-                        qrData={qrData}
-                        qrCodeData={qrCodeData}
-                        inputData={inputData}
-                        actualAuthorizationRequestObject={actualAuthorizationRequestObject}
-                        isRequestSigned={isRequestSigned}
-                        onDownloadDebugDetails={() => downloadDebugDetails(qrData, qrCodeData, inputData, actualAuthorizationRequestObject)}
-                        onOpenInjiWeb={handleOpenInjiWeb}
-                    />
+                    {isMobile ? (
+                        <QrCodeCard {...qrDisplayProps}/>
+                    ) : (
+                        <QrCodeDisplay {...qrDisplayProps}/>
+                    )}
                 </div>
                 <ScanResult/>
+                {isMobile && (
+                    <QrDataSections
+                        qrData={qrData}
+                        inputData={inputData}
+                        actualAuthorizationRequestObject={actualAuthorizationRequestObject}
+                    />
+                )}
             </div>
             {presentationRequestModal}
         </div>

@@ -13,6 +13,7 @@ import {
   validateClaimsArray,
   cloneQuery,
 } from "../utility/dcqlHelper";
+import Toggle from "./common/Toggle";
 
 const newCredential = () => ({
   id: `credential-${Date.now()}`,
@@ -287,9 +288,14 @@ export default function DcqlQueryEditor({
     });
   };
 
+  const editorOptions = [
+    { name: 'Form', selected: editorMode === "form", onChange: () => setEditorMode("form") },
+    { name: 'JSON', selected: editorMode === "json", onChange: () => setEditorMode("json") },
+  ];
+
   return (
     <div>
-      <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <div style={{ marginBottom: 12, display: "flex", gap: 8, flexWrap: "wrap", flexDirection: "column", justifyContent: "space-between", }}>
         <div style={{ border: "1px solid #e6e6e6", borderRadius: 8, padding: 8, minWidth: 280 }}>
           <div style={{ fontWeight: 600, marginBottom: 6 }}>Select Query (multi-select)</div>
           {DCQL_PRESETS.map((preset) => (
@@ -314,26 +320,27 @@ export default function DcqlQueryEditor({
             </Button>
           </div>
         </div>
-        <Button variant={editorMode === "form" ? "primary" : "secondary"} onClick={() => setEditorMode("form")}>Form</Button>
-        <Button variant={editorMode === "json" ? "primary" : "secondary"} onClick={() => setEditorMode("json")}>JSON</Button>
-        <CheckBox
-          id={"allow-invalid-request"}
-          label={"Allow invalid request"}
-          checked={allowInvalidRequest}
-          onClick={(checked) => {
-            if (disabled) return;
-            onAllowInvalidRequestChange?.(checked);
-          }}
-        />
-        <Button
-          variant={"tertiary"}
-          onClick={() => {
-            if (disabled) return;
-            applyQuery({ credentials: [], credential_sets: [] }, !allowInvalidRequest);
-          }}
-        >
-          Reset Empty
-        </Button>
+        <div>
+          <Toggle options={editorOptions} />
+          <div style={{display: 'flex', flexDirection: "row", gap: 20}}><CheckBox
+            id={"allow-invalid-request"}
+            label={"Allow invalid request"}
+            checked={allowInvalidRequest}
+            onClick={(checked) => {
+              if (disabled) return;
+              onAllowInvalidRequestChange?.(checked);
+            }}
+          />
+            <Button
+              variant={"tertiary"}
+              onClick={() => {
+                if (disabled) return;
+                applyQuery({ credentials: [], credential_sets: [] }, !allowInvalidRequest);
+              }}
+            >
+              Reset
+            </Button></div>
+        </div>
       </div>
 
       {disabled && (
@@ -456,7 +463,7 @@ export default function DcqlQueryEditor({
           })}
 
           <div>
-            <Button variant={"secondary"} onClick={addCredential}>Add Credential Query</Button>
+            <Button variant={"tertiary"} onClick={addCredential}>Add Credential Query</Button>
           </div>
 
           <h4 style={{ marginBottom: 0 }}>Credential Sets</h4>
@@ -505,7 +512,7 @@ export default function DcqlQueryEditor({
           ))}
 
           <div>
-            <Button variant={"secondary"} onClick={addCredentialSet}>Add Credential Set</Button>
+            <Button variant={"tertiary"} onClick={addCredentialSet}>Add Credential Set</Button>
           </div>
 
           {!!credentialIds.length && (

@@ -22,8 +22,8 @@ const BASE_CREDENTIAL_CONFIGURATIONS = {
     },
     credential_metadata: {
       display: [
-        { name: "Farmer Credential", locale: "en", "text_color": "#FFFFFF" },
-        { name: "किसान क्रेडेंशियल", locale: "hi", "text_color": "#FFFFFF" },
+        { name: "Farmer Credential", locale: "en", "text_color": "#000" },
+        { name: "किसान क्रेडेंशियल", locale: "hi", "text_color": "#000" },
       ],
       claims: [
         {

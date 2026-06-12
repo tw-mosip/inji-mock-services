@@ -9,6 +9,7 @@ export const useQrFetch = () => {
     const [qrCodeData, setQrCodeData] = useState(null);
     const [actualAuthorizationRequestObject, setActualAuthorizationRequestObject] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [qrSize, setQrSize] = useState(null);
 
     const resetValues = useCallback(() => {
         setErrorMessage(null);
@@ -53,6 +54,7 @@ export const useQrFetch = () => {
 
             setQrCodeData(qrResponse.data.qrCodeData);
             setQrData(qrResponse.data.qrData);
+            setQrSize(qrResponse.data.qrSize);
             const inputDataValue = qrResponse.data.inputData;
             setInputData(inputDataValue);
 
@@ -89,6 +91,7 @@ export const useQrFetch = () => {
 
     return {
         qrData,
+        qrSize,
         qrCodeData,
         inputData,
         actualAuthorizationRequestObject,
