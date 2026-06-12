@@ -12,6 +12,7 @@ import tokenHandler from "./as/token.js";
 import credentialHandler from "./credential/endpoint.js";
 import loginHandler from "./as/login.js";
 import nonceHandler from "./nonce.js";
+import { getDidDocument } from "./credential/ldp-vc.js";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -26,6 +27,11 @@ app.get("/qr", qrPageHandler);
 app.get("/qr/image", qrImageHandler);
 
 // ---- WELL-KNOWN ---- //
+app.get("/.well-known/did.json", (req, res) => {
+  const host = req.headers.host || 'mock-issuer.local:4000';
+  const issuerDid = `did:web:${host.replace(/:/g, '%3A')}`;
+  res.json(getDidDocument(issuerDid));
+});
 app.get("/.well-known/openid-credential-issuer", issuerMetadata);
 app.get("/:flow(pdi)/.well-known/openid-credential-issuer", issuerMetadata);
 app.get("/:version(v1|draft13)/.well-known/openid-credential-issuer", issuerMetadata);

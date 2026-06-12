@@ -40,7 +40,7 @@ function optionButton(name, value, currentValue, label, hint) {
 }
 
 function renderPage(options, pin = null) {
-  const { offerUri } = buildQrPayload(options, pin);
+  const { offerUri, qrData } = buildQrPayload(options, pin);
 
   const queryParams = new URLSearchParams({
     flow: options.flow,
@@ -416,7 +416,8 @@ function renderPage(options, pin = null) {
             </li>
           </ul>
           <div class="actions">
-            <a class="button-link primary" href="${escapeHtml(qrImageUrl)}" target="_blank" rel="noreferrer">Open Raw QR</a>
+            <a class="button-link primary" href="${escapeHtml(qrData)}">Open in Wallet</a>
+            <a class="button-link" href="${escapeHtml(qrImageUrl)}" target="_blank" rel="noreferrer">Open Raw QR</a>
             <a class="button-link" href="${escapeHtml(offerPreviewUrl)}" target="_blank" rel="noreferrer">Open Offer JSON</a>
           </div>
           <p class="footer-note">PDI mode keeps the authorization code grant but also advertises the interactive authorization endpoint for presentation-driven testing.</p>
