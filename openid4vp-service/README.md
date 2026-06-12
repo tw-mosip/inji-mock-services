@@ -4,14 +4,51 @@
 
 This is a mock service which mocks openid4vp backend to generate a QR code with Verifiable Presentation request and receive response in response-uri end-point.
 
+## Quick Gist
+
+This mock OpenID4VP setup has **2 apps**:
+
+1. **Backend app** (`openid4vp-service`)
+  - Generates OpenID4VP authorization requests.
+  - Creates QR payloads (`by_value` or `by_reference`).
+  - Exposes verifier APIs such as request object, presentation-definition URI, and VP response endpoints.
+  - Runs on `http://localhost:3000`.
+
+2. **Frontend app** (`ovp-client`)
+  - UI for selecting verifier configuration (draft/version, request mode, response mode, signing).
+  - Displays QR code and request payload details.
+  - Shows wallet scan results and debug data.
+  - Runs on `http://localhost:3001`.
+
+### Quick Start (Both Apps)
+
+Backend:
+
+```bash
+cd openid4vp-service
+npm install
+npm start
+```
+
+Frontend:
+
+```bash
+cd ovp-client
+npm install
+npm start
+```
+
+Open `http://localhost:3001`, choose a flow in the UI, and use the generated QR for wallet testing.
+
+For detailed setup and feature documentation, see:
+- **Backend**: [openid4vp-service/README.md](README.md)
+- **Frontend**: [ovp-client/README.md](ovp-client/README.md)
+
 #### specification followed
 
-openID4VP [Specification-21](https://openid.net/specs/openid-4-verifiable-presentations-1_0-21.html) and  [Specification-23](https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html).
+openID4VP [Specification-1.0](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html) and [Draft 23](https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html).
 
-### Start the service
-
-#### Pre-requisites before starting the service
-1. In case of testing out mso_mdoc VP share, ensure the mso_mdoc presentation definition's docType and claim is updated in presentationDefinitionMock.json file
+### Backend - Start the service
 
 #### Steps to start service
 1. Install the dependencies
@@ -20,32 +57,23 @@ openID4VP [Specification-21](https://openid.net/specs/openid-4-verifiable-presen
   cd openid4vp-service
   npm install
 ```
-2. Modify the configuration
-   - update the `baseUrl` constant in `app.js` file with the actual base url (exposed localtunnel url. Reference : [ https://theboroer.github.io/localtunnel-www/ ]) where the service is running.
-   - modify `presentationDefinitionMock.json` file with the presentation definition object as per requirement.
-3. Start the service
+2. Start the service
    - Start the service by running the below command
    - Note: Make sure the current working directory is openid4vp-service
 
 ```bash
-  node app.js 
+  npm start
 ```
+Provide your exposed remote URL as input which will be used as base URL for verifier host in the request data 
 
 To simplify the process, script is also exposed 
 
-#### start up script
-
-Post performing the pre-requisites, you can run the below command to start the service.
-
-```shell
-npm install # install the dependencies
-npm start # asks base url (localtunnel url or any remote url) and starts the service
-```
 
 # Supported features
 
 | Feature                                                   | Supported values                                                                                                                                                                                                                                                                                                                                                   |
 |-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| OpenID4VP specification versions                          | `draft-23`, `version-1.0`                                                                                                                                                                                                                                                                                                                                         |
 | Device flow                                               | cross device flow (QR code generated for the authorization request), Same device flow (Generated QR code with authorization request is clickable)                                                                                                                                                                                                                  |
 | Client id scheme                                          | `pre-registered`, `redirect_uri`, `did`                                                                                                                                                                                                                                                                                                                            |
 | Signed authorization request algorithms                   | Ed25519                                                                                                                                                                                                                                                                                                                                                            |
@@ -55,157 +83,12 @@ npm start # asks base url (localtunnel url or any remote url) and starts the ser
 | Authorization Response type                               | `vp_token`                                                                                                                                                                                                                                                                                                                                                         |
 | Supported Credential formats                              | `ldp_vc`, `mso_mdoc`                                                                                                                                                                                                                                                                                                                                               |
 
-### OpenID4VP Mock Service End-points
 
-1. Generate QR code with Verifier's Authorization Request
-
-- This end-point can be used to generate the QR code with the Verifier's Authorization Request to fetch the Verifiable Credentials from the Wallet.
-- Endpoint
-```html
-/verifier/<client_id_scheme>/<response_mode>?draft=<draft_version>
-```
-- The placeholder values in the end-point should be replaced with the below values:
-    - client_id_scheme = pre-registered, redirect_uri, did
-    - response_mode = by_value, by_reference
-    - draft_version = draft-21, draft-23 (default draft-23)
-- Error scenarios:
-    
-| Scenario                                                                   | status code | Message                                                              |
-|----------------------------------------------------------------------------|-------------|----------------------------------------------------------------------|
-| 1. Provided client_id_scheme / response_mode / draft version not supported | 400         | Bad Request: Provided combination is not supported                   |
-| 2. Provided request_mode is not supported                                  | 400         | Bad Request: <client_id_scheme> does not support <request_mode> mode |
-| 3. Other general errors                                                    | 500         | Internal Server Error                                                |
-
-
-2. Get Authorization Request Object (for request_uri method)
-
-- This is the request_uri endpoint which is used to generate and send the Authorisation Request object as a JWT
-- Endpoint
-```html
-/verifier/get-auth-request-obj/<client_id_scheme>?draft=<draft_version>
-```
-- The placeholder values in the end-point should be replaced with the below values:
-    - client_id_scheme = pre-registered, redirect_uri, did
-    - draft_version = draft-21, draft-23 (default draft-23)
-- Error scenarios:
-
-| Scenario                                                       | status code | Message                                                              |
-|----------------------------------------------------------------|-------------|----------------------------------------------------------------------|
-| 1. Provided client_id_scheme / draft version not supported     | 400         | Bad Request: Provided combination is not supported                   |
-| 2. By reference mode is not supported for the client id scheme | 400         | Bad Request: <client_id_scheme> does not support <request_mode> mode |
-| 3. Other general errors                                        | 500         | Internal Server Error                                                |
-
-
-### 3. (Deprecated) Create QR code for Verifier's Authorization Request By Value
-
-```
-/verifier/generate-auth-request-by-value-<client_id_scheme>-qr
-```
-
-- This end-point can be used to generate the QR code with the Verifier's Authorization Request to
-  fetch the Verifiable Credentials from the Wallet.
-- The client_is_scheme can be one of the following:
-
-| client_id_scheme | api                                                          |
-|------------------|--------------------------------------------------------------|
-| redirect_uri     | `/verifier/generate-auth-request-by-value-redirect-qr`       |
-| pre-registered   | `/verifier/generate-auth-request-by-value-pre-registered-qr` |
-
-- Here configure the **response_uri** field of the **Authorization Request** with the actual
-  end-point where we would like to receive the response. Here Localhost won't be accessible from the
-  physical device, recommended using local tunnel [https://theboroer.github.io/localtunnel-www/ ] generate a
-  corresponding mapping url for the Localhost.
-- As part of the Authorization Request Verifier can send **presentation_definition_uri** instead of the full **presentation_definition** to reduce the amount of data embedded in the QR code and this uri returns the actual **presentation_definition** object when called and only one of **presentation_definition** & **presentation_definition_uri** should be present in the request.
-
-**Ex:**
-
-##### Send _presentation_definition_ in request:
-```javascript
-    const authorizationRequest =
-    "https://client.example.org/universal-link?
-    response_type=vp_token
-    &response_mode=direct_post
-    &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &presentation_definition=...
-    &nonce=n-0S6_WzA2Mj
-    &response_uri=baseUrl+"/verifier/vp-response"
-    &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp_json%22:%
-    7B%22alg%22:%5B%22EdDSA%22,%22ES256K%22%5D%7D,%22ldp
-    _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
-    8%22%5D%7D%7D%7D"
-```
-
-or
-
-##### Send _presentation_definition_uri_ in request:
-```javascript
-    const authorizationRequest =
-    "https://client.example.org/universal-link?
-    response_type=vp_token
-    &response_mode=direct_post
-    &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
-    &redirect_uri=https%3A%2F%2Fclient.example.org%2Fcb
-    &presentation_definition_uri=baseUrl+"/verifier/presentation_definition_uri"
-    &nonce=n-0S6_WzA2Mj
-    &response_uri=baseUrl+"/verifier/vp-response"
-    &client_metadata=%7B%22vp_formats%22:%7B%22jwt_vp_json%22:%
-    7B%22alg%22:%5B%22EdDSA%22,%22ES256K%22%5D%7D,%22ldp
-    _vp%22:%7B%22proof_type%22:%5B%22Ed25519Signature201
-    8%22%5D%7D%7D%7D"
-```
-
-### 4. (Deprecated) Create QR code for Verifier's Authorization Request By Reference
-
-```
-/verifier/generate-auth-request-by-reference-qr
-```
-- This end-point can be used to generate the QR code with `request uri` field which is used to get the Verifier's Authorization Request to fetch the Verifiable Credentials from the Wallet.
-- Here configure the `request_uri` field with the actual end-point where we can fetch the Authorization Request. Here Localhost won't be accessible from the physical device, recommended using localtunnel [https://theboroer.github.io/localtunnel-www/ ] to generate a corresponding mapping url for the Localhost. 
-- The response of the `request_uri` will either be a jwt or base64 encoded json string which contains the Authorization Request 
-##### Send _request_uri_ in the qr code:
-```javascript
-    const authorizationRequest =
-    "https://client.example.org/universal-link?
-    &client_id=redirect_uri:https%3A%2F%2Fclient.example.org%2Fcb
-    &request_uri_method=get
-    &request_uri=baseUrl+"/verifier/get-auth-request-obj"
-
-```
-
-#### 5. (Deprecated) Get Authorization Request Object
-
-```
-/verifier/get-auth-request-obj:
-```
-- This is the request_uri endpoint which is used to generate and send the Authorisation Request object either as a JWT or base64 encoded string.
-
-
-### 6. Get Presentation Definition Object
-
-```
-/verifier/presentation_definition_uri
-```
-- This end-point can be passed as part of the Verifier's Authorization Request QR code which gives the actual presentation_definition object when called.
-- Please refer to the above example to understand how to send presentation_definition_uri as part of the Authorization Request.
-
-### 7. Submission of Authorization Response
-
-```
-/verifier/vp-response:
-```
-
-- This is the response_uri end-point which is used to listen to the Verifiable Presentation response
-  shared by the wallet and return the response back to the wallet to notify whether this server has
-  received the response or not.
-- It just receives the Verifiable Presentation response in the request body and returns
-  the response but doesn't perform any validations on the received data.
-
-#### 8. Hosted public keys of the Verifier
+#### Hosted public keys of the Verifier
 
 - The public keys used by the Verifier for signing JWTs are exposed at the endpoint `/.well-known/jwks.json`.
 - This endpoint returns a JWKS (JSON Web Key Set) containing the public keys in standard format, which can be used by clients and wallets to verify signatures.
-- Example usage: Fetch the JWKS from <base-url>/.well-known/jwks.json` to validate the Verifier's JWTs.
+- Example usage: Fetch the JWKS from `<base-url>/.well-known/jwks.json` to validate the Verifier's JWTs.
 
 
 ## Client id schemes supported
@@ -233,7 +116,65 @@ or
 - Runs on http://localhost:3001 and is exposed via ngrok at a public URL (e.g., https://your-ui.ngrok.io).
 - Steps to run the Mock Frontend UI are provided in the `ovp-client/README.md` file.
 
-Reference: https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html#name-client-identifier-scheme-an
+## Available APIs
+
+| Method | Path | Responsibility |
+|--------|------|----------------|
+| `GET` | `/.well-known/jwks.json` | Exposes verifier public keys as a JWKS for signature verification. |
+| `GET`, `POST` | `/verifier/:client_id_scheme/:request_mode` | Generates the authorization request and returns the QR response payload. Applies request overrides such as `dcql_query`, `presentation_definition`, signing option, draft/version, and response mode. |
+| `GET`, `POST` | `/verifier/get-auth-request-obj/:sessionId/:client_id_scheme` | Returns the actual authorization request object for `by_reference` flows using the request data stored for the given `sessionId`. |
+| `GET` | `/verifier/presentation-definition-uri/:sessionId` | Returns the session-scoped presentation definition, including any stored overrides for that `sessionId`. |
+| `GET` | `/verifier/presentation_definition_uri` | Legacy endpoint that returns the default presentation definition without session-specific overrides. |
+| `POST` | `/verifier/vp-response` | Accepts the wallet VP response and stores it as the latest received verifier result. |
+| `GET` | `/verifier/vp-result` | Returns the latest stored VP result once and clears it from in-memory state. |
+| `GET` | `/verifier/check-response` | Returns whether a verifier response has been received. |
+| `GET` | `/verifier/callback` | Renders the success callback page after completion of the response flow. |
+| `POST` | `/verifier/decrypt-jwe` | Decrypts a JWE token using the active server encryption key and returns the decrypted payload. |
+
+### Common API Examples
+
+Generate a QR code payload for a `by_reference` request:
+
+```bash
+curl -X POST "http://localhost:3000/verifier/pre-registered/by_reference?draft=version-1.0" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "signed": true,
+    "response_mode": "direct_post",
+    "dcql_query": {
+      "credentials": []
+    }
+  }'
+```
+
+Fetch the actual authorization request object for a session:
+
+```bash
+curl "http://localhost:3000/verifier/get-auth-request-obj/<sessionId>/pre-registered?draft=version-1.0&response_mode=direct_post"
+```
+
+Post a wallet VP response back to the verifier:
+
+```bash
+curl -X POST "http://localhost:3000/verifier/vp-response" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "vp_token": "<vp-token>",
+    "presentation_submission": {
+      "id": "submission-id"
+    }
+  }'
+```
+
+## Session Creation Using sessionId
+
+- When `/verifier/:client_id_scheme/:request_mode` is called, the service generates a new `sessionId` for that request.
+- The generated `sessionId` is used to store session-scoped request data such as `dcql_query` and `presentation_definition` overrides.
+- For `by_reference` flows, the `sessionId` is embedded into the generated `request_uri` as `/verifier/get-auth-request-obj/:sessionId/:client_id_scheme`.
+- When presentation definition is served by reference, the service also uses the same `sessionId` in `/verifier/presentation-definition-uri/:sessionId`.
+- This allows each QR code request to resolve the correct request object and presentation definition without mixing overrides from other sessions.
+
+Reference: https://openid.net/specs/openid-4-verifiable-presentations-1_0.html
 
 ## Version Supported
 

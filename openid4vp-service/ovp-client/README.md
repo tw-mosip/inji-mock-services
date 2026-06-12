@@ -3,10 +3,20 @@
 This React client application is built to interact with the OpenID4VP mock verifier services. It provides a user-friendly interface to:
 
 - Select and generate different types of OpenID4VP Authorization Requests (by-value, by-reference, pre-registered).
+- Switch between the supported OpenID4VP request versions: `draft-23` and `version-1.0`.
 - Display the corresponding QR codes for mobile wallet scanning.
 - Listen for Verifiable Presentation (VP) responses sent by wallets after scanning.
 - Visually display parsed VP tokens, presentation submissions, and other payloads.
 - It serves as a frontend demo for testing OpenID4VP flows using mock services.
+
+## Features
+
+- Editable configurations for testing different verifier flows, including request mode, supported spec version selection (`draft-23` and `version-1.0`), response mode, and request signing options.
+- QR code display for generated presentation requests, with actions to download the QR image and open the same request in InjiWeb.
+- QR code information panels for viewing the generated request data, QR payload, and actual authorization request object for `request_uri` flows.
+- Scan result display that polls for wallet responses and shows either the received VP response or any returned error details.
+- Decoded view for encoded data so JWT-based request content can be inspected in decoded as well as encoded form.
+- Editable presentation request details that allow updating the DCQL query or presentation definition before submitting the presentation request.
 
 ## Steps to run the client app
 - Run the mock services by running `npm start` in the `openid4vp-service` directory. It will be running in the port `3000`.

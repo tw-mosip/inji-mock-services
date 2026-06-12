@@ -323,6 +323,33 @@ cd /path/to/openid4vp-service
 node index.js
 ```
 
+### Verifier Configuration for PDI Flow
+
+The file `src/as/verifier-config.js` is used by the issuer during the **PDI interactive authorization flow**.
+
+When the issuer handles `POST /as/interactive-authorization`, it loads the values from `verifier-config.js`, calls the verifier service, and uses the returned verifier request object as the `openid4vp_request` sent back to the wallet.
+
+This helps you customize verifier behavior for PDI without changing the interactive authorization handler itself.
+
+You can use `verifier-config.js` to control:
+
+* `specVersion`: selects whether the verifier request is built for `draft-23` or `version-1.0`
+* `responseMode`: controls how the verifier expects the presentation response
+* `clientIdScheme`: selects the verifier client ID scheme such as `did`, `redirect_uri`, or `pre-registered`
+* `requestMode`: switches between `by_value` and `by_reference`
+* `verifierBaseUrl`: points the issuer to the verifier service instance to call
+* `signedRequest`: enables or disables signed verifier requests
+* `presentationDefinition`: used when the selected spec version is `draft-23`
+* `dcqlQuery`: used when the selected spec version is `version-1.0`
+
+In practice, this means you can change the verifier requirements for a PDI run by editing one config file before starting the flow. For example, you can switch from presentation-definition based requests to DCQL-based requests, change the verifier endpoint, or test signed versus unsigned requests.
+
+**Example:**
+
+* Set `specVersion` to `draft-23` and update `presentationDefinition` to test a presentation-definition based verifier request.
+* Set `specVersion` to `version-1.0` and update `dcqlQuery` to test a DCQL-based verifier request.
+* Change `verifierBaseUrl` when your verifier is exposed through ngrok or another public tunnel.
+
 **3. Link Services**
 
 To make changes in the VP service reflect in the issuer:
