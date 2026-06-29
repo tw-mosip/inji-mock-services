@@ -378,6 +378,84 @@ When making changes across both services:
 
 ---
 
-## 📄 License
+## 🔐 DPoP Testing (RFC 9449)
+
+The mock issuer now supports **DPoP sender-constrained access tokens**. When the wallet sends a `DPoP` header on the token request, the server validates the proof and issues a `token_type: DPoP` token. The credential endpoint then validates the access-token-bound DPoP proof on every credential request.
+
+### How it works
+
+```
+Wallet                          Mock Issuer
+  │                                 │
+  │── POST /as/token ───────────────▶
+  │   DPoP: <proof JWT>             │  validates proof (htm, htu, iat, jti)
+  │◀─ 200 { token_type:"DPoP" } ───│  stores JWK thumbprint with token
+  │   DPoP-Nonce: <nonce>           │
+  │                                 │
+  │── POST /credential ─────────────▶
+  │   Authorization: DPoP <token>   │  validates ath-bound proof
+  │   DPoP: <proof JWT w/ ath>      │  (ath = SHA-256 of access token)
+  │◀─ 200 { credential: … } ───────│
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `USE_DPOP_NONCE` | `false` | When `true`, the AS returns `400 use_dpop_nonce` on the first token request, forcing the wallet to retry with a server-issued nonce. Use this to test the nonce-retry flow. |
+
+### Starting the server for DPoP testing
+
+**Happy path (no nonce required):**
+```bash
+npm start
+# or
+node src/server.js
+```
+
+**Nonce-retry flow:**
+```bash
+USE_DPOP_NONCE=true node src/server.js
+```
+
+### QA Test Scenarios
+
+| # | Scenario | How to trigger | Expected result |
+|---|---|---|---|
+| **TC-01** | DPoP happy path | Start server normally, use wallet with DPoP library | Token `token_type: DPoP`, credential issued |
+| **TC-02** | Nonce retry flow | `USE_DPOP_NONCE=true`, run wallet | First token request → `400 use_dpop_nonce` + `DPoP-Nonce` header; wallet retries with nonce → succeeds |
+| **TC-03** | Bearer fallback | Wallet without DPoP header (or turn off DPoP in lib) | Token `token_type: Bearer`, credential issued (backward compat) |
+| **TC-04** | Invalid DPoP proof | Tamper with the proof before sending | `400 invalid_dpop_proof` |
+| **TC-05** | Wrong `htu` | Send proof with wrong URL in `htu` claim | `400 invalid_dpop_proof` (htu mismatch) |
+| **TC-06** | Wrong `ath` | Send credential request with wrong access token hash | `401` with `WWW-Authenticate: DPoP error="invalid_dpop_proof"` |
+| **TC-07** | DPoP token used as Bearer | Send `Authorization: Bearer <dpop-token>` | Credential issued (server trusts the token store entry) |
+| **TC-08** | HTTP endpoint | Point wallet at `http://` URL | Wallet HTTPS check rejects before sending (client-side) |
+
+### Verifying with curl (manual)
+
+**Step 1 — Get a pre-auth credential offer:**
+```bash
+curl -sk "https://mock-issuer.local:4000/credential-offer?flow=pre-auth&version=v1&credential=sd-jwt" | jq
+```
+
+**Step 2 — Exchange pre-auth code (Bearer, no DPoP):**
+```bash
+curl -sk -X POST https://mock-issuer.local:4000/as/token \
+  -d "grant_type=urn:ietf:params:oauth:grant-type:pre-authorized_code" \
+  -d "pre-authorized_code=<code from offer>" | jq .token_type
+# → "Bearer"
+```
+
+**Step 3 — Same request with a DPoP proof header:**
+```bash
+# Generate a DPoP proof using the inji-vci-client library or a test tool
+# token_type in response will be "DPoP"
+```
+
+> **Tip:** Use the [dpop-test-tool](https://github.com/panva/dpop) or generate proofs directly via the Swift/Kotlin VCI client library tests to get valid DPoP JWTs for manual curl testing.
+
+---
+
+
 
 MIT

@@ -29,6 +29,10 @@ export default function authServerMetadata(req, res) {
     scopes_supported: ["degree.read", "jwt_vc_json.read", "openid"],
     token_endpoint_auth_methods_supported: ["none"],
 
+    // DPoP sender-constrained tokens (RFC 9449)
+    // Priority order matches the VCI client library: EdDSA → ES256K → ES256/ES384/ES512 → RS256
+    dpop_signing_alg_values_supported: ["EdDSA", "ES256K", "ES256", "ES384", "ES512", "RS256"],
+
     // For OpenID4VCI, authorization_details will be used
     authorization_details_types_supported: ["openid_credential"]
   };
