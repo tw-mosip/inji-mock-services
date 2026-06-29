@@ -59,6 +59,11 @@ export default async function credentialEndpoint(req, res) {
     }
     try {
       const htu = buildHtu(req);
+      const { decodeProtectedHeader, decodeJwt } = await import("jose");
+      console.log("[DPoP Credential Proof]");
+      console.log("  raw    :", dpopProof);
+      console.log("  header :", JSON.stringify(decodeProtectedHeader(dpopProof)));
+      console.log("  payload:", JSON.stringify(decodeJwt(dpopProof)));
       await verifyDPoPProof(dpopProof, "POST", htu, { accessToken });
     } catch (err) {
       console.warn("Credential endpoint DPoP validation failed:", err.message);

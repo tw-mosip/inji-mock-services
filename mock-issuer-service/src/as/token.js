@@ -30,6 +30,7 @@ export default async function tokenHandler(req, res) {
   console.log("Token Request:", grant_type, code || preAuthorizedCode);
 
   let scope;
+  let boundDpopJkt = null; // RFC 9449 §10: set if dpop_jkt was bound at authorization
   let testError = envTestError("token") || stageTestErrorStore.get("token") || null;
   let credentialTestError =
     envTestError("credential") || stageTestErrorStore.get("credential") || null;
@@ -58,6 +59,17 @@ export default async function tokenHandler(req, res) {
     testError ||= entry.testError?.stage === "token" ? entry.testError : null;
     credentialTestError ||= entry.testError?.stage === "credential" ? entry.testError : null;
     authCodeStore.delete(code);
+
+    // RFC 9449 §10: if dpop_jkt was bound at authorization, DPoP proof is mandatory
+    if (entry.dpop_jkt) {
+      if (!req.headers["dpop"]) {
+        return res.status(400).json({
+          error: "invalid_dpop_proof",
+          error_description: "DPoP proof required — dpop_jkt was bound at authorization",
+        });
+      }
+      boundDpopJkt = entry.dpop_jkt;
+    }
   } else if (grant_type === "urn:ietf:params:oauth:grant-type:pre-authorized_code") {
     if (!preAuthorizedCode) {
       return res.status(400).json({
@@ -144,7 +156,24 @@ export default async function tokenHandler(req, res) {
 
       dpopThumbprint = result.thumbprint;
       tokenType = "DPoP";
+      const { decodeProtectedHeader: dph, decodeJwt: djwt } = await import("jose");
+      console.log("[DPoP Token Proof]");
+      console.log("  raw    :", dpopProof);
+      console.log("  header :", JSON.stringify(dph(dpopProof)));
+      console.log("  payload:", JSON.stringify(djwt(dpopProof)));
       console.log(`DPoP proof valid (alg: ${result.jwk?.crv || "RSA"}, thumbprint: ${dpopThumbprint})`);
+
+      // RFC 9449 §10: enforce dpop_jkt binding using the verified thumbprint
+      if (boundDpopJkt && dpopThumbprint !== boundDpopJkt) {
+        console.warn(`dpop_jkt mismatch: expected ${boundDpopJkt}, got ${dpopThumbprint}`);
+        return res.status(400).json({
+          error: "invalid_dpop_proof",
+          error_description: "DPoP key thumbprint does not match dpop_jkt bound at authorization",
+        });
+      }
+      if (boundDpopJkt) {
+        console.log(`dpop_jkt verified ✓ (thumbprint: ${dpopThumbprint})`);
+      }
     } catch (err) {
       if (err instanceof DPoPError && err.code === "use_dpop_nonce") {
         res.setHeader("DPoP-Nonce", freshNonce);
@@ -174,6 +203,12 @@ export default async function tokenHandler(req, res) {
     testError: credentialTestError,
   });
   if (credentialTestError) stageTestErrorStore.delete("credential");
+
+  console.log(
+    `Issuing token: token_type=${tokenType} access_token=${accessToken} c_nonce=${cNonce}${
+      dpopThumbprint ? ` dpop_thumbprint=${dpopThumbprint}` : ""
+    }`,
+  );
 
   res.setHeader("Cache-Control", "no-store");
 

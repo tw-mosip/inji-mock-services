@@ -85,6 +85,14 @@ function renderPage(options, pin = null, configError = null, jsonFieldText = {})
     version: options.version,
     credential: options.credential
   });
+  if (options.testErrorStage) queryParams.set("test_error_stage", options.testErrorStage);
+  if (options.testErrorCode !== null) {
+    queryParams.set("test_error_code", options.testErrorCode);
+  }
+  if (options.testErrorStatus) queryParams.set("test_error_status", options.testErrorStatus);
+  if (options.testErrorDescription) {
+    queryParams.set("test_error_description", options.testErrorDescription);
+  }
   if (pin) queryParams.set("tx_code", pin);
 
   const qrImageUrl = `/qr/image?${queryParams.toString()}`;
