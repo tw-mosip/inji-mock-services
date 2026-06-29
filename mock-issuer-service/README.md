@@ -446,6 +446,62 @@ When making changes across both services:
 
 ---
 
-## 📄 License
+## 🔐 DPoP Testing (RFC 9449)
+
+The mock issuer now supports **DPoP sender-constrained access tokens**. When the wallet sends a `DPoP` header on the token request, the server validates the proof and issues a `token_type: DPoP` token. The credential endpoint then validates the access-token-bound DPoP proof on every credential request.
+
+### How it works
+
+```
+Wallet                          Mock Issuer
+  │                                 │
+  │── POST /as/token ───────────────▶
+  │   DPoP: <proof JWT>             │  validates proof (htm, htu, iat, jti)
+  │◀─ 200 { token_type:"DPoP" } ───│  stores JWK thumbprint with token
+  │   DPoP-Nonce: <nonce>           │
+  │                                 │
+  │── POST /credential ─────────────▶
+  │   Authorization: DPoP <token>   │  validates ath-bound proof
+  │   DPoP: <proof JWT w/ ath>      │  (ath = SHA-256 of access token)
+  │◀─ 200 { credential: … } ───────│
+```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `USE_DPOP_NONCE` | `false` | When `true`, the AS returns `400 use_dpop_nonce` on the first token request, forcing the wallet to retry with a server-issued nonce. Use this to test the nonce-retry flow. |
+
+### Starting the server for DPoP testing
+
+**Happy path (no nonce required):**
+```bash
+npm start
+# or
+node src/server.js
+```
+
+**Nonce-retry flow:**
+```bash
+USE_DPOP_NONCE=true node src/server.js
+```
+
+### QA test scenarios (release-build wallet)
+
+These run end-to-end against a **released wallet build** — no wallet code changes or
+hand-crafted requests. QA only controls the **issuer side** (the `USE_DPOP_NONCE` env
+var and which wallet release is used) and confirms results from the issuer console
+logs and the wallet's success/error screen.
+
+| # | Scenario | How to trigger | Expected result |
+|---|---|---|---|
+| **TC-01** | DPoP happy path | Start the server normally and complete issuance from the wallet | Credential issued; issuer log shows `token_type: DPoP` |
+| **TC-02** | Nonce-retry flow | Start with `USE_DPOP_NONCE=true`, then complete issuance from the wallet | Wallet gets `400 use_dpop_nonce` + `DPoP-Nonce` on the first token request, auto-retries with the nonce, and issuance still succeeds |
+| **TC-03** | Backward compatibility | Use a pre-DPoP wallet release (sends no `DPoP` header) | Issuer log shows `token_type: Bearer`; credential still issued |
+| **TC-04** | Plain-HTTP issuer | Point the wallet at an `http://` issuer URL | Wallet's HTTPS check rejects it client-side before any request is sent |
+
+---
+
+
 
 MIT
