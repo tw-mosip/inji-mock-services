@@ -1,16 +1,20 @@
-import { generateAuthCode, authCodeStore } from "./authz-store.js";
+import { generateAuthCode, authCodeStore, issuerStateStore } from "./authz-store.js";
 
 export default function loginHandler(req, res) {
-  const { client_id, redirect_uri, state } = req.body;
+  const { client_id, redirect_uri, state, issuer_state: issuerState, dpop_jkt } = req.body;
 
   const code = generateAuthCode();
+  const issuerStateEntry = issuerState ? issuerStateStore.get(issuerState) : null;
 
   authCodeStore.set(code, {
     client_id,
     redirect_uri,
     state,
-    created_at: Date.now()
+    dpop_jkt: dpop_jkt || null,   // RFC 9449 §10 — key binding
+    created_at: Date.now(),
+    testError: issuerStateEntry?.testError || null,
   });
+  if (issuerState) issuerStateStore.delete(issuerState);
 
   const redirectURL = new URL(redirect_uri);
   redirectURL.searchParams.set("code", code);

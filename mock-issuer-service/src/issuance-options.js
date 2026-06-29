@@ -1,6 +1,7 @@
 const FLOW_OPTIONS = new Set(["normal", "pdi", "pre-auth", "pre-auth-tx"]);
 const VERSION_OPTIONS = new Set(["v1", "draft13"]);
 const CREDENTIAL_OPTIONS = new Set(["farmer", "employee", "sd-jwt", "mdoc"]);
+const TEST_ERROR_STAGES = new Set(["offer", "authorization", "token", "credential"]);
 
 export const SPEC_VERSION_OPTIONS = new Set(["draft-23", "version-1.0"])
 export const RESPONSE_MODE_OPTIONS = new Set(["iar-post", "iar-post.jwt", "iae_post", "iae_post.jwt"]);
@@ -60,7 +61,7 @@ export function resolveIssuanceOptions(query = {}) {
   const specVersion = SPEC_VERSION_OPTIONS.has(query.specVersion) ? query.specVersion : "draft-23"
   const requestMode = REQUEST_MODE_OPTIONS.has(query.requestMode) ? query.requestMode : "by_reference"
   const signedRequest = query.signedRequest ? query.signedRequest === "true" : true
-
+  const hasTestErrorCode = Object.prototype.hasOwnProperty.call(query, "test_error_code");
 
   return {
     flow,
@@ -72,6 +73,12 @@ export function resolveIssuanceOptions(query = {}) {
     specVersion,
     requestMode,
     signedRequest,
+    testErrorStage: TEST_ERROR_STAGES.has(query.test_error_stage)
+      ? query.test_error_stage
+      : null,
+    testErrorCode: hasTestErrorCode ? query.test_error_code : null,
+    testErrorStatus: query.test_error_status || null,
+    testErrorDescription: query.test_error_description || null,
   };
 }
 
@@ -81,6 +88,12 @@ export function buildOfferUrl(issuer, options) {
     version: options.version,
     credential: options.credential,
   });
+  if (options.testErrorStage) params.set("test_error_stage", options.testErrorStage);
+  if (options.testErrorCode !== null) params.set("test_error_code", options.testErrorCode);
+  if (options.testErrorStatus) params.set("test_error_status", options.testErrorStatus);
+  if (options.testErrorDescription) {
+    params.set("test_error_description", options.testErrorDescription);
+  }
 
   return `${issuer}/credential-offer?${params.toString()}`;
 }

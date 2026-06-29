@@ -1,5 +1,6 @@
 import express from "express";
 import https from "https";
+import http from "http";
 import fs from "fs";
 import cors from "cors";
 import authServerMetadata from "./as/metadata.js";
@@ -13,6 +14,7 @@ import credentialHandler from "./credential/endpoint.js";
 import loginHandler from "./as/login.js";
 import nonceHandler from "./nonce.js";
 import { getDidDocument } from "./credential/ldp-vc.js";
+import { ISSUER } from "./issuer-profile.js";
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -98,16 +100,23 @@ app.post("/:flow(pdi)/nonce", nonceHandler);
 app.post("/:version(v1|draft13)/nonce", nonceHandler);
 app.post("/:version(v1|draft13)/:flow(pdi)/nonce", nonceHandler);
 
-// ---- HTTPS SERVER ---- //
-const options = {
-  key: fs.readFileSync("cert/server.key"),
-  cert: fs.readFileSync("cert/server.cert")
-};
+// ---- SERVER (HTTP or HTTPS) ---- //
+// USE_HTTPS=false serves plain HTTP (handy when fronted by a tunnel that
+// terminates TLS, e.g. ngrok http://localhost:4000). Defaults to HTTPS.
+const port = Number(process.env.PORT || 4000);
+const host = process.env.HOST || "0.0.0.0";
+const useHttps = String(process.env.USE_HTTPS ?? "true").toLowerCase() !== "false";
 
-https.createServer(options, app).listen(4000, () => {
-  console.log("Mock Issuer running at https://mock-issuer.local:4000");
-});
-
-// app.listen(4000, () => {
-//   console.log(`Server is running on http://localhost:4000`);
-// });
+if (useHttps) {
+  const options = {
+    key: fs.readFileSync(process.env.TLS_KEY_PATH || "cert/server.key"),
+    cert: fs.readFileSync(process.env.TLS_CERT_PATH || "cert/server.cert")
+  };
+  https.createServer(options, app).listen(port, host, () => {
+    console.log(`Mock Issuer (https) running at ${ISSUER} (local :${port})`);
+  });
+} else {
+  http.createServer(app).listen(port, host, () => {
+    console.log(`Mock Issuer (http) running at ${ISSUER} (local :${port})`);
+  });
+}

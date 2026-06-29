@@ -116,7 +116,8 @@ export async function verifyDPoPProof(dpopProof, htm, htu, opts = {}) {
  * Builds the canonical htu value from an Express request (scheme + host + path).
  */
 export function buildHtu(req) {
-  const proto = req.protocol || 'https';
+  // Respect x-forwarded-proto from reverse proxies (e.g. ngrok)
+  const proto = req.headers['x-forwarded-proto'] || req.protocol || 'https';
   const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:4000';
   return `${proto}://${host}${req.path}`;
 }
