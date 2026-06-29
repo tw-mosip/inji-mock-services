@@ -44,11 +44,7 @@ function updateVpRequest(inputData, responseMode, draftVersion, byReferenceMode 
 
     updatedData.response_mode = responseMode;
 
-    const responseModeEnum = responseMode === 'direct_post.jwt'
-        ? ResponseModes.DIRECT_POST_JWT
-        : ResponseModes.DIRECT_POST;
-
-    const verifierMetadata = getVerifierMetadata(responseModeEnum, draftVersion);
+    const verifierMetadata = getVerifierMetadata(responseMode, draftVersion);
 
     if (byReferenceMode) {
         updatedData.client_metadata = verifierMetadata;
@@ -186,7 +182,7 @@ function registerVerifierRoutes(app, deps) {
         const bodyRequestMode = req.body?.request_mode;
         const client_id_scheme = pathClientIdScheme || bodyClientIdScheme;
         const request_mode = pathRequestMode || bodyRequestMode;
-        let draftVersion = req.query.draft;
+        let draftVersion = req.query.draft ?? "version-1.0";
         const signedValue = req.method === 'POST' ? req.body?.signed : req.query.signed;
         const signed = signedValue === true || signedValue === 'true';
         const responseMode = (req.method === 'POST' ? req.body?.response_mode : req.query.response_mode) || 'direct_post';

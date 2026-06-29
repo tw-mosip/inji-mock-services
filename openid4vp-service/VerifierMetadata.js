@@ -84,7 +84,7 @@ const VerifierMetadata = {
 function getVerifierMetadata(responseMode, version) {
   let metadata = JSON.parse(JSON.stringify(VerifierMetadata[version] || {}));
 
-  if (responseMode === ResponseModes.DIRECT_POST) {
+  if (!String(responseMode).includes(".jwt")) {
     if (version === DRAFT_VERSIONS.V_1_0) {
       delete metadata["encrypted_response_enc_values_supported"];
     }
