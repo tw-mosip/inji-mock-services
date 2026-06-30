@@ -13,12 +13,12 @@ import { createSdJwt } from "./sd-jwt.js";
 import { createMdoc } from "./mdoc.js";
 import { signLdpVc } from "./ldp-vc.js";
 
-const SUPPORTED_FORMATS = ["ldp_vc", "jwt_vc_json", "vc+sd-jwt", "mso_mdoc"];
+const SUPPORTED_FORMATS = ["ldp_vc", "jwt_vc_json", "vc+sd-jwt","dc+sd-jwt", "mso_mdoc"];
 
 // Minimal config-id → format map for the v1 flow where the client sends
 // credential_configuration_id instead of format.
 const CONFIG_TO_FORMAT = {
-  UniversityDegreeCredential: "ldp_vc",
+  FarmerCredential: "ldp_vc",
   JwtVerifiableCredential: "jwt_vc_json",
   SdJwtVerifiableCredential: "vc+sd-jwt",
   MdocVerifiableCredential: "mso_mdoc",
@@ -136,7 +136,7 @@ export default async function credentialEndpoint(req, res) {
             .setNotBefore('0s')
             .setExpirationTime('1y')
             .sign(privateKey);
-        } else if (format === "dc+sd-jwt" || format === "vc+sd-jwt") {
+        } else if (format === "vc+sd-jwt" || format === "dc+sd-jwt") {
           let holderCnfInfo = {};
           if (holderKey?.startsWith("did:jwk:")) {
             const encodedJwk = holderKey.slice("did:jwk:".length);

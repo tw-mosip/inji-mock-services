@@ -50,8 +50,8 @@ function isValidPresentationDefinitionOverride(pd) {
     return !!pd && typeof pd === 'object' && !Array.isArray(pd);
 }
 
-function applyPresentationDefinitionOverride(inputData, draftVersion, presentationDefinitionOverride, defaultPresentationDefinition) {
-    if (!inputData || draftVersion === SPEC_VERSIONS.V_1_0 || !('presentation_definition' in inputData)) {
+function applyPresentationDefinitionOverride(inputData, specVersion, presentationDefinitionOverride, defaultPresentationDefinition) {
+    if (!inputData || specVersion === SPEC_VERSIONS.V_1_0 || !('presentation_definition' in inputData)) {
         return inputData;
     }
 
@@ -64,8 +64,8 @@ function applyPresentationDefinitionOverride(inputData, draftVersion, presentati
     return updatedInputData;
 }
 
-function applyDcqlQueryOverride(inputData, draftVersion, dcqlOverride, defaultDcqlQuery) {
-    if (!inputData || draftVersion !== SPEC_VERSIONS.V_1_0 || !('dcql_query' in inputData)) {
+function applyDcqlQueryOverride(inputData, specVersion, dcqlOverride, defaultDcqlQuery) {
+    if (!inputData || specVersion !== SPEC_VERSIONS.V_1_0 || !('dcql_query' in inputData)) {
         return inputData;
     }
 

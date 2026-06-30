@@ -141,11 +141,6 @@ function registerVerifierRoutes(app, deps) {
             const dcqlOverride = resolvedOverrides.dcqlOverride;
             const presentationDefinitionOverride = resolvedOverrides.presentationDefinitionOverride;
 
-            if (!specVersion) {
-                res.status(400).send('Bad Request: spec parameter is required');
-                return;
-            }
-
             if (!isSupportedSpecVersion(specVersion)) {
                 res.status(400).send(`Bad Request: Unsupported spec version ${specVersion}`);
                 return;
@@ -158,12 +153,13 @@ function registerVerifierRoutes(app, deps) {
                 return;
             }
 
-            let inputData = updateVpRequest(
-                finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[specVersion],
-                responseMode,
-                specVersion,
-                true
-            );
+            const selectedTemplate = finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[specVersion];
+            if (!selectedTemplate) {
+                console.error('Error generating JWT:', 'Provided combination is not supported - ', { client_id_prefix, specVersion });
+                res.status(400).send(providedCombinationIsNotSupported);
+                return;
+            }
+            let inputData = updateVpRequest(selectedTemplate, responseMode, specVersion, true);
 
             inputData = applyDraftOverrides({
                 inputData,

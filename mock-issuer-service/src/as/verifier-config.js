@@ -1,6 +1,6 @@
 export const verifierConfig = {
   specVersion: "draft-23", // draft-23 or version-1.0
-  responseMode: "iar-post", // keep as iar-post or iar-post.jwt (encrypted response)
+  responseMode: "iar-post", // keep as iar-post / iae_post or iar-post.jwt / iae_post.jwt (encrypted response)
   clientIdPrefix: "did",
   requestMode: "by_reference", // by_value or by_reference
   verifierBaseUrl: "http://localhost:3000", // Verifier backend service URL

@@ -21,7 +21,7 @@ export const useQrFetch = () => {
     const fetchQrCodeData = useCallback(async (
         clientIdPrefix,
         requestMode,
-        draftVersion,
+        specVersion,
         isRequestSigned = false,
         responseMode = 'direct_post',
         dcqlQueryOverride,
@@ -43,7 +43,7 @@ export const useQrFetch = () => {
 
             // spec is intentionally kept as query param for backend compatibility
             const qrResponse = await axios.post(
-                `${BACKEND_URL}/verifier/${clientIdPrefix}/${requestMode}?spec=${draftVersion}`,
+                `${BACKEND_URL}/verifier/${clientIdPrefix}/${requestMode}?spec=${specVersion}`,
                 qrRequestBody,
                 {headers: {'ngrok-skip-browser-warning': 'true'}},
             );

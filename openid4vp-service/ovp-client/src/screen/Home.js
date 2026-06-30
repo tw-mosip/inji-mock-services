@@ -81,8 +81,8 @@ const Home = () => {
         navigate('/qr', {
             state: {
                 name: endpointObj.name,
-                draftVersion: SPEC_VERSIONS.V_1_0,
-                title: `${endpointObj.name} - ${SPEC_VERSIONS.DRAFT_23}`
+                specVersion: SPEC_VERSIONS.V_1_0,
+                title: `${endpointObj.name} - ${SPEC_VERSIONS.V_1_0}`
             }
         });
     };

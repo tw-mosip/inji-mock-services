@@ -90,7 +90,7 @@ const QrScreen = () => {
 
     const doFetch = useCallback((dcqlQueryOverride, presentationDefinitionOverride) =>
         fetchQrCodeData(
-            getClientIdPrefix(state.name, selectedSpec),
+            getClientIdPrefix(state?.name, selectedSpec),
             isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE,
             selectedSpec,
             isRequestSigned,
@@ -127,7 +127,7 @@ const QrScreen = () => {
         resetValues();
         const dcqlQueryOverride = presentationRequest.getDcqlQueryOverride();
         if (dcqlQueryOverride === null) return;
-        await fetchQrCodeData(getClientIdPrefix(state.name, selectedSpec), mode, selectedSpec, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
+        await fetchQrCodeData(getClientIdPrefix(state?.name, selectedSpec), mode, selectedSpec, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
     };
 
     const handleSpecVersionChange = async (version) => {
@@ -138,7 +138,7 @@ const QrScreen = () => {
             ? presentationRequest.getDcqlQueryOverride()
             : undefined;
         if (dcqlQueryOverride === null) return;
-        await fetchQrCodeData(getClientIdPrefix(state.name, version), isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, version, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
+        await fetchQrCodeData(getClientIdPrefix(state?.name, version), isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, version, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
     };
 
     const handleResponseModeChange = (mode) => {

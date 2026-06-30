@@ -35,10 +35,10 @@ const emptyPreset = DCQL_PRESETS.find((preset) => preset.value === 'empty');
 /**
  * Manages DCQL / presentation-definition state and the presentation request modal.
  *
- * @param {boolean}  selectedDraftIsV10 - whether spec V1.0 is active
+ * @param {boolean}  selectedSpecIsV10 - whether spec V1.0 is active
  * @param {function} onFetch            - (dcqlQueryOverride, presentationDefinitionOverride) => Promise
  */
-export const usePresentationRequest = ({selectedDraftIsV10, onFetch}) => {
+export const usePresentationRequest = ({selectedSpecIsV10, onFetch}) => {
     const [showPresentationRequestDetails, setShowPresentationRequestDetails] = useState(false);
     const [dcqlQueryValue, setDcqlQueryValue] = useState(cloneQuery(emptyPreset?.query || EMPTY_QUERY));
     const [draftDcqlQueryValue, setDraftDcqlQueryValue] = useState(cloneQuery(emptyPreset?.query || EMPTY_QUERY));
@@ -61,12 +61,12 @@ export const usePresentationRequest = ({selectedDraftIsV10, onFetch}) => {
     };
 
     const getDcqlQueryOverride = () => {
-        if (!selectedDraftIsV10 || !hasSubmittedDcqlQuery) return undefined;
+        if (!selectedSpecIsV10 || !hasSubmittedDcqlQuery) return undefined;
         return normalizeDcqlForSubmission(dcqlQueryValue, allowInvalidDcqlRequest);
     };
 
     const getPresentationDefinitionOverride = () => {
-        if (selectedDraftIsV10 || !hasSubmittedPresentationDefinition) return undefined;
+        if (selectedSpecIsV10 || !hasSubmittedPresentationDefinition) return undefined;
         return presentationDefinitionValue && typeof presentationDefinitionValue === 'object'
             ? presentationDefinitionValue
             : {};
@@ -77,7 +77,7 @@ export const usePresentationRequest = ({selectedDraftIsV10, onFetch}) => {
     const handlePresentationDefinitionChange = (value) => setDraftPresentationDefinitionValue(value);
 
     const openPresentationRequestDetails = () => {
-        if (selectedDraftIsV10) {
+        if (selectedSpecIsV10) {
             setDraftDcqlQueryValue(cloneQuery(dcqlQueryValue));
         } else {
             setDraftPresentationDefinitionValue(JSON.parse(JSON.stringify(presentationDefinitionValue)));
@@ -92,12 +92,12 @@ export const usePresentationRequest = ({selectedDraftIsV10, onFetch}) => {
     };
 
     const submitPresentationRequestDetails = async () => {
-        const dcqlQueryOverride = selectedDraftIsV10
+        const dcqlQueryOverride = selectedSpecIsV10
             ? normalizeDcqlForSubmission(draftDcqlQueryValue, allowInvalidDcqlRequest)
             : undefined;
-        const presentationDefinitionOverride = !selectedDraftIsV10 ? draftPresentationDefinitionValue : undefined;
+        const presentationDefinitionOverride = !selectedSpecIsV10 ? draftPresentationDefinitionValue : undefined;
 
-        if (selectedDraftIsV10) {
+        if (selectedSpecIsV10) {
             setDcqlQueryValue(cloneQuery(dcqlQueryOverride));
             setHasSubmittedDcqlQuery(true);
         } else {

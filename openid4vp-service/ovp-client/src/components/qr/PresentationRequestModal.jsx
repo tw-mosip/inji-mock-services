@@ -15,13 +15,13 @@ export default function PresentationRequestModal({
     onDcqlQueryChange,
     draftPresentationDefinitionValue,
     onPresentationDefinitionChange,
-    selectedDraftIsV10,
+    selectedSpecIsV10,
     allowInvalidRequest,
     onAllowInvalidRequestChange,
 }) {
     const [showInstructions, setShowInstructions] = useState(false);
 
-    const isV10 = selectedDraftIsV10;
+    const isV10 = selectedSpecIsV10;
     const title = isV10 
         ? "Presentation Request Details (DCQL Query)" 
         : "Presentation Request Details (Presentation Definition)";
@@ -109,7 +109,7 @@ PresentationRequestModal.propTypes = {
     onDcqlQueryChange: PropTypes.func.isRequired,
     draftPresentationDefinitionValue: PropTypes.object,
     onPresentationDefinitionChange: PropTypes.func.isRequired,
-    selectedDraftIsV10: PropTypes.bool.isRequired,
+    selectedSpecIsV10: PropTypes.bool.isRequired,
     allowInvalidRequest: PropTypes.bool,
     onAllowInvalidRequestChange: PropTypes.func,
 };

@@ -470,9 +470,9 @@ function renderPage(options, pin = null) {
                     "Response mode"
                   )}
                   ${dropDown(
-                    "clientIdScheme",
+                    "clientIdPrefix",
                     updateClientIdPrefixes(options.specVersion),
-                    options.clientIdScheme,
+                    options.clientIdPrefix,
                     "VP request Client ID Scheme"
                   )}
                   ${dropDown(

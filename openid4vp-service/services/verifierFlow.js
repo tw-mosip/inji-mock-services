@@ -45,7 +45,7 @@ function resolveOverrides(req, providedDcqlQuery = undefined, providedPresentati
 
 function applyDraftOverrides({
     inputData,
-    draftVersion,
+    specVersion,
     dcqlOverride,
     presentationDefinitionOverride,
     defaultDcqlQuery,
@@ -53,13 +53,13 @@ function applyDraftOverrides({
     baseUrl,
     sessionId,
 }) {
-    if (draftVersion === SPEC_VERSIONS.V_1_0) {
-        return applyDcqlQueryOverride(inputData, draftVersion, dcqlOverride, defaultDcqlQuery);
+    if (specVersion === SPEC_VERSIONS.V_1_0) {
+        return applyDcqlQueryOverride(inputData, specVersion, dcqlOverride, defaultDcqlQuery);
     }
 
     const updatedInputData = applyPresentationDefinitionOverride(
         inputData,
-        draftVersion,
+        specVersion,
         presentationDefinitionOverride,
         defaultPresentationDefinition
     );

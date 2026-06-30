@@ -153,9 +153,11 @@ export default async function interactiveAuthorizationHandler(req, res) {
     // Fetch the VP request object from the verifier service
     const requestObject = await fetchVPRequest();
 
+    const type = verifierConfig.responseMode.startsWith("iar") ? "openid4vp_presentation" : "urn:openid:dcp:iae:openid4vp_presentation"
+
     const interactionRequiredResponse = {
       status: "require_interaction",
-      type: "openid4vp_presentation",
+      type: type,
       auth_session: sessionId,
       credential_issuer: issuer,
       openid4vp_request: requestObject,
