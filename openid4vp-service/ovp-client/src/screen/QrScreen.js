@@ -67,11 +67,11 @@ const QrScreen = () => {
     const [selectedResponseMode, setSelectedResponseMode] = useState(Object.values(RESPONSE_MODES)[0]);
     const [isRequestSigned, setIsRequestSigned] = useState(false);
 
-    const selectedSpecIsV10 = selectedSpec === SPEC_VERSIONS.V_1_0;
+    const selectedSpecIsV1_0 = selectedSpec === SPEC_VERSIONS.V_1_0;
 
     // Determine client_id_prefix based on spec version if prefix is 'did', otherwise keep the provided prefix
     const getClientIdPrefix = (clientIdPrefix, spec) => {
-        if (clientIdPrefix === 'did') {
+        if (clientIdPrefix === 'did' || clientIdPrefix === 'decentralized_identifier') {
             // If prefix is 'did', determine based on spec version
             if (spec === SPEC_VERSIONS.V_1_0) {
                 return 'decentralized_identifier';
@@ -100,7 +100,7 @@ const QrScreen = () => {
         ),
     [fetchQrCodeData, state, isByValue, selectedSpec, isRequestSigned, selectedResponseMode]);
 
-    const presentationRequest = usePresentationRequest({selectedSpecIsV10: selectedSpecIsV10, onFetch: doFetch});
+    const presentationRequest = usePresentationRequest({selectedSpecIsV1_0: selectedSpecIsV1_0, onFetch: doFetch});
 
     useEffect(() => {
         const dcqlQueryOverride = presentationRequest.getDcqlQueryOverride();
@@ -179,7 +179,7 @@ const QrScreen = () => {
             onDcqlQueryChange={presentationRequest.handleDcqlQueryChange}
             draftPresentationDefinitionValue={presentationRequest.draftPresentationDefinitionValue}
             onPresentationDefinitionChange={presentationRequest.handlePresentationDefinitionChange}
-            selectedSpecIsV10={selectedSpecIsV10}
+            selectedSpecIsV1_0={selectedSpecIsV1_0}
             allowInvalidRequest={presentationRequest.allowInvalidDcqlRequest}
             onAllowInvalidRequestChange={presentationRequest.setAllowInvalidDcqlRequest}
         />

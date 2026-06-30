@@ -46,7 +46,7 @@ function normalizeClientIdPrefix(clientIdPrefixInput, currentSpecVersion) {
 
     if (clientIdPrefixInput === "did") {
         // "did" MUST be with draft-23 spec version
-        normalizedPrefix = "decentralized identifier";
+        normalizedPrefix = "decentralized_identifier";
         if (specVersion !== SPEC_VERSIONS.DRAFT_23) {
             throw new Error(`Bad Request: client_id_prefix "did" is only compatible with spec version "${SPEC_VERSIONS.DRAFT_23}", but "${specVersion}" was provided`);
         }
@@ -201,6 +201,7 @@ function registerVerifierRoutes(app, deps) {
         const bodyClientIdPrefix = req.body?.client_id_prefix;
         const bodyRequestMode = req.body?.request_mode;
         let client_id_prefix = pathClientIdPrefix || bodyClientIdPrefix;
+        let originalClientIdPrefix = client_id_prefix
         const request_mode = pathRequestMode || bodyRequestMode;
 
         const { normalizedPrefix, specVersion: normalizedSpecVersion } = normalizeClientIdPrefix(client_id_prefix, req.query.spec);
@@ -273,7 +274,7 @@ function registerVerifierRoutes(app, deps) {
 
             const updatedData = {
                 ...inputData,
-                request_uri: buildRequestUri(baseUrl, client_id_prefix, specVersion, responseMode, sessionId),
+                request_uri: buildRequestUri(baseUrl, originalClientIdPrefix, specVersion, responseMode, sessionId),
             };
 
             await generateQrCodeResponse(QRCode, updatedData, res);
