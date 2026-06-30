@@ -5,7 +5,7 @@ import {
   STATIC_MDL_MDOC,
   STATIC_MDL_MDOC_SAMPLE_B64URL,
 } from "./static-vc.js";
-import { SignJWT, generateKeyPair, exportJWK } from 'jose';
+import { SignJWT, generateKeyPair, exportJWK, decodeProtectedHeader } from 'jose';
 import { randomUUID, createHash } from 'node:crypto';
 import { ISSUER } from "../issuer-metadata.js";
 import { hasExplicitVersion, issuerBaseUrl, resolveRequestVersion } from "../issuer-profile.js";
@@ -85,6 +85,9 @@ export default async function credentialEndpoint(req, res) {
     proofJwt = body.proof.jwt;
   }
 
+  // Get the holder key from the proof JWT protected header "kid".
+  const holderKey = decodeProtectedHeader(proofJwt)?.kid;
+
   let credential;
 
   try {
@@ -133,8 +136,28 @@ export default async function credentialEndpoint(req, res) {
             .setNotBefore('0s')
             .setExpirationTime('1y')
             .sign(privateKey);
-        } else if (format === "vc+sd-jwt") {
-            credential = await createSdJwt(STATIC_SD_JWT_VC, privateKey, didJwk, didJwk);
+        } else if (format === "dc+sd-jwt" || format === "vc+sd-jwt") {
+          let holderCnfInfo = {};
+          if (holderKey?.startsWith("did:jwk:")) {
+            const encodedJwk = holderKey.slice("did:jwk:".length);
+            try {
+              const jwkString = Buffer.from(encodedJwk, "base64url").toString("utf8");
+              const parsedJwk = JSON.parse(jwkString);
+              holderCnfInfo = {
+                "cnf": {
+                  "jwk": parsedJwk
+                }
+              }
+            } catch (error) {
+              console.error("data in did:jwk not right")
+              holderCnfInfo = {
+                "cnf": {
+                  "kid": holderKey
+                }
+              }
+            }
+          }
+            credential = await createSdJwt({...STATIC_SD_JWT_VC, ...holderCnfInfo}, privateKey, didJwk, didJwk);
         } else if (format === "mso_mdoc") {
             credential = STATIC_MDL_MDOC_SAMPLE_B64URL;
         }

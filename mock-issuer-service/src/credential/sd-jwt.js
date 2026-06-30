@@ -13,17 +13,17 @@ export async function createSdJwt(payload, privateKey, issuer, holderDid) {
   const disclosures = [];
   const sdHashes = [];
 
-  const claimsToDisclose = Object.keys(payload).filter(k => k !== 'iss' && k !== 'sub' && k !== 'iat' && k !== 'exp' && k !== 'nbf' && k !== 'jti' && k !== 'vct');
+  const claimsToDisclose = Object.keys(payload).filter(k => k !== 'iss' && k !== 'sub' && k !== 'iat' && k !== 'exp' && k !== 'nbf' && k !== 'jti' && k !== 'vct' && k !== 'cnf');
 
   const newPayload = { ...payload };
-  
+
   for (const claim of claimsToDisclose) {
     const salt = base64url(randomBytes(16));
     const disclosureArray = [salt, claim, payload[claim]];
     const disclosureJson = JSON.stringify(disclosureArray);
     const disclosureB64 = Buffer.from(disclosureJson).toString('base64url');
     disclosures.push(disclosureB64);
-    
+
     const hash = base64url(sha256(disclosureB64));
     sdHashes.push(hash);
     delete newPayload[claim];
