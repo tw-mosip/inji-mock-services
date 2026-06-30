@@ -1,5 +1,5 @@
 const {
-  nonce, state, responseUri, baseUrl, presentationDefinitionUri, didDocumentUrl,REQUEST_MODES, DRAFT_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES, ResponseModes
+  nonce, state, responseUri, baseUrl, presentationDefinitionUri, didDocumentUrl,REQUEST_MODES, SPEC_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES, ResponseModes
 } = require("../constants");
 const clientMetadata = require('../clientMetadataMock.json');
 const {getVerifierMetadata} = require("../VerifierMetadata");
@@ -15,7 +15,7 @@ const didAuthorizationRequestVersion1 = {
   "nonce": nonce,
   "state": state,
   "response_uri": responseUri,
-  "client_metadata": getVerifierMetadata(ResponseModes.DIRECT_POST, DRAFT_VERSIONS.V_1_0),
+  "client_metadata": getVerifierMetadata(ResponseModes.DIRECT_POST, SPEC_VERSIONS.V_1_0),
 }
 
 const didAuthorizationRequestDraft23 = {
@@ -44,7 +44,7 @@ const didAuthorizationRequestDraft21 = {
 
 const didAuthorizationRequestParamsVersion1 = {
   "client_id": `decentralized_identifier:${didDocumentUrl}`,
-  "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?draft=version-1.0`,
+  "request_uri": `${baseUrl}/verifier/get-auth-request-obj/did?spec=version-1.0`,
   "request_uri_method": "post"
 }
 
@@ -63,14 +63,14 @@ const map = {
   [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]: true,
   [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED]: false,
   [REQUEST_MODES.BY_REFERENCE]: {
-    [DRAFT_VERSIONS.V_1_0]: didAuthorizationRequestParamsVersion1,
-    [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestParamsDraft23,
-    [DRAFT_VERSIONS.DRAFT_21]: didAuthorizationRequestParamsDraft21,
+    [SPEC_VERSIONS.V_1_0]: didAuthorizationRequestParamsVersion1,
+    [SPEC_VERSIONS.DRAFT_23]: didAuthorizationRequestParamsDraft23,
+    [SPEC_VERSIONS.DRAFT_21]: didAuthorizationRequestParamsDraft21,
   },
   [REQUEST_MODES.BY_VALUE]: {
-    [DRAFT_VERSIONS.V_1_0]: didAuthorizationRequestVersion1,
-    [DRAFT_VERSIONS.DRAFT_23]: didAuthorizationRequestDraft23,
-    [DRAFT_VERSIONS.DRAFT_21]: didAuthorizationRequestDraft21,
+    [SPEC_VERSIONS.V_1_0]: didAuthorizationRequestVersion1,
+    [SPEC_VERSIONS.DRAFT_23]: didAuthorizationRequestDraft23,
+    [SPEC_VERSIONS.DRAFT_21]: didAuthorizationRequestDraft21,
   },
 };
 

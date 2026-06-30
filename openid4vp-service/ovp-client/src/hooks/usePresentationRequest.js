@@ -1,5 +1,4 @@
 import {useState} from 'react';
-import {DRAFT_VERSIONS} from '../constants/constants';
 import {DCQL_PRESETS} from '../constants/dcql-presets';
 import {cloneQuery, ensureDcqlShape} from '../utility/dcqlHelper';
 
@@ -36,7 +35,7 @@ const emptyPreset = DCQL_PRESETS.find((preset) => preset.value === 'empty');
 /**
  * Manages DCQL / presentation-definition state and the presentation request modal.
  *
- * @param {boolean}  selectedDraftIsV10 - whether draft V1.0 is active
+ * @param {boolean}  selectedDraftIsV10 - whether spec V1.0 is active
  * @param {function} onFetch            - (dcqlQueryOverride, presentationDefinitionOverride) => Promise
  */
 export const usePresentationRequest = ({selectedDraftIsV10, onFetch}) => {

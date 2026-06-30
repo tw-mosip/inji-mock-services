@@ -1,6 +1,6 @@
 import QRCode from "qrcode";
 import { ISSUER } from "./issuer-metadata.js";
-import { buildOfferUrl, resolveIssuanceOptions, RESPONSE_MODE_OPTIONS, SPEC_VERSION_OPTIONS, CLIENT_ID_PREDIX_OPTIONS, REQUEST_MODE_OPTIONS, SIGNED_REQUEST_OPTIONS } from "./issuance-options.js";
+import { buildOfferUrl, resolveIssuanceOptions, RESPONSE_MODE_OPTIONS, SPEC_VERSION_OPTIONS, CLIENT_ID_PREFIX_OPTIONS, REQUEST_MODE_OPTIONS, SIGNED_REQUEST_OPTIONS } from "./issuance-options.js";
 import { verifierConfig } from "./as/verifier-config.js";
 
 function escapeHtml(value) {
@@ -40,9 +40,18 @@ function optionButton(name, value, currentValue, label, hint) {
   `;
 }
 
+function updateClientIdPrefixes(specVersion) {
+  let data
+  if(specVersion === "version-1.0") {
+    data = [...CLIENT_ID_PREFIX_OPTIONS].filter(data => data!="did")
+  } else {
+    data = [...CLIENT_ID_PREFIX_OPTIONS].filter(data => data!="decentralized_identifier")
+  }
+  return Array.from(data).map(name => ({ name }))
+}
+
 const responseModes = Array.from(RESPONSE_MODE_OPTIONS).map(name => ({ name }))
 const specVersionOptions = Array.from(SPEC_VERSION_OPTIONS).map(name => ({ name }))
-const clientIdSchemeOptions = Array.from(CLIENT_ID_PREDIX_OPTIONS).map(name => ({ name }))
 const requestModeOptions = Array.from(REQUEST_MODE_OPTIONS).map(name => ({ name }))
 const signedRequestOptions = Array.from(SIGNED_REQUEST_OPTIONS).map(val => ({ name: String(val) }))
 
@@ -462,7 +471,7 @@ function renderPage(options, pin = null) {
                   )}
                   ${dropDown(
                     "clientIdScheme",
-                    clientIdSchemeOptions,
+                    updateClientIdPrefixes(options.specVersion),
                     options.clientIdScheme,
                     "VP request Client ID Scheme"
                   )}
@@ -575,7 +584,7 @@ export default async function qrPageHandler(req, res) {
   if (options.flow === "pdi") {
     verifierConfig.specVersion = options.specVersion;
     verifierConfig.responseMode = options.responseMode;
-    verifierConfig.clientIdScheme = options.clientIdScheme;
+    verifierConfig.clientIdPrefix = options.clientIdPrefix;
     verifierConfig.requestMode = options.requestMode;
     verifierConfig.signedRequest = options.signedRequest;
   }

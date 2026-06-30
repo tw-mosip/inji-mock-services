@@ -4,7 +4,7 @@ const CREDENTIAL_OPTIONS = new Set(["farmer", "employee", "sd-jwt", "mdoc"]);
 
 export const SPEC_VERSION_OPTIONS = new Set(["draft-23", "version-1.0"])
 export const RESPONSE_MODE_OPTIONS = new Set(["iar-post", "iar-post.jwt", "iae_post", "iae_post.jwt"]);
-export const CLIENT_ID_PREDIX_OPTIONS = new Set(["did", "redirect_uri", "pre-registered"])
+export const CLIENT_ID_PREFIX_OPTIONS = new Set(["did", "decentralized_identifier", "redirect_uri", "pre-registered"])
 export const REQUEST_MODE_OPTIONS = new Set(["by_reference", "by_value"]);
 export const SIGNED_REQUEST_OPTIONS = new Set([true, false]);
 
@@ -56,7 +56,7 @@ export function resolveIssuanceOptions(query = {}) {
   const responseMode = RESPONSE_MODE_OPTIONS.has(query.responseMode)
     ? query.responseMode
     : "iar-post";
-  const clientIdScheme = CLIENT_ID_PREDIX_OPTIONS.has(query.clientIdScheme) ? query.clientIdScheme : "did"
+  const clientIdPrefix = CLIENT_ID_PREFIX_OPTIONS.has(query.clientIdPrefix) ? query.clientIdPrefix : "did"
   const specVersion = SPEC_VERSION_OPTIONS.has(query.specVersion) ? query.specVersion : "draft-23"
   const requestMode = REQUEST_MODE_OPTIONS.has(query.requestMode) ? query.requestMode : "by_reference"
   const signedRequest = query.signedRequest ? query.signedRequest === "true" : true
@@ -68,7 +68,7 @@ export function resolveIssuanceOptions(query = {}) {
     credential,
     credentialDetails: CREDENTIAL_MAP[credential],
     responseMode,
-    clientIdScheme,
+    clientIdPrefix,
     specVersion,
     requestMode,
     signedRequest,

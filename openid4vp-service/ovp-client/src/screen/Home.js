@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {CLIENT_ID_SCHEMES, DRAFT_VERSIONS} from "../constants/constants";
+import {CLIENT_ID_PREFIXES, SPEC_VERSIONS} from "../constants/constants";
 import {INJIWEB_URL} from "../constants/mockui-constants";
 import Button from "../components/common/Button";
 import {backgroundStyle, Palette, font} from "../styles/palette";
@@ -71,18 +71,18 @@ const Home = () => {
     }, []);
 
     const endpoints = [
-        {name: CLIENT_ID_SCHEMES.PRE_REGISTERED},
-        {name: CLIENT_ID_SCHEMES.REDIRECT_URI},
-        {name: CLIENT_ID_SCHEMES.DID}
+        {name: CLIENT_ID_PREFIXES.PRE_REGISTERED},
+        {name: CLIENT_ID_PREFIXES.REDIRECT_URI},
+        {name: CLIENT_ID_PREFIXES.DID}
     ];
 
-    const handleClientIdSchemeClick = (endpointObj) => {
-        // Default  Draft 23
+    const handleClientIdPrefixClick = (endpointObj) => {
+        // Default  V1
         navigate('/qr', {
             state: {
                 name: endpointObj.name,
-                draftVersion: DRAFT_VERSIONS.DRAFT_23,
-                title: `${endpointObj.name} - ${DRAFT_VERSIONS.DRAFT_23}`
+                draftVersion: SPEC_VERSIONS.V_1_0,
+                title: `${endpointObj.name} - ${SPEC_VERSIONS.DRAFT_23}`
             }
         });
     };
@@ -117,20 +117,20 @@ const Home = () => {
                 </p>
             </div>
             <div>
-                <p>Please select a Client Id Scheme to generate an Authorization Request QR code:</p>
+                <p>Please select a Client ID Prefix / Client ID Scheme to generate an Authorization Request QR code:</p>
                 <div style={styles.buttonGrid}>
                     {endpoints.map(e => (
                         <div key={e.name} style={{ display: 'flex', alignItems: 'baseline'}}>
                             <span role="img" aria-label="emoji" style={styles.emoji}>
-                                {e.name === CLIENT_ID_SCHEMES.PRE_REGISTERED ? '🔐' :
-                                    e.name === CLIENT_ID_SCHEMES.REDIRECT_URI ? '🔄' : '🆔'}
+                                {e.name === CLIENT_ID_PREFIXES.PRE_REGISTERED ? '🔐' :
+                                    e.name === CLIENT_ID_PREFIXES.REDIRECT_URI ? '🔄' : '🆔'}
                             </span>
                             <Button
-                                onClick={() => handleClientIdSchemeClick(e)}
+                                onClick={() => handleClientIdPrefixClick(e)}
                                 variant={"secondary"}
                                 style={styles.button}
                             >
-                                {e.name}
+                                {e.name === CLIENT_ID_PREFIXES.DID ? "Decentralized Identifier / Did" : e.name}
                             </Button>
                         </div>
                     ))}

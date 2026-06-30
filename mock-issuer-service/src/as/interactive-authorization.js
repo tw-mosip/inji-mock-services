@@ -17,8 +17,8 @@ function randomCode() {
  * @returns {Promise<Object>} The VP request object
  */
 async function fetchVPRequest() {
-  const clientIdScheme = verifierConfig.clientIdScheme;
-  const draftVersion = verifierConfig.specVersion;
+  const clientIdPrefix = verifierConfig.clientIdPrefix;
+  const specVersion = verifierConfig.specVersion;
   const responseMode = verifierConfig.responseMode;
   const requestMode = verifierConfig.requestMode;
   const signedRequest = verifierConfig.signedRequest;
@@ -28,7 +28,7 @@ async function fetchVPRequest() {
     response_mode: responseMode,
   };
 
-  if (draftVersion === "version-1.0") {
+  if (specVersion === "version-1.0") {
     requestBody.dcql_query = verifierConfig.dcqlQuery;
   } else {
     requestBody.presentation_definition = verifierConfig.presentationDefinition;
@@ -36,9 +36,9 @@ async function fetchVPRequest() {
 
   try {
     const requestUrl = new URL(
-      `${verifierConfig.verifierBaseUrl}/verifier/${clientIdScheme}/${requestMode}`
+      `${verifierConfig.verifierBaseUrl}/verifier/${clientIdPrefix}/${requestMode}`
     );
-    requestUrl.searchParams.set("draft", draftVersion);
+    requestUrl.searchParams.set("spec", specVersion);
 
     console.log(
       `Fetching VP request info from: ${requestUrl.toString()}`

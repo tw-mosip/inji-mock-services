@@ -335,7 +335,7 @@ You can use `verifier-config.js` to control:
 
 * `specVersion`: selects whether the verifier request is built for `draft-23` or `version-1.0`
 * `responseMode`: controls how the verifier expects the presentation response
-* `clientIdScheme`: selects the verifier client ID scheme such as `did`, `redirect_uri`, or `pre-registered`
+* `clientIdPrefix`: selects the verifier client ID prefix such as `did` (draft-23), `decentralized_identifier` (version-1.0), `redirect_uri`, or `pre-registered`
 * `requestMode`: switches between `by_value` and `by_reference`
 * `verifierBaseUrl`: points the issuer to the verifier service instance to call
 * `signedRequest`: enables or disables signed verifier requests

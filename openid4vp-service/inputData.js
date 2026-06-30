@@ -1,13 +1,13 @@
-const { CLIENT_ID_SCHEMES } = require("./constants");
+const { CLIENT_ID_PREFIXES } = require("./constants");
 const preRegistered = require("./requestData/preRegistered");
 const redirectUri = require("./requestData/redirectUri");
 const did = require("./requestData/did");
 
 // Final map of all combinations
 const finalAuthRequestMap = {
-    [CLIENT_ID_SCHEMES.PRE_REGISTERED]: preRegistered.map,
-    [CLIENT_ID_SCHEMES.REDIRECT_URI]: redirectUri.map,
-    [CLIENT_ID_SCHEMES.DID]: did.map,
+    [CLIENT_ID_PREFIXES.PRE_REGISTERED]: preRegistered.map,
+    [CLIENT_ID_PREFIXES.REDIRECT_URI]: redirectUri.map,
+    [CLIENT_ID_PREFIXES.DECENTRALIZED_IDENTIFIER]: did.map,
 }
 
 module.exports = {

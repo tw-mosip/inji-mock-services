@@ -1,7 +1,7 @@
 export const verifierConfig = {
   specVersion: "draft-23", // draft-23 or version-1.0
   responseMode: "iar-post", // keep as iar-post or iar-post.jwt (encrypted response)
-  clientIdScheme: "did", 
+  clientIdPrefix: "did",
   requestMode: "by_reference", // by_value or by_reference
   verifierBaseUrl: "http://localhost:3000", // Verifier backend service URL
   signedRequest: true, // Set to true if you want the request to be signed by the verifier or keep as false
@@ -35,7 +35,7 @@ export const verifierConfig = {
       {
         id: "id-card-query",
         format: "ldp_vc",
-        meta:{},
+        meta: {},
         claims: [
           {
             path: ["credentialSubject", "email"],

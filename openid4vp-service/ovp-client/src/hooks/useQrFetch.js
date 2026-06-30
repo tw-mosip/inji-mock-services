@@ -19,7 +19,7 @@ export const useQrFetch = () => {
     }, []);
 
     const fetchQrCodeData = useCallback(async (
-        clientIdScheme,
+        clientIdPrefix,
         requestMode,
         draftVersion,
         isRequestSigned = false,
@@ -41,9 +41,9 @@ export const useQrFetch = () => {
                 qrRequestBody.presentation_definition = presentationDefinitionOverride;
             }
 
-            // draft is intentionally kept as query param for backend compatibility
+            // spec is intentionally kept as query param for backend compatibility
             const qrResponse = await axios.post(
-                `${BACKEND_URL}/verifier/${clientIdScheme}/${requestMode}?draft=${draftVersion}`,
+                `${BACKEND_URL}/verifier/${clientIdPrefix}/${requestMode}?spec=${draftVersion}`,
                 qrRequestBody,
                 {headers: {'ngrok-skip-browser-warning': 'true'}},
             );

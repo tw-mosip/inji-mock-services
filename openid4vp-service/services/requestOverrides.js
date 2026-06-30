@@ -1,4 +1,4 @@
-const { DRAFT_VERSIONS } = require('../constants');
+const { SPEC_VERSIONS } = require('../constants');
 
 function extractDcqlQueryOverride(req) {
     if (req.body && req.body.dcql_query !== undefined) {
@@ -51,7 +51,7 @@ function isValidPresentationDefinitionOverride(pd) {
 }
 
 function applyPresentationDefinitionOverride(inputData, draftVersion, presentationDefinitionOverride, defaultPresentationDefinition) {
-    if (!inputData || draftVersion === DRAFT_VERSIONS.V_1_0 || !('presentation_definition' in inputData)) {
+    if (!inputData || draftVersion === SPEC_VERSIONS.V_1_0 || !('presentation_definition' in inputData)) {
         return inputData;
     }
 
@@ -65,7 +65,7 @@ function applyPresentationDefinitionOverride(inputData, draftVersion, presentati
 }
 
 function applyDcqlQueryOverride(inputData, draftVersion, dcqlOverride, defaultDcqlQuery) {
-    if (!inputData || draftVersion !== DRAFT_VERSIONS.V_1_0 || !('dcql_query' in inputData)) {
+    if (!inputData || draftVersion !== SPEC_VERSIONS.V_1_0 || !('dcql_query' in inputData)) {
         return inputData;
     }
 

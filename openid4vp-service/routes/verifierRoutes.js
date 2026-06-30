@@ -6,7 +6,7 @@ const {
     ContentTypes,
     REQUEST_MODES,
     REQUEST_SIGNING_SUPPORT_MODES,
-    DRAFT_VERSIONS,
+    SPEC_VERSIONS,
     ResponseModes,
     baseUrl,
 } = require('../constants');
@@ -28,23 +28,44 @@ function createUrlWithParams(params) {
     return `${baseUrl}?${paramStrings.join('&')}`;
 }
 
-function buildRequestUri(baseUrl, clientIdScheme, draftVersion, responseMode, sessionId) {
-    const requestUri = new URL(`${baseUrl}/verifier/get-auth-request-obj/${sessionId}/${clientIdScheme}`);
-    requestUri.searchParams.set('draft', draftVersion);
+function buildRequestUri(baseUrl, clientIdPrefix, specVersion, responseMode, sessionId) {
+    const requestUri = new URL(`${baseUrl}/verifier/get-auth-request-obj/${sessionId}/${clientIdPrefix}`);
+    requestUri.searchParams.set('spec', specVersion);
     requestUri.searchParams.set('response_mode', responseMode);
     return requestUri.toString();
 }
 
-function isSupportedDraftVersion(draftVersion) {
-    return Object.values(DRAFT_VERSIONS).includes(draftVersion);
+function isSupportedSpecVersion(specVersion) {
+    return Object.values(SPEC_VERSIONS).includes(specVersion);
 }
 
-function updateVpRequest(inputData, responseMode, draftVersion, byReferenceMode = false) {
+// Normalize client_id_prefix input and validate spec version compatibility
+function normalizeClientIdPrefix(clientIdPrefixInput, currentSpecVersion) {
+    let normalizedPrefix = clientIdPrefixInput;
+    let specVersion = currentSpecVersion ?? SPEC_VERSIONS.V_1_0;
+
+    if (clientIdPrefixInput === "did") {
+        // "did" MUST be with draft-23 spec version
+        normalizedPrefix = "decentralized identifier";
+        if (specVersion !== SPEC_VERSIONS.DRAFT_23) {
+            throw new Error(`Bad Request: client_id_prefix "did" is only compatible with spec version "${SPEC_VERSIONS.DRAFT_23}", but "${specVersion}" was provided`);
+        }
+    } else if (clientIdPrefixInput === "decentralized_identifier") {
+        // "decentralized_identifier" MUST be with version-1.0 spec version
+        if (specVersion !== SPEC_VERSIONS.V_1_0) {
+            throw new Error(`Bad Request: client_id_prefix "decentralized_identifier" is only compatible with spec version "${SPEC_VERSIONS.V_1_0}", but "${specVersion}" was provided`);
+        }
+    }
+
+    return { normalizedPrefix, specVersion };
+}
+
+function updateVpRequest(inputData, responseMode, specVersion, byReferenceMode = false) {
     const updatedData = JSON.parse(JSON.stringify(inputData));
 
     updatedData.response_mode = responseMode;
 
-    const verifierMetadata = getVerifierMetadata(responseMode, draftVersion);
+    const verifierMetadata = getVerifierMetadata(responseMode, specVersion);
 
     if (byReferenceMode) {
         updatedData.client_metadata = verifierMetadata;
@@ -106,8 +127,11 @@ function registerVerifierRoutes(app, deps) {
         sessionId = null
     ) => {
         try {
-            const { client_id_scheme } = req.params;
-            const draftVersion = req.query.draft;
+            // Normalize client_id_prefix and validate spec version compatibility
+            const { normalizedPrefix, specVersion: normalizedSpecVersion } = normalizeClientIdPrefix(req.params.client_id_prefix, req.query.spec);
+            
+            let client_id_prefix = normalizedPrefix;
+            let specVersion = normalizedSpecVersion;
             const responseMode = req.query.response_mode || 'direct_post';
             const resolvedOverrides = resolveOverrides(req, providedDcqlQuery, providedPresentationDefinition);
             if (resolvedOverrides.errorMessage) {
@@ -117,33 +141,33 @@ function registerVerifierRoutes(app, deps) {
             const dcqlOverride = resolvedOverrides.dcqlOverride;
             const presentationDefinitionOverride = resolvedOverrides.presentationDefinitionOverride;
 
-            if (!draftVersion) {
-                res.status(400).send('Bad Request: draft parameter is required');
+            if (!specVersion) {
+                res.status(400).send('Bad Request: spec parameter is required');
                 return;
             }
 
-            if (!isSupportedDraftVersion(draftVersion)) {
-                res.status(400).send(`Bad Request: Unsupported draft version ${draftVersion}`);
+            if (!isSupportedSpecVersion(specVersion)) {
+                res.status(400).send(`Bad Request: Unsupported spec version ${specVersion}`);
                 return;
             }
 
-            const finalAuthRequestMapElement = finalAuthRequestMap[client_id_scheme];
+            const finalAuthRequestMapElement = finalAuthRequestMap[client_id_prefix];
 
             if (!finalAuthRequestMapElement?.[REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]) {
-                res.status(400).send(`Bad Request: ${client_id_scheme} does not support signed request, so by_reference mode is not possible`);
+                res.status(400).send(`Bad Request: ${client_id_prefix} does not support signed request, so by_reference mode is not possible`);
                 return;
             }
 
             let inputData = updateVpRequest(
-                finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[draftVersion],
+                finalAuthRequestMapElement?.[REQUEST_MODES.BY_VALUE]?.[specVersion],
                 responseMode,
-                draftVersion,
+                specVersion,
                 true
             );
 
             inputData = applyDraftOverrides({
                 inputData,
-                draftVersion,
+                specVersion,
                 dcqlOverride,
                 presentationDefinitionOverride,
                 defaultDcqlQuery,
@@ -154,8 +178,8 @@ function registerVerifierRoutes(app, deps) {
 
             if (!inputData) {
                 console.error('Error generating JWT:', 'Provided combination is not supported - ', {
-                    client_id_scheme,
-                    draftVersion,
+                    client_id_prefix,
+                    specVersion,
                 });
                 res.status(400).send(providedCombinationIsNotSupported);
                 return;
@@ -177,12 +201,16 @@ function registerVerifierRoutes(app, deps) {
     };
 
     const generateQrCode = async (req, res) => {
-        const { client_id_scheme: pathClientIdScheme, request_mode: pathRequestMode } = req.params;
-        const bodyClientIdScheme = req.body?.client_id_scheme;
+        const { client_id_prefix: pathClientIdPrefix, request_mode: pathRequestMode } = req.params;
+        const bodyClientIdPrefix = req.body?.client_id_prefix;
         const bodyRequestMode = req.body?.request_mode;
-        const client_id_scheme = pathClientIdScheme || bodyClientIdScheme;
+        let client_id_prefix = pathClientIdPrefix || bodyClientIdPrefix;
         const request_mode = pathRequestMode || bodyRequestMode;
-        let draftVersion = req.query.draft ?? "version-1.0";
+
+        const { normalizedPrefix, specVersion: normalizedSpecVersion } = normalizeClientIdPrefix(client_id_prefix, req.query.spec);
+
+        client_id_prefix = normalizedPrefix;
+        let specVersion = normalizedSpecVersion;
         const signedValue = req.method === 'POST' ? req.body?.signed : req.query.signed;
         const signed = signedValue === true || signedValue === 'true';
         const responseMode = (req.method === 'POST' ? req.body?.response_mode : req.query.response_mode) || 'direct_post';
@@ -196,17 +224,17 @@ function registerVerifierRoutes(app, deps) {
         const dcqlQueryOverride = resolvedOverrides.dcqlOverride;
         const presentationDefinitionOverride = resolvedOverrides.presentationDefinitionOverride;
 
-        if (!draftVersion) {
-            draftVersion = DRAFT_VERSIONS.V_1_0;
+        if (!specVersion) {
+            specVersion = SPEC_VERSIONS.V_1_0;
         }
 
-        if (!isSupportedDraftVersion(draftVersion)) {
-            res.status(400).send(`Bad Request: Unsupported draft version ${draftVersion}`);
+        if (!isSupportedSpecVersion(specVersion)) {
+            res.status(400).send(`Bad Request: Unsupported spec version ${specVersion}`);
             return;
         }
 
-        if (!client_id_scheme || !request_mode) {
-            res.status(400).send('Bad Request: client_id_scheme and request_mode are required');
+        if (!client_id_prefix || !request_mode) {
+            res.status(400).send('Bad Request: client_id_prefix and request_mode are required');
             return;
         }
 
@@ -220,28 +248,28 @@ function registerVerifierRoutes(app, deps) {
             console.warn('Failed to persist VP request session data, continuing without stored overrides:', error.message);
         }
 
-        const finalAuthRequestMapElement = finalAuthRequestMap[client_id_scheme];
+        const finalAuthRequestMapElement = finalAuthRequestMap[client_id_prefix];
 
         if (!finalAuthRequestMapElement) {
-            console.error('Error generating QR code:', `Unsupported client_id_scheme ${client_id_scheme}`);
-            res.status(400).send(`Bad Request: Unsupported client_id_scheme ${client_id_scheme}`);
+            console.error('Error generating QR code:', `Unsupported client_id_prefix ${client_id_prefix}`);
+            res.status(400).send(`Bad Request: Unsupported client_id_prefix ${client_id_prefix}`);
             return;
         }
 
         if (request_mode === REQUEST_MODES.BY_REFERENCE) {
             if (!finalAuthRequestMapElement[REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]) {
-                const errorMessage = `Bad Request: ${client_id_scheme} does not support signed request, so by_reference mode is not possible`;
+                const errorMessage = `Bad Request: ${client_id_prefix} does not support signed request, so by_reference mode is not possible`;
                 console.error('Error generating QR code:', errorMessage);
                 res.status(400).send(errorMessage);
                 return;
             }
 
-            const inputData = finalAuthRequestMapElement?.[request_mode]?.[draftVersion];
+            const inputData = finalAuthRequestMapElement?.[request_mode]?.[specVersion];
             if (!inputData) {
                 console.error('Error generating QR code:', 'Provided combination is not supported - ', {
-                    client_id_scheme,
+                    client_id_prefix: client_id_prefix,
                     request_mode,
-                    draftVersion,
+                    specVersion,
                 });
                 res.status(400).send(providedCombinationIsNotSupported);
                 return;
@@ -249,19 +277,19 @@ function registerVerifierRoutes(app, deps) {
 
             const updatedData = {
                 ...inputData,
-                request_uri: buildRequestUri(baseUrl, client_id_scheme, draftVersion, responseMode, sessionId),
+                request_uri: buildRequestUri(baseUrl, client_id_prefix, specVersion, responseMode, sessionId),
             };
 
             await generateQrCodeResponse(QRCode, updatedData, res);
             return;
         }
 
-        let inputData = finalAuthRequestMapElement?.[request_mode]?.[draftVersion];
+        let inputData = finalAuthRequestMapElement?.[request_mode]?.[specVersion];
         if (!inputData) {
             console.error('Error generating QR code:', 'Provided combination is not supported - ', {
-                client_id_scheme,
+                client_id_prefix: client_id_prefix,
                 request_mode,
-                draftVersion,
+                specVersion,
             });
 
             res.status(400).send(providedCombinationIsNotSupported);
@@ -270,7 +298,7 @@ function registerVerifierRoutes(app, deps) {
 
         inputData = applyDraftOverrides({
             inputData,
-            draftVersion,
+            specVersion,
             dcqlOverride: dcqlQueryOverride,
             presentationDefinitionOverride,
             defaultDcqlQuery,
@@ -281,25 +309,25 @@ function registerVerifierRoutes(app, deps) {
 
         if (signed) {
             if (!finalAuthRequestMapElement[REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED]) {
-                console.error('Error generating QR code:', `${client_id_scheme} does not support signed request`);
+                console.error('Error generating QR code:', `${client_id_prefix} does not support signed request`);
 
-                res.status(400).send(`Bad Request: ${client_id_scheme} does not support ${request_mode} mode with signed request\nAction: try switching to unsigned request`);
+                res.status(400).send(`Bad Request: ${client_id_prefix} does not support ${request_mode} mode with signed request\nAction: try switching to unsigned request`);
                 return;
             }
 
-            inputData = updateVpRequest(inputData, responseMode, draftVersion);
+            inputData = updateVpRequest(inputData, responseMode, specVersion);
 
             const clientId = inputData.client_id;
             const request = await createJWT(inputData);
 
             inputData = { client_id: clientId, request };
         } else if (!finalAuthRequestMapElement[REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED]) {
-            console.error('Error generating QR code:', `${client_id_scheme} does not support unsigned request`);
+            console.error('Error generating QR code:', `${client_id_prefix} does not support unsigned request`);
 
-            res.status(400).send(`Bad Request: ${client_id_scheme} does not support unsigned request in ${request_mode} mode\nAction: try switching to signed request`);
+            res.status(400).send(`Bad Request: ${client_id_prefix} does not support unsigned request in ${request_mode} mode\nAction: try switching to signed request`);
             return;
         } else {
-            inputData = updateVpRequest(inputData, responseMode, draftVersion);
+            inputData = updateVpRequest(inputData, responseMode, specVersion);
         }
 
         await generateQrCodeResponse(QRCode, inputData, res);
@@ -335,36 +363,36 @@ function registerVerifierRoutes(app, deps) {
     });
 
     // API for actual authorization request object
-    // client_id_scheme: pre-registered | redirect_uri | did
-    // API: /verifier/get-auth-request-obj/:sessionId/:client_id_scheme
+    // client_id_prefix: pre-registered | redirect_uri | did (requires draft-23) | decentralized_identifier (requires version-1.0)
+    // API: /verifier/get-auth-request-obj/:sessionId/:client_id_prefix
     
-    // Uses sessionId created during /verifier/:client_id_scheme/:request_mode request creation.
+    // Uses sessionId created during /verifier/:client_id_prefix/:request_mode request creation.
     // Resolves session-scoped overrides and returns a signed/processed request object.
-    app.get('/verifier/get-auth-request-obj/:sessionId/:client_id_scheme', handleSessionRequestUri);
-    app.post('/verifier/get-auth-request-obj/:sessionId/:client_id_scheme', handleSessionRequestUri);
+    app.get('/verifier/get-auth-request-obj/:sessionId/:client_id_prefix', handleSessionRequestUri);
+    app.post('/verifier/get-auth-request-obj/:sessionId/:client_id_prefix', handleSessionRequestUri);
 
-    // API to generate QR codes for different client_id schemes and request modes
-    // API: /verifier/:client_id_scheme/:request_mode?draft=<draft_version>&signed=true|false&response_mode=<response_mode>
-    // client_id_scheme: pre-registered | redirect_uri | did
+    // API to generate QR codes for different client_id prefixes and request modes
+    // API: /verifier/:client_id_prefix/:request_mode?spec=<spec_version>&signed=true|false&response_mode=<response_mode>
+    // client_id_prefix: pre-registered | redirect_uri | did (requires draft-23) | decentralized_identifier (requires version-1.0)
     // request_mode: by_value | by_reference
     // response_mode: direct_post | direct_post.jwt
-    app.get('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
+    app.get('/verifier/:client_id_prefix/:request_mode', async (req, res) => {
         await generateQrCode(req, res);
     });
 
-    // API: POST /verifier/:client_id_scheme/:request_mode
+    // API: POST /verifier/:client_id_prefix/:request_mode
     // Responsibility:
     // - Builds an authorization request for the selected verifier mode and returns QR response payload.
     // - Applies optional request overrides (dcql_query / presentation_definition) and signing options.
     // - Returns `{ qrCodeData, qrData, inputData }` on success, or a 4xx/5xx error message on failure.
     // Request params:
-    // - path.client_id_scheme: pre-registered | redirect_uri | did
+    // - path.client_id_prefix: pre-registered | redirect_uri | did (requires draft-23) | decentralized_identifier (requires version-1.0)
     // - path.request_mode: by_value | by_reference
-    // - query.draft: draft version (optional, defaults to version-1.0)
+    // - query.spec: spec version (optional; if not provided, defaults to version-1.0
     // Request body (optional):
     // - signed: true | false
     // - response_mode: direct_post | direct_post.jwt
-    // - dcql_query: object (draft version-1.0)
+    // - dcql_query: object (spec version-1.0)
     // - presentation_definition: object (non-version-1.0 drafts)
     // Response:
     // - 200 application/json:
@@ -375,7 +403,7 @@ function registerVerifierRoutes(app, deps) {
     //   }
     // - 400 text/plain for invalid combinations/unsupported params/oversized QR payload.
     // - 500 text/plain for unexpected server errors.
-    app.post('/verifier/:client_id_scheme/:request_mode', async (req, res) => {
+    app.post('/verifier/:client_id_prefix/:request_mode', async (req, res) => {
         await generateQrCode(req, res);
     });
 }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Dropdown from '../common/Dropdown';
 import Toggle from '../common/Toggle';
 import Button from '../common/Button';
-import {REQUEST_MODES, RESPONSE_MODES, DRAFT_VERSIONS} from '../../constants/constants';
+import {REQUEST_MODES, RESPONSE_MODES, SPEC_VERSIONS} from '../../constants/constants';
 import {Palette, font, spacing, cardStyles} from '../../styles/palette';
 
 const fieldLabelStyle = {
@@ -17,11 +17,11 @@ const fieldLabelStyle = {
 export default function QrControls({
     isByValue,
     isByReference,
-    selectedDraft,
+    selectedSpec,
     selectedResponseMode,
     isRequestSigned,
     onRequestModeChange,
-    onDraftVersionChange,
+    onSpecVersionChange,
     onResponseModeChange,
     onSignedChange,
     onOpenPresentationDetails,
@@ -33,10 +33,10 @@ export default function QrControls({
         {name: 'By Reference', selected: isByReference, onChange: () => onRequestModeChange(REQUEST_MODES.BY_REFERENCE)},
     ];
 
-    const draftOptions = Object.values(DRAFT_VERSIONS).map((v) => ({
+    const specOptions = Object.values(SPEC_VERSIONS).map((v) => ({
         name: v,
-        selected: selectedDraft === v,
-        onChange: () => onDraftVersionChange(v),
+        selected: selectedSpec === v,
+        onChange: () => onSpecVersionChange(v),
     }));
 
     const responseModeOptions = Object.values(RESPONSE_MODES).map((m) => ({
@@ -85,7 +85,7 @@ export default function QrControls({
                     }}>
                         <div>
                             <label style={fieldLabelStyle}>OpenID4VP Spec Version</label>
-                            <Dropdown options={draftOptions} fullWidth/>
+                            <Dropdown options={specOptions} fullWidth/>
                         </div>
                         <div>
                             <label style={fieldLabelStyle}>Response Mode</label>
@@ -150,11 +150,11 @@ export default function QrControls({
 QrControls.propTypes = {
     isByValue: PropTypes.bool.isRequired,
     isByReference: PropTypes.bool.isRequired,
-    selectedDraft: PropTypes.string.isRequired,
+    selectedSpec: PropTypes.string.isRequired,
     selectedResponseMode: PropTypes.string.isRequired,
     isRequestSigned: PropTypes.bool.isRequired,
     onRequestModeChange: PropTypes.func.isRequired,
-    onDraftVersionChange: PropTypes.func.isRequired,
+    onSpecVersionChange: PropTypes.func.isRequired,
     onResponseModeChange: PropTypes.func.isRequired,
     onSignedChange: PropTypes.func.isRequired,
     onOpenPresentationDetails: PropTypes.func.isRequired,

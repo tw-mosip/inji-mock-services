@@ -1,4 +1,4 @@
-const { DRAFT_VERSIONS } = require('../constants');
+const { SPEC_VERSIONS: SPEC_VERSIONS } = require('../constants');
 const {
     extractDcqlQueryOverride,
     isValidDcqlOverride,
@@ -53,7 +53,7 @@ function applyDraftOverrides({
     baseUrl,
     sessionId,
 }) {
-    if (draftVersion === DRAFT_VERSIONS.V_1_0) {
+    if (draftVersion === SPEC_VERSIONS.V_1_0) {
         return applyDcqlQueryOverride(inputData, draftVersion, dcqlOverride, defaultDcqlQuery);
     }
 

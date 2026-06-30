@@ -149,7 +149,7 @@ export default async function credentialEndpoint(req, res) {
                 }
               }
             } catch (error) {
-              console.error("data in did:jwk not right")
+              console.error("data in did:jwk not right ",error)
               holderCnfInfo = {
                 "cnf": {
                   "kid": holderKey

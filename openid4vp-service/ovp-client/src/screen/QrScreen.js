@@ -3,7 +3,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {INJIWEB_URL} from '../constants/mockui-constants';
 import {Loader} from '../components/common/Loader';
 import {Palette, font, spacing} from '../styles/palette';
-import {DRAFT_VERSIONS, REQUEST_MODES, RESPONSE_MODES} from '../constants/constants';
+import {SPEC_VERSIONS, REQUEST_MODES, RESPONSE_MODES} from '../constants/constants';
 import {ScanResult} from '../components/scan/ScanResult';
 import Error from '../components/common/Error';
 import QrScreenHeader from '../components/qr/QrScreenHeader';
@@ -63,11 +63,25 @@ const QrScreen = () => {
 
     const [isByValue, setIsByValue] = useState(true);
     const [isByReference, setIsByReference] = useState(false);
-    const [selectedDraft, setSelectedDraft] = useState(Object.values(DRAFT_VERSIONS)[0]);
+    const [selectedSpec, setSelectedSpec] = useState(Object.values(SPEC_VERSIONS)[0]);
     const [selectedResponseMode, setSelectedResponseMode] = useState(Object.values(RESPONSE_MODES)[0]);
     const [isRequestSigned, setIsRequestSigned] = useState(false);
 
-    const selectedDraftIsV10 = selectedDraft === DRAFT_VERSIONS.V_1_0;
+    const selectedSpecIsV10 = selectedSpec === SPEC_VERSIONS.V_1_0;
+
+    // Determine client_id_prefix based on spec version if prefix is 'did', otherwise keep the provided prefix
+    const getClientIdPrefix = (clientIdPrefix, spec) => {
+        if (clientIdPrefix === 'did') {
+            // If prefix is 'did', determine based on spec version
+            if (spec === SPEC_VERSIONS.V_1_0) {
+                return 'decentralized_identifier';
+            } else {
+                return 'did';
+            } 
+        }
+        // Otherwise, keep the provided prefix as-is
+        return clientIdPrefix;
+    };
 
     const {
         qrData, qrSize, qrCodeData, inputData, actualAuthorizationRequestObject, errorMessage,
@@ -76,24 +90,24 @@ const QrScreen = () => {
 
     const doFetch = useCallback((dcqlQueryOverride, presentationDefinitionOverride) =>
         fetchQrCodeData(
-            state.name,
+            getClientIdPrefix(state.name, selectedSpec),
             isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE,
-            selectedDraft,
+            selectedSpec,
             isRequestSigned,
             selectedResponseMode,
             dcqlQueryOverride,
             presentationDefinitionOverride,
         ),
-    [fetchQrCodeData, state, isByValue, selectedDraft, isRequestSigned, selectedResponseMode]);
+    [fetchQrCodeData, state, isByValue, selectedSpec, isRequestSigned, selectedResponseMode]);
 
-    const presentationRequest = usePresentationRequest({selectedDraftIsV10, onFetch: doFetch});
+    const presentationRequest = usePresentationRequest({selectedSpecIsV10: selectedSpecIsV10, onFetch: doFetch});
 
     useEffect(() => {
         const dcqlQueryOverride = presentationRequest.getDcqlQueryOverride();
         const presentationDefinitionOverride = presentationRequest.getPresentationDefinitionOverride();
         if (dcqlQueryOverride === null) return;
         void doFetch(dcqlQueryOverride, presentationDefinitionOverride);
-    }, [state, isByValue, isByReference, selectedDraft, fetchQrCodeData, isRequestSigned, selectedResponseMode]);
+    }, [state, isByValue, isByReference, selectedSpec, fetchQrCodeData, isRequestSigned, selectedResponseMode]);
 
     useEffect(() => {
         document.title = 'Scan';
@@ -113,18 +127,18 @@ const QrScreen = () => {
         resetValues();
         const dcqlQueryOverride = presentationRequest.getDcqlQueryOverride();
         if (dcqlQueryOverride === null) return;
-        await fetchQrCodeData(state.name, mode, selectedDraft, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
+        await fetchQrCodeData(getClientIdPrefix(state.name, selectedSpec), mode, selectedSpec, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
     };
 
-    const handleDraftVersionChange = async (version) => {
-        if (version === selectedDraft) return;
-        setSelectedDraft(version);
+    const handleSpecVersionChange = async (version) => {
+        if (version === selectedSpec) return;
+        setSelectedSpec(version);
         resetValues();
-        const dcqlQueryOverride = (version === DRAFT_VERSIONS.V_1_0 && presentationRequest.hasSubmittedDcqlQuery)
+        const dcqlQueryOverride = (version === SPEC_VERSIONS.V_1_0 && presentationRequest.hasSubmittedDcqlQuery)
             ? presentationRequest.getDcqlQueryOverride()
             : undefined;
         if (dcqlQueryOverride === null) return;
-        await fetchQrCodeData(state.name, isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, version, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
+        await fetchQrCodeData(getClientIdPrefix(state.name, version), isByValue ? REQUEST_MODES.BY_VALUE : REQUEST_MODES.BY_REFERENCE, version, isRequestSigned, selectedResponseMode, dcqlQueryOverride);
     };
 
     const handleResponseModeChange = (mode) => {
@@ -138,18 +152,18 @@ const QrScreen = () => {
         window.open(`${INJIWEB_URL}?${strippedRequest}`, '_blank');
     };
 
-    const subtitle = `${state?.name || 'QR Code Image'} · ${selectedDraft}`;
+    const subtitle = `${getClientIdPrefix(state?.name, selectedSpec) || 'QR Code Image'} · ${selectedSpec}`;
     const styles = getPageStyles();
 
     const controls = (
         <QrControls
             isByValue={isByValue}
             isByReference={isByReference}
-            selectedDraft={selectedDraft}
+            selectedSpec={selectedSpec}
             selectedResponseMode={selectedResponseMode}
             isRequestSigned={isRequestSigned}
             onRequestModeChange={handleRequestModeChange}
-            onDraftVersionChange={handleDraftVersionChange}
+            onSpecVersionChange={handleSpecVersionChange}
             onResponseModeChange={handleResponseModeChange}
             onSignedChange={(isChecked) => setIsRequestSigned(isChecked)}
             onOpenPresentationDetails={presentationRequest.openPresentationRequestDetails}
@@ -165,7 +179,7 @@ const QrScreen = () => {
             onDcqlQueryChange={presentationRequest.handleDcqlQueryChange}
             draftPresentationDefinitionValue={presentationRequest.draftPresentationDefinitionValue}
             onPresentationDefinitionChange={presentationRequest.handlePresentationDefinitionChange}
-            selectedDraftIsV10={selectedDraftIsV10}
+            selectedSpecIsV10={selectedSpecIsV10}
             allowInvalidRequest={presentationRequest.allowInvalidDcqlRequest}
             onAllowInvalidRequestChange={presentationRequest.setAllowInvalidDcqlRequest}
         />
