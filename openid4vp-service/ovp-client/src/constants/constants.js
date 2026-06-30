@@ -1,12 +1,12 @@
-// enum for client_id_schemes
-export const CLIENT_ID_SCHEMES = {
+// enum for CLIENT_ID_PREFIXES
+export const CLIENT_ID_PREFIXES = {
     PRE_REGISTERED: "pre-registered",
     REDIRECT_URI: "redirect_uri",
     DID: "did"
 }
 
-// enum for draft versions
-export const DRAFT_VERSIONS = {
+// enum for spec versions
+export const SPEC_VERSIONS = {
     V_1_0: "version-1.0",
     DRAFT_23: "draft-23",
     // DRAFT_21: "draft-21",

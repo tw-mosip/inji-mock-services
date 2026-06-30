@@ -1,6 +1,7 @@
 import QRCode from "qrcode";
 import { ISSUER } from "./issuer-metadata.js";
-import { buildOfferUrl, resolveIssuanceOptions } from "./issuance-options.js";
+import { buildOfferUrl, resolveIssuanceOptions, RESPONSE_MODE_OPTIONS, SPEC_VERSION_OPTIONS, CLIENT_ID_PREFIX_OPTIONS, REQUEST_MODE_OPTIONS, SIGNED_REQUEST_OPTIONS } from "./issuance-options.js";
+import { verifierConfig } from "./as/verifier-config.js";
 
 function escapeHtml(value) {
   return String(value)
@@ -36,6 +37,39 @@ function optionButton(name, value, currentValue, label, hint) {
       <span>${escapeHtml(label)}</span>
       <small>${escapeHtml(hint)}</small>
     </label>
+  `;
+}
+
+function updateClientIdPrefixes(specVersion) {
+  let data
+  if(specVersion === "version-1.0") {
+    data = [...CLIENT_ID_PREFIX_OPTIONS].filter(data => data!="did")
+  } else {
+    data = [...CLIENT_ID_PREFIX_OPTIONS].filter(data => data!="decentralized_identifier")
+  }
+  return Array.from(data).map(name => ({ name }))
+}
+
+const responseModes = Array.from(RESPONSE_MODE_OPTIONS).map(name => ({ name }))
+const specVersionOptions = Array.from(SPEC_VERSION_OPTIONS).map(name => ({ name }))
+const requestModeOptions = Array.from(REQUEST_MODE_OPTIONS).map(name => ({ name }))
+const signedRequestOptions = Array.from(SIGNED_REQUEST_OPTIONS).map(val => ({ name: String(val) }))
+
+function dropDown(name, options, currentValue, hint = "Option") {
+  return `
+    <div class="select-field">
+      <small>${hint}</small>
+      <select name="${name}" id="${name}">
+        ${options.map(option => `
+          <option
+            value="${option.name}"
+            ${option.name === currentValue ? "selected" : ""}
+          >
+            ${option.name}
+          </option>
+        `).join("")}
+      </select>
+    </div>
   `;
 }
 
@@ -336,6 +370,53 @@ function renderPage(options, pin = null) {
           grid-template-columns: 1fr;
         }
       }
+
+      .dropdown-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+      }
+
+      .select-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .select-field label {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .select-field small {
+        color: var(--text-muted);
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .select-field select {
+        width: 100%;
+        padding: 10px 14px;
+        font: inherit;
+        color: var(--text);
+        background: var(--surface-muted);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s, background .2s;
+        cursor: pointer;
+      }
+
+      .select-field select:hover {
+        border-color: var(--accent);
+      }
+
+      .select-field select:focus {
+        border-color: var(--accent);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(23, 107, 82, 0.15);
+      }
     </style>
   </head>
   <body>
@@ -371,6 +452,45 @@ function renderPage(options, pin = null) {
                 ${optionButton("flow", "pdi", options.flow, "PDI", "Presentation during issuance")}
               </div>
             </div>
+
+            ${options.flow === "pdi" ? `
+              <div class="control-group">
+                <h2>OpenID4VP Request Config</h2>
+                <div class="dropdown-group">
+                  ${dropDown(
+                    "specVersion",
+                    specVersionOptions,
+                    options.specVersion,
+                    "VP request spec version"
+                  )}
+                  ${dropDown(
+                    "responseMode",
+                    responseModes,
+                    options.responseMode,
+                    "Response mode"
+                  )}
+                  ${dropDown(
+                    "clientIdPrefix",
+                    updateClientIdPrefixes(options.specVersion),
+                    options.clientIdPrefix,
+                    "VP request Client ID Scheme"
+                  )}
+                  ${dropDown(
+                    "requestMode",
+                    requestModeOptions,
+                    options.requestMode,
+                    "VP Request Mode"
+                  )}
+                  ${dropDown(
+                    "signedRequest",
+                    signedRequestOptions,
+                    options.signedRequest ? "true" : "false",
+                    "Should the VP request be signed?"
+                  )}
+                </div>
+              </div>
+            `
+            : ""}
 
             <div class="control-group">
               <h2>Spec version</h2>
@@ -460,6 +580,14 @@ export async function qrImageHandler(req, res) {
 export default async function qrPageHandler(req, res) {
   const options = resolveIssuanceOptions(req.query);
   let pin = req.query.tx_code;
+
+  if (options.flow === "pdi") {
+    verifierConfig.specVersion = options.specVersion;
+    verifierConfig.responseMode = options.responseMode;
+    verifierConfig.clientIdPrefix = options.clientIdPrefix;
+    verifierConfig.requestMode = options.requestMode;
+    verifierConfig.signedRequest = options.signedRequest;
+  }
 
   if (options.flow === "pre-auth-tx" && !pin) {
     pin = Math.floor(1000 + Math.random() * 9000).toString();

@@ -88,7 +88,7 @@ app.post('/verifier/vp-response', (req, res) => {
 
     const response = {
         redirect_uri: `${baseUrl}/verifier/callback#response_code=${responseCode}`,
-        message: `Verifiable presentation is not right`,
+        message: `Verifiable presentation is all right`,
     };
     console.log("Response to be sent:", response);
     res.status(200).json(response);

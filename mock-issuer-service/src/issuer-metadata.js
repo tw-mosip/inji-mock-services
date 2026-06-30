@@ -7,7 +7,7 @@ import {
 } from "./issuer-profile.js";
 
 const BASE_CREDENTIAL_CONFIGURATIONS = {
-  UniversityDegreeCredential: {
+  FarmerCredential: {
     format: "ldp_vc",
     scope: "degree.read",
     cryptographic_binding_methods_supported: ["jwk"],

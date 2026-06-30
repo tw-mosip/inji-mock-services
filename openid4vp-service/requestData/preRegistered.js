@@ -1,6 +1,6 @@
 const {
     nonce, state, responseUri, baseUrl, presentationDefinitionUri,
-    CLIENT_ID_SCHEMES, REQUEST_MODES, DRAFT_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES, ResponseModes
+    CLIENT_ID_PREFIXES, REQUEST_MODES, SPEC_VERSIONS, REQUEST_SIGNING_SUPPORT_MODES, ResponseModes
 } = require("../constants");
 const clientMetadata = require('../clientMetadataMock.json');
 const {getVerifierMetadata} = require("../VerifierMetadata");
@@ -16,7 +16,7 @@ const preRegisteredAuthorizationRequestVersion1 = {
     "nonce": nonce,
     "state": state,
     "response_uri": responseUri,
-    "client_metadata": JSON.stringify(getVerifierMetadata(ResponseModes.DIRECT_POST_JWT, DRAFT_VERSIONS.V_1_0)),
+    "client_metadata": JSON.stringify(getVerifierMetadata(ResponseModes.DIRECT_POST_JWT, SPEC_VERSIONS.V_1_0)),
 }
 
 const preRegisteredAuthorizationRequestDraft23 = {
@@ -57,14 +57,14 @@ const map = {
     [REQUEST_SIGNING_SUPPORT_MODES.SIGNED_REQUEST_SUPPORTED] : true,
     [REQUEST_SIGNING_SUPPORT_MODES.UNSIGNED_REQUEST_SUPPORTED] : true,
     [REQUEST_MODES.BY_REFERENCE]: {
-        [DRAFT_VERSIONS.V_1_0]: preRegisteredAuthorizationRequestParamsDraft23,
-        [DRAFT_VERSIONS.DRAFT_23]: preRegisteredAuthorizationRequestParamsDraft23,
-        [DRAFT_VERSIONS.DRAFT_21]: preRegisteredAuthorizationRequestParamsDraft21,
+        [SPEC_VERSIONS.V_1_0]: preRegisteredAuthorizationRequestParamsDraft23,
+        [SPEC_VERSIONS.DRAFT_23]: preRegisteredAuthorizationRequestParamsDraft23,
+        [SPEC_VERSIONS.DRAFT_21]: preRegisteredAuthorizationRequestParamsDraft21,
     },
     [REQUEST_MODES.BY_VALUE]: {
-        [DRAFT_VERSIONS.V_1_0]: preRegisteredAuthorizationRequestVersion1,
-        [DRAFT_VERSIONS.DRAFT_23]: preRegisteredAuthorizationRequestDraft23,
-        [DRAFT_VERSIONS.DRAFT_21]: preRegisteredAuthorizationRequestDraft21,
+        [SPEC_VERSIONS.V_1_0]: preRegisteredAuthorizationRequestVersion1,
+        [SPEC_VERSIONS.DRAFT_23]: preRegisteredAuthorizationRequestDraft23,
+        [SPEC_VERSIONS.DRAFT_21]: preRegisteredAuthorizationRequestDraft21,
     }
 };
 

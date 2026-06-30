@@ -15,14 +15,14 @@ export default function PresentationRequestModal({
     onDcqlQueryChange,
     draftPresentationDefinitionValue,
     onPresentationDefinitionChange,
-    selectedDraftIsV10,
+    selectedSpecIsV1_0,
     allowInvalidRequest,
     onAllowInvalidRequestChange,
 }) {
     const [showInstructions, setShowInstructions] = useState(false);
 
-    const isV10 = selectedDraftIsV10;
-    const title = isV10 
+    const isV1_0 = selectedSpecIsV1_0;
+    const title = isV1_0 
         ? "Presentation Request Details (DCQL Query)" 
         : "Presentation Request Details (Presentation Definition)";
 
@@ -37,7 +37,7 @@ export default function PresentationRequestModal({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                 <h3 style={{ margin: 0 }}>{title}</h3>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    {isV10 && (
+                    {isV1_0 && (
                         <button
                             onClick={() => setShowInstructions(true)}
                             aria-label={"Open DCQL instructions"}
@@ -63,7 +63,7 @@ export default function PresentationRequestModal({
                 </div>
             </div>
 
-            {isV10 ? (
+            {isV1_0 ? (
                 <DcqlQueryEditor
                     value={draftDcqlQueryValue}
                     disabled={false}
@@ -91,7 +91,7 @@ export default function PresentationRequestModal({
                 </Button>
             </div>
 
-            {isV10 && (
+            {isV1_0 && (
                 <DcqlInstructionsModal
                     isOpen={showInstructions}
                     onClose={() => setShowInstructions(false)}
@@ -109,7 +109,7 @@ PresentationRequestModal.propTypes = {
     onDcqlQueryChange: PropTypes.func.isRequired,
     draftPresentationDefinitionValue: PropTypes.object,
     onPresentationDefinitionChange: PropTypes.func.isRequired,
-    selectedDraftIsV10: PropTypes.bool.isRequired,
+    selectedSpecIsV1_0: PropTypes.bool.isRequired,
     allowInvalidRequest: PropTypes.bool,
     onAllowInvalidRequestChange: PropTypes.func,
 };

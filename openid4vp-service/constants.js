@@ -30,15 +30,15 @@ const ContentTypes = {
 };
 
 
-// enum for client_id_schemes
-const CLIENT_ID_SCHEMES = {
+// enum for client_id_prefixes
+const CLIENT_ID_PREFIXES = {
     PRE_REGISTERED: "pre-registered",
     REDIRECT_URI: "redirect_uri",
-    DID: "did"
+    DECENTRALIZED_IDENTIFIER: "decentralized_identifier"
 }
 
-// enum for draft versions
-const DRAFT_VERSIONS = {
+// enum for Spec versions
+const SPEC_VERSIONS = {
     DRAFT_21: "draft-21",
     DRAFT_23: "draft-23",
     V_1_0: "version-1.0"
@@ -78,7 +78,7 @@ module.exports = {
 
     REQUEST_MODES,
     ResponseModes,
-    CLIENT_ID_SCHEMES,
-    DRAFT_VERSIONS,
+    CLIENT_ID_PREFIXES,
+    SPEC_VERSIONS,
     REQUEST_SIGNING_SUPPORT_MODES
 };

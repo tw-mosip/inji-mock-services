@@ -1,5 +1,5 @@
 const clientMetadata = require('./clientMetadataMock.json');
-const {DRAFT_VERSIONS, ResponseModes} = require("./constants");
+const {SPEC_VERSIONS, ResponseModes} = require("./constants");
 const { defaultVerifierKeys } = require('./encryptionKeyManagement');
 
 // Convert base64 to base64url format (just character replacement, no re-encoding)
@@ -84,11 +84,11 @@ const VerifierMetadata = {
 function getVerifierMetadata(responseMode, version) {
   let metadata = JSON.parse(JSON.stringify(VerifierMetadata[version] || {}));
 
-  if (responseMode === ResponseModes.DIRECT_POST) {
-    if (version === DRAFT_VERSIONS.V_1_0) {
+  if (!String(responseMode).includes(".jwt")) {
+    if (version === SPEC_VERSIONS.V_1_0) {
       delete metadata["encrypted_response_enc_values_supported"];
     }
-    if (version === DRAFT_VERSIONS.DRAFT_23) {
+    if (version === SPEC_VERSIONS.DRAFT_23) {
       delete metadata["authorization_encrypted_response_enc"];
       delete metadata["authorization_encrypted_response_alg"];
     }

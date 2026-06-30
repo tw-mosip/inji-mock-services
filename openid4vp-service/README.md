@@ -75,9 +75,9 @@ To simplify the process, script is also exposed
 |-----------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | OpenID4VP specification versions                          | `draft-23`, `version-1.0`                                                                                                                                                                                                                                                                                                                                         |
 | Device flow                                               | cross device flow (QR code generated for the authorization request), Same device flow (Generated QR code with authorization request is clickable)                                                                                                                                                                                                                  |
-| Client id scheme                                          | `pre-registered`, `redirect_uri`, `did`                                                                                                                                                                                                                                                                                                                            |
+| Client id Prefix                                          | `pre-registered`, `redirect_uri`, `decentralized_identifier (or did for OVP draft 23)`                                                                                                                                                                                                                                                                                                                            |
 | Signed authorization request algorithms                   | Ed25519                                                                                                                                                                                                                                                                                                                                                            |
-| Creating authorization request                            | By value, By reference ( via `request_uri` method) <br> _[Note: Authorization request by value is not supported for the did client ID scheme, as it requires a signed request. Instead, a Request URI should be used to fetch the signed authorization request ([reference](https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html#section-3.2))]_ |
+| Creating authorization request                            | By value, By reference ( via `request_uri` method) <br> _[Note: Authorization request by value is not supported for the decentralized_identifier Client id Prefix (or did client ID scheme), as it requires a signed request. Instead, a Request URI should be used to fetch the signed authorization request ([reference](https://openid.net/specs/openid-4-verifiable-presentations-1_0-23.html#section-3.2))]_ |
 | Creating presentation definition in authorization request | By value, By reference (via `presentation_definition_uri`)                                                                                                                                                                                                                                                                                                         |
 | Authorization Response mode                               | `direct_post`, `direct_post.jwt` (with encrypted & unsigned responses)                                                                                                                                                                                                                                                                                             |
 | Authorization Response type                               | `vp_token`                                                                                                                                                                                                                                                                                                                                                         |
@@ -91,11 +91,11 @@ To simplify the process, script is also exposed
 - Example usage: Fetch the JWKS from `<base-url>/.well-known/jwks.json` to validate the Verifier's JWTs.
 
 
-## Client id schemes supported
+## Client id Prefixes / Schemes supported
 
-1. `redirect_uri` scheme (example: client_id: `https://client.example.org/cb`)
-2. `did` scheme (example: client_id: `did:example:123`)
-3. `pre-registered` scheme (example: client_id: `mock-example client`)
+1. `redirect_uri` (example: client_id: `https://client.example.org/cb`)
+2. `decentralized_identifier` (example: client_id: `decentralized_identifier:did:example:123`) OR `did` scheme (example: client_id: `did:example:123`)
+3. `pre-registered` (example: client_id: `mock-example client`)
 
 ## Port & Tunnel Configuration
 
@@ -121,8 +121,8 @@ To simplify the process, script is also exposed
 | Method | Path | Responsibility |
 |--------|------|----------------|
 | `GET` | `/.well-known/jwks.json` | Exposes verifier public keys as a JWKS for signature verification. |
-| `GET`, `POST` | `/verifier/:client_id_scheme/:request_mode` | Generates the authorization request and returns the QR response payload. Applies request overrides such as `dcql_query`, `presentation_definition`, signing option, draft/version, and response mode. |
-| `GET`, `POST` | `/verifier/get-auth-request-obj/:sessionId/:client_id_scheme` | Returns the actual authorization request object for `by_reference` flows using the request data stored for the given `sessionId`. |
+| `GET`, `POST` | `/verifier/:client_id_prefix/:request_mode` | Generates the authorization request and returns the QR response payload. Applies request overrides such as `dcql_query`, `presentation_definition`, signing option, draft/version, and response mode. |
+| `GET`, `POST` | `/verifier/get-auth-request-obj/:sessionId/:client_id_prefix` | Returns the actual authorization request object for `by_reference` flows using the request data stored for the given `sessionId`. |
 | `GET` | `/verifier/presentation-definition-uri/:sessionId` | Returns the session-scoped presentation definition, including any stored overrides for that `sessionId`. |
 | `GET` | `/verifier/presentation_definition_uri` | Legacy endpoint that returns the default presentation definition without session-specific overrides. |
 | `POST` | `/verifier/vp-response` | Accepts the wallet VP response and stores it as the latest received verifier result. |
@@ -136,7 +136,7 @@ To simplify the process, script is also exposed
 Generate a QR code payload for a `by_reference` request:
 
 ```bash
-curl -X POST "http://localhost:3000/verifier/pre-registered/by_reference?draft=version-1.0" \
+curl -X POST "http://localhost:3000/verifier/pre-registered/by_reference?spec=version-1.0" \
   -H "Content-Type: application/json" \
   -d '{
     "signed": true,
@@ -150,7 +150,7 @@ curl -X POST "http://localhost:3000/verifier/pre-registered/by_reference?draft=v
 Fetch the actual authorization request object for a session:
 
 ```bash
-curl "http://localhost:3000/verifier/get-auth-request-obj/<sessionId>/pre-registered?draft=version-1.0&response_mode=direct_post"
+curl "http://localhost:3000/verifier/get-auth-request-obj/<sessionId>/pre-registered?spec=version-1.0&response_mode=direct_post"
 ```
 
 Post a wallet VP response back to the verifier:
@@ -168,9 +168,9 @@ curl -X POST "http://localhost:3000/verifier/vp-response" \
 
 ## Session Creation Using sessionId
 
-- When `/verifier/:client_id_scheme/:request_mode` is called, the service generates a new `sessionId` for that request.
+- When `/verifier/:client_id_prefix/:request_mode` is called, the service generates a new `sessionId` for that request.
 - The generated `sessionId` is used to store session-scoped request data such as `dcql_query` and `presentation_definition` overrides.
-- For `by_reference` flows, the `sessionId` is embedded into the generated `request_uri` as `/verifier/get-auth-request-obj/:sessionId/:client_id_scheme`.
+- For `by_reference` flows, the `sessionId` is embedded into the generated `request_uri` as `/verifier/get-auth-request-obj/:sessionId/:client_id_prefix`.
 - When presentation definition is served by reference, the service also uses the same `sessionId` in `/verifier/presentation-definition-uri/:sessionId`.
 - This allows each QR code request to resolve the correct request object and presentation definition without mixing overrides from other sessions.
 
