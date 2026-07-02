@@ -82,6 +82,16 @@ To simplify the process, script is also exposed
 | Authorization Response mode                               | `direct_post`, `direct_post.jwt` (with encrypted & unsigned responses)                                                                                                                                                                                                                                                                                             |
 | Authorization Response type                               | `vp_token`                                                                                                                                                                                                                                                                                                                                                         |
 | Supported Credential formats                              | `ldp_vc`, `mso_mdoc`                                                                                                                                                                                                                                                                                                                                               |
+#### Encrypted Response
+
+For the `direct_post.jwt` response mode, the VP response is returned in encrypted form.
+
+The mock application supports the `ECDH-ES` key management algorithm with `A256GCM` content encryption for the following key types:
+
+* `OKP` (curve `Ed25519`)
+* `EC` (curves `P-256`, `P-384`, and `P-521`)
+
+By default, the Verifier's encryption key is exposed as an `OKP` key using the `Ed25519` curve. To customize the encryption key, update the `initializeEncryptionKeys` method in the [encryptionKeyManagement](./encryptionKeyManagement.js) file so that it returns the desired Verifier encryption key as `encryptionKey`.
 
 
 #### Hosted public keys of the Verifier

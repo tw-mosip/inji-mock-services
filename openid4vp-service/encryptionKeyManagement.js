@@ -14,6 +14,17 @@ const defaultVerifierKeys = {
     privateKeyBase64: "Mjxgl/YAh11IxsTZ6b6TD63BGc1FPWe+yAhD96S0IC0="
 };
 
+const ecVerifierKey = {
+    "kty": "EC",
+    "d": "Llyw0UJUFOvBY7hLiyZuSqXgxvk_r0HpikmUFSVjprs",
+    "use": "enc",
+    "crv": "P-256",
+    "kid": "p-256-enc-key",
+    "x": "cDkxy2ZK0R2alOAvHo3n5EnzA5yV-qg6lbT3TnF_7xQ",
+    "y": "7GffiqVWpLBAqRByuoJ-0TCtxRAs7_-OK02kpGyWO7g",
+    "alg": "ECDH-ES"
+}
+
 /**
  * Convert base64 to base64url format
  * @param {string} base64 - Standard base64 string
@@ -29,6 +40,7 @@ function base64ToBase64Url(base64) {
  */
 async function initializeEncryptionKeys() {
     const publicKeyB64Url = base64ToBase64Url(defaultVerifierKeys.publicKeyBase64);
+    const pvtKeyB64Url = base64ToBase64Url(defaultVerifierKeys.privateKeyBase64);
 
     const encryptionKey = {
         jwk: {
@@ -36,6 +48,7 @@ async function initializeEncryptionKeys() {
             crv: "X25519",
             use: "enc",
             x: publicKeyB64Url,
+            d: pvtKeyB64Url,
             alg: "ECDH-ES",
             kid: "verifier-static-key"
         },
@@ -45,6 +58,15 @@ async function initializeEncryptionKeys() {
         publicKeyBase64: defaultVerifierKeys.publicKeyBase64,
         privateKeyBase64: defaultVerifierKeys.privateKeyBase64
     };
+
+    const ecEncryptionKey = {
+        jwk: ecVerifierKey,
+        keyId: ecVerifierKey.kid,
+        algorithm: ecVerifierKey.alg,
+        encryptionMethods: ["A256GCM"]
+    }
+
+    // return the type of Encryption key required for Verifier encryption key - Eg : return { encryptionKey: ecEncryptionKey };
 
     return { encryptionKey };
 }
@@ -75,17 +97,11 @@ async function decryptJwe(jweToken, encryptionKey) {
         throw new Error('Invalid JWE token: must be a non-empty string');
     }
 
-    if (!encryptionKey || !encryptionKey.privateKeyBase64) {
+    f (!encryptionKey) {
         throw new Error('Invalid encryption key: private key required');
     }
 
-    // Create a JWK object for the jose library
-    const privateJwk = {
-        kty: 'OKP',
-        crv: 'X25519',
-        x: base64ToBase64Url(encryptionKey.publicKeyBase64),
-        d: base64ToBase64Url(encryptionKey.privateKeyBase64)
-    };
+    const privateJwk = encryptionKey.jwk;
 
     try {
         // Load jose dynamically (ESM module)
