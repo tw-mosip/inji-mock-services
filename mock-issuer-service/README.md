@@ -24,6 +24,61 @@ A lightweight **mock OpenID for Verifiable Credential Issuer** built with **Node
 
 ---
 
+## 🚦 One-command PDI flow startup (recommended)
+
+Instead of manually starting the issuer, the OVP backend, and the OVP UI in three
+terminals, you can start the whole Presentation During Issuance (PDI) demo stack from
+here with a single command:
+
+```bash
+cd mock-issuer-service
+npm install
+npm start
+```
+
+This runs `scripts/start-all.js`, which:
+
+1. Prompts for the two ngrok URLs the flow needs (press Enter to keep the current
+   value shown):
+   * Issuer service tunnel (`ngrok http 4000`)
+   * OVP verifier backend tunnel (`ngrok http 3000`)
+
+   Start those two `ngrok` tunnels in separate terminals *before* answering the
+   prompts, then paste the URLs in. The values are written into `src/issuer-profile.js`
+   (`ISSUER`) and `../openid4vp-service/constants.js` (`baseUrl`).
+2. Starts the OVP verifier backend (`openid4vp-service`, port 3000), which the issuer
+   calls during PDI to build the verifier's authorization request.
+3. Starts the OVP verifier UI (`ovp-client`, port 3001) - useful for standalone
+   testing of the verifier itself, independent of the issuer/PDI flow.
+4. Starts this issuer service itself (port 4000).
+
+All three processes' logs are shown together (prefixed `[OVP-BACKEND]`, `[OVP-UI]`,
+`[ISSUER]`); press `Ctrl+C` once to stop all of them.
+
+To run only the issuer (e.g. if the other two services are already running
+elsewhere), use `npm run start:issuer-only` instead.
+
+### Configuring the PDI verifier request
+
+The PDI verifier request (spec version, client ID prefix, request mode, signing,
+presentation definition / DCQL query) is configured entirely on **this service's own
+`/qr` page** - no need to touch the OVP UI or backend:
+
+1. Open `https://mock-issuer.local:4000/qr` and select the **PDI** flow toggle.
+2. Use the dropdowns to pick spec version, client ID prefix, request mode, response
+   mode, and whether the request should be signed - each change reloads the page and
+   applies immediately (no restart needed).
+3. Edit the **Presentation Definition** (shown for `draft-23`) or **DCQL Query**
+   (shown for `version-1.0`) JSON directly in the textarea, then click **"Apply JSON
+   config"**. Invalid JSON is flagged with an error banner and the previous valid
+   value keeps being used until you fix it.
+
+All of this is held in `src/as/verifier-config.js` (`verifierConfig`), which the
+issuer reads directly when it calls the verifier during `POST
+/as/interactive-authorization`. You can also edit that file directly if you prefer.
+
+---
+
 ## 🧱 Tech Stack
 
 * Node.js (ESM)
@@ -327,6 +382,12 @@ node index.js
 
 The file `src/as/verifier-config.js` is used by the issuer during the **PDI interactive authorization flow**.
 
+> ℹ️ **Configure it from the `/qr` page**: rather than editing this file by hand, open
+> `/qr`, select the **PDI** flow, and use the dropdowns / JSON textareas there - see
+> [Configuring the PDI verifier request](#configuring-the-pdi-verifier-request) above.
+> Those controls update this same `verifierConfig` object in memory, immediately, with
+> no restart required.
+
 When the issuer handles `POST /as/interactive-authorization`, it loads the values from `verifier-config.js`, calls the verifier service, and uses the returned verifier request object as the `openid4vp_request` sent back to the wallet.
 
 This helps you customize verifier behavior for PDI without changing the interactive authorization handler itself.
@@ -337,7 +398,7 @@ You can use `verifier-config.js` to control:
 * `responseMode`: controls how the verifier expects the presentation response
 * `clientIdPrefix`: selects the verifier client ID prefix such as `did` (draft-23), `decentralized_identifier` (version-1.0), `redirect_uri`, or `pre-registered`
 * `requestMode`: switches between `by_value` and `by_reference`
-* `verifierBaseUrl`: points the issuer to the verifier service instance to call
+* `verifierBaseUrl`: points the issuer to the verifier service instance to call (issuer-local; can also be set via the `VERIFIER_BASE_URL` environment variable)
 * `signedRequest`: enables or disables signed verifier requests
 * `presentationDefinition`: used when the selected spec version is `draft-23`
 * `dcqlQuery`: used when the selected spec version is `version-1.0`
