@@ -40,7 +40,7 @@ start_if_not_running "Issuer service (port 4000, HTTP)" "node src/server.js" \
     "$REPO_ROOT/mock-issuer-service" "$LOG_DIR/issuer.log" \
     env USE_HTTPS=false node src/server.js
 
-start_if_not_running "OVP verifier UI (port 3001)" "react-scripts start" \
+start_if_not_running "OVP verifier UI (port 3001)" "react-scripts/scripts/start.js" \
     "$REPO_ROOT/openid4vp-service/ovp-client" "$LOG_DIR/ovp-ui.log" \
     npm start
 

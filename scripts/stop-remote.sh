@@ -6,7 +6,7 @@
 
 set -e
 
-for pattern in "node app.js" "node src/server.js" "react-scripts start"; do
+for pattern in "node app.js" "node src/server.js" "react-scripts/scripts/start.js"; do
     pids=$(pgrep -f "$pattern" || true)
     if [ -n "$pids" ]; then
         echo "Stopping '$pattern' (pid(s): $pids)"
