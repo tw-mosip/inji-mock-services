@@ -26,9 +26,9 @@ A lightweight **mock OpenID for Verifiable Credential Issuer** built with **Node
 
 ## 🚦 One-command PDI flow startup (recommended)
 
-Instead of manually starting the issuer, the OVP backend, and the OVP UI in three
-terminals, you can start the whole Presentation During Issuance (PDI) demo stack from
-here with a single command:
+Instead of manually starting the issuer and the OVP backend in separate terminals,
+you can start the whole Presentation During Issuance (PDI) demo stack from here with a
+single command:
 
 ```bash
 cd mock-issuer-service
@@ -38,24 +38,31 @@ npm start
 
 This runs `scripts/start-all.js`, which:
 
-1. Prompts for the two ngrok URLs the flow needs (press Enter to keep the current
-   value shown):
-   * Issuer service tunnel (`ngrok http 4000`)
-   * OVP verifier backend tunnel (`ngrok http 3000`)
+1. Prompts for the two public tunnel URLs the flow needs (press Enter to keep the
+   current value shown):
+   * Issuer service (port 4000)
+   * OVP verifier backend (port 3000)
 
-   Start those two `ngrok` tunnels in separate terminals *before* answering the
-   prompts, then paste the URLs in. The values are written into `src/issuer-profile.js`
-   (`ISSUER`) and `../openid4vp-service/constants.js` (`baseUrl`).
+   Expose those two local ports over public HTTPS with the tunnel of your choice
+   (ngrok, serveo, cloudflared, etc.) *before* answering the prompts, then paste the
+   URLs in. The values are written into `src/issuer-profile.js` (`ISSUER`) and
+   `../openid4vp-service/constants.js` (`baseUrl`).
 2. Starts the OVP verifier backend (`openid4vp-service`, port 3000), which the issuer
    calls during PDI to build the verifier's authorization request.
-3. Starts the OVP verifier UI (`ovp-client`, port 3001) - useful for standalone
-   testing of the verifier itself, independent of the issuer/PDI flow.
-4. Starts this issuer service itself (port 4000).
+3. Starts this issuer service itself (port 4000).
 
-All three processes' logs are shown together (prefixed `[OVP-BACKEND]`, `[OVP-UI]`,
-`[ISSUER]`); press `Ctrl+C` once to stop all of them.
+The OVP verifier UI (`ovp-client`, port 3001) is only useful for standalone testing of
+the verifier and is **not** started by default. Pass `--with-ui` (or set
+`START_OVP_UI=true`) to launch it too:
 
-To run only the issuer (e.g. if the other two services are already running
+```bash
+npm start -- --with-ui
+```
+
+All processes' logs are shown together (prefixed `[OVP-BACKEND]`, `[ISSUER]`, and
+`[OVP-UI]` when enabled); press `Ctrl+C` once to stop all of them.
+
+To run only the issuer (e.g. if the other services are already running
 elsewhere), use `npm run start:issuer-only` instead.
 
 ### Configuring the PDI verifier request

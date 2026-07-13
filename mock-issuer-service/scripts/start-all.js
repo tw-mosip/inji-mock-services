@@ -3,16 +3,19 @@
  * Single entry point that wires up and starts the full PDI (Presentation During
  * Issuance) demo stack from the mock-issuer-service:
  *
- *   1. Prompts for the two ngrok URLs the flow needs (issuer + OVP verifier backend)
- *      and patches them into the relevant source files.
+ *   1. Prompts for the two public tunnel URLs the flow needs (issuer + OVP
+ *      verifier backend) and patches them into the relevant source files. Any
+ *      tunnel that exposes a local port over public HTTPS works.
  *   2. Starts the OVP verifier backend (openid4vp-service, port 3000), which the
  *      issuer calls during PDI to build the verifier's authorization request.
- *   3. Starts the OVP verifier UI (ovp-client, port 3001) - useful for standalone
- *      testing of the verifier, independent of the issuer/PDI flow.
- *   4. Starts this issuer service itself (port 4000). The PDI verifier request
+ *   3. Starts this issuer service itself (port 4000). The PDI verifier request
  *      (spec version, client ID prefix, request mode, signing, presentation
  *      definition / DCQL query) is configured entirely on this service's own
  *      `/qr` page (select the "PDI" flow) - see src/as/verifier-config.js.
+ *
+ * The OVP verifier UI (ovp-client, port 3001) is only useful for standalone
+ * testing of the verifier and is NOT started by default. Pass `--with-ui`
+ * (or set START_OVP_UI=true) to start it alongside the rest.
  *
  * Run with: npm start (from mock-issuer-service)
  */
@@ -38,6 +41,11 @@ const OVP_CONSTANTS_FILE = path.join(OVP_DIR, "constants.js");
 const ISSUER_PORT = 4000;
 const OVP_BACKEND_PORT = 3000;
 const OVP_CLIENT_PORT = 3001;
+
+// The OVP verifier UI is optional - only start it when explicitly requested,
+// since the PDI flow itself does not depend on it.
+const START_OVP_UI =
+  process.argv.includes("--with-ui") || process.env.START_OVP_UI === "true";
 
 function readCurrentIssuerUrl() {
   const data = fs.readFileSync(ISSUER_PROFILE_FILE, "utf8");
@@ -77,7 +85,7 @@ function stripTrailingSlash(url) {
   return url.trim().replace(/\/+$/, "");
 }
 
-async function promptForNgrokUrls() {
+async function promptForPublicUrls() {
   const currentIssuerUrl = readCurrentIssuerUrl();
   const currentOvpUrl = readCurrentOvpBaseUrl();
 
@@ -89,19 +97,22 @@ async function promptForNgrokUrls() {
 
   console.log("\n=== PDI Flow Setup ===");
   console.log(
-    "This flow needs two ngrok tunnels running so wallets can reach both services publicly:"
+    "This flow needs both services exposed over public HTTPS so wallets can reach them."
   );
-  console.log(`  ngrok http ${ISSUER_PORT}   # Issuer service`);
-  console.log(`  ngrok http ${OVP_BACKEND_PORT}   # OVP verifier backend`);
-  console.log("Start those in separate terminals first, then paste the URLs below.\n");
+  console.log(
+    `Expose port ${ISSUER_PORT} (issuer) and port ${OVP_BACKEND_PORT} (OVP verifier backend)`
+  );
+  console.log(
+    "with the tunnel of your choice, then paste the resulting public URLs below.\n"
+  );
 
   process.stdout.write(
-    `Issuer ngrok URL (port ${ISSUER_PORT}) [press Enter to keep "${currentIssuerUrl}"]: `
+    `Issuer public URL (port ${ISSUER_PORT}) [press Enter to keep "${currentIssuerUrl}"]: `
   );
   const issuerAnswer = (await lines.next()).value ?? "";
 
   process.stdout.write(
-    `OVP Verifier backend ngrok URL (port ${OVP_BACKEND_PORT}) [press Enter to keep "${currentOvpUrl}"]: `
+    `OVP verifier backend public URL (port ${OVP_BACKEND_PORT}) [press Enter to keep "${currentOvpUrl}"]: `
   );
   const ovpAnswer = (await lines.next()).value ?? "";
 
@@ -203,7 +214,7 @@ function waitForPort(port, { timeoutMs = 20000, intervalMs = 500, useHttps = fal
 }
 
 async function main() {
-  const { issuerUrl, ovpUrl } = await promptForNgrokUrls();
+  const { issuerUrl, ovpUrl } = await promptForPublicUrls();
 
   console.log("\nStarting services...\n");
 
@@ -217,13 +228,16 @@ async function main() {
     cwd: OVP_DIR,
   });
 
-  // OVP verifier UI - useful for standalone testing of the verifier itself.
-  spawnService({
-    label: "OVP-UI",
-    command: "npm",
-    args: ["start"],
-    cwd: OVP_CLIENT_DIR,
-  });
+  // OVP verifier UI - useful for standalone testing of the verifier itself,
+  // but not required by the PDI flow, so only start it when requested.
+  if (START_OVP_UI) {
+    spawnService({
+      label: "OVP-UI",
+      command: "npm",
+      args: ["start"],
+      cwd: OVP_CLIENT_DIR,
+    });
+  }
 
   // Issuer service itself.
   spawnService({
@@ -236,15 +250,17 @@ async function main() {
     },
   });
 
-  const [ovpUp, ovpUiUp, issuerUp] = await Promise.all([
+  const [ovpUp, issuerUp, ovpUiUp] = await Promise.all([
     waitForPort(OVP_BACKEND_PORT),
-    waitForPort(OVP_CLIENT_PORT, { timeoutMs: 60000 }),
     waitForPort(ISSUER_PORT, { useHttps: true }),
+    START_OVP_UI ? waitForPort(OVP_CLIENT_PORT, { timeoutMs: 60000 }) : Promise.resolve(null),
   ]);
 
   console.log("\n=== PDI Flow Ready ===");
   console.log(`OVP verifier backend : http://localhost:${OVP_BACKEND_PORT} ${ovpUp ? "✅" : "⚠️  not responding yet"} (public: ${ovpUrl || "not set"})`);
-  console.log(`OVP verifier UI      : http://localhost:${OVP_CLIENT_PORT} ${ovpUiUp ? "✅" : "⚠️  not responding yet"}`);
+  if (START_OVP_UI) {
+    console.log(`OVP verifier UI      : http://localhost:${OVP_CLIENT_PORT} ${ovpUiUp ? "✅" : "⚠️  not responding yet"}`);
+  }
   console.log(`Issuer service       : https://mock-issuer.local:${ISSUER_PORT} ${issuerUp ? "✅" : "⚠️  not responding yet"} (public: ${issuerUrl || "not set"})`);
   console.log("\nOpen the issuer's /qr page, select the \"PDI\" flow, and configure the verifier request there (spec version, client ID prefix, request mode, signing, presentation definition / DCQL query).");
   console.log("Press Ctrl+C to stop all services.\n");
