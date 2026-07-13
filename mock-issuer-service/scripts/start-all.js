@@ -41,21 +41,21 @@ const OVP_CLIENT_PORT = 3001;
 
 function readCurrentIssuerUrl() {
   const data = fs.readFileSync(ISSUER_PROFILE_FILE, "utf8");
-  const match = data.match(/export const ISSUER = "([^"]+)";/);
+  const match = data.match(/export const ISSUER =[^"]*"([^"]+)"/);
   return match ? match[1] : "";
 }
 
 function readCurrentOvpBaseUrl() {
   const data = fs.readFileSync(OVP_CONSTANTS_FILE, "utf8");
-  const match = data.match(/const baseUrl = "([^"]+)"/);
+  const match = data.match(/const baseUrl =[^"]*"([^"]+)"/);
   return match ? match[1] : "";
 }
 
 function writeIssuerUrl(url) {
   const data = fs.readFileSync(ISSUER_PROFILE_FILE, "utf8");
   const updated = data.replace(
-    /export const ISSUER = "[^"]+";/,
-    `export const ISSUER = "${url}";`
+    /(export const ISSUER =[^"]*")[^"]+(")/,
+    `$1${url}$2`
   );
   fs.writeFileSync(ISSUER_PROFILE_FILE, updated, "utf8");
 }
@@ -63,8 +63,8 @@ function writeIssuerUrl(url) {
 function writeOvpBaseUrl(url) {
   const data = fs.readFileSync(OVP_CONSTANTS_FILE, "utf8");
   const updated = data.replace(
-    /const baseUrl = "[^"]+"/,
-    `const baseUrl = "${url}"`
+    /(const baseUrl =[^"]*")[^"]+(")/,
+    `$1${url}$2`
   );
   fs.writeFileSync(OVP_CONSTANTS_FILE, updated, "utf8");
 }
