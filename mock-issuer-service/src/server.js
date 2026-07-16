@@ -104,8 +104,8 @@ app.post("/:version(v1|draft13)/:flow(pdi)/nonce", nonceHandler);
 // ---- SERVER (HTTP or HTTPS, configurable via .env) ---- //
 // Most wallets require HTTPS, so this defaults to HTTPS (self-signed cert) to match
 // existing local-dev setup. Set USE_HTTPS=false when fronting this service with a
-// proxy that already terminates TLS (e.g. GitHub Codespaces port forwarding, ngrok,
-// cloudflared) to avoid double-TLS/protocol-mismatch issues.
+// proxy that already terminates TLS (e.g. ngrok, cloudflared) to avoid
+// double-TLS/protocol-mismatch issues.
 const PORT = Number(process.env.PORT) || 4000;
 const HOST = process.env.HOST || "0.0.0.0";
 const useHttps = process.env.USE_HTTPS !== "false";
