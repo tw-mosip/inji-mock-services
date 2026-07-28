@@ -14,6 +14,9 @@ export default function loginHandler(req, res) {
     created_at: Date.now(),
     testError: issuerStateEntry?.testError || null,
   });
+  console.log(
+    `Auth code issued for client_id=${client_id}${dpop_jkt ? ` (dpop_jkt bound: ${dpop_jkt})` : " (no dpop_jkt)"}`,
+  );
   if (issuerState) issuerStateStore.delete(issuerState);
 
   const redirectURL = new URL(redirect_uri);

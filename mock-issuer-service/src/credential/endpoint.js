@@ -74,6 +74,11 @@ export default async function credentialEndpoint(req, res) {
     console.log("DPoP-bound credential request validated ✓");
   }
   // ── End DPoP binding check ─────────────────────────────────────────────────
+  else if (accessToken) {
+    console.log(
+      `Bearer credential request (no DPoP) — token_type on record: ${tokenEntry?.tokenType ?? "unknown"}`,
+    );
+  }
 
   const testError =
     envTestError("credential") || tokenEntry?.testError || stageTestErrorStore.get("credential") || null;

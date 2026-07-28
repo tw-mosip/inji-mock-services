@@ -106,6 +106,7 @@ app.post("/:version(v1|draft13)/:flow(pdi)/nonce", nonceHandler);
 const port = Number(process.env.PORT || 4000);
 const host = process.env.HOST || "0.0.0.0";
 const useHttps = String(process.env.USE_HTTPS ?? "true").toLowerCase() !== "false";
+const dpopNonceMode = String(process.env.USE_DPOP_NONCE ?? "false").toLowerCase() === "true";
 
 if (useHttps) {
   const options = {
@@ -114,9 +115,11 @@ if (useHttps) {
   };
   https.createServer(options, app).listen(port, host, () => {
     console.log(`Mock Issuer (https) running at ${ISSUER} (local :${port})`);
+    console.log(`DPoP nonce-challenge mode (USE_DPOP_NONCE): ${dpopNonceMode}`);
   });
 } else {
   http.createServer(app).listen(port, host, () => {
     console.log(`Mock Issuer (http) running at ${ISSUER} (local :${port})`);
+    console.log(`DPoP nonce-challenge mode (USE_DPOP_NONCE): ${dpopNonceMode}`);
   });
 }
