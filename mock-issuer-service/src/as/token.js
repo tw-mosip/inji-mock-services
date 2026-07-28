@@ -58,7 +58,6 @@ export default async function tokenHandler(req, res) {
     scope = entry.scope;
     testError ||= entry.testError?.stage === "token" ? entry.testError : null;
     credentialTestError ||= entry.testError?.stage === "credential" ? entry.testError : null;
-    authCodeStore.delete(code);
 
     // RFC 9449 §10: if dpop_jkt was bound at authorization, DPoP proof is mandatory
     if (entry.dpop_jkt) {
@@ -70,6 +69,10 @@ export default async function tokenHandler(req, res) {
       }
       boundDpopJkt = entry.dpop_jkt;
     }
+    // NOTE: code is deleted only after DPoP validation succeeds below (see
+    // "Issue access_token" section) — deleting it here would break the
+    // RFC 9449 §8 use_dpop_nonce retry, since the wallet must resend the
+    // SAME authorization_code grant with a nonce-bound proof.
   } else if (grant_type === "urn:ietf:params:oauth:grant-type:pre-authorized_code") {
     if (!preAuthorizedCode) {
       return res.status(400).json({
@@ -101,7 +104,7 @@ export default async function tokenHandler(req, res) {
     scope = entry.scope;
     testError ||= entry.testError?.stage === "token" ? entry.testError : null;
     credentialTestError ||= entry.testError?.stage === "credential" ? entry.testError : null;
-    preAuthCodeStore.delete(preAuthorizedCode);
+    // NOTE: deferred delete — see comment on authCodeStore above.
   } else {
     return res.status(400).json({
       error: "unsupported_grant_type",
@@ -116,6 +119,10 @@ export default async function tokenHandler(req, res) {
   const dpopProof = req.headers["dpop"];
   let dpopThumbprint = null;
   let tokenType = "Bearer";
+
+  if (!dpopProof) {
+    console.log("No DPoP header present — issuing plain Bearer token");
+  }
 
   if (dpopProof) {
     // Fresh nonce for proactive use (always issued so wallet can include it next time)
@@ -146,12 +153,16 @@ export default async function tokenHandler(req, res) {
         const { decodeJwt } = await import("jose");
         const proofPayload = decodeJwt(dpopProof);
         if (!proofPayload.nonce || !isDPoPNonceValid(proofPayload.nonce)) {
+          console.log(
+            `use_dpop_nonce challenge issued (proof nonce: ${proofPayload.nonce || "none"}) — freshNonce: ${freshNonce}`,
+          );
           res.setHeader("DPoP-Nonce", freshNonce);
           return res.status(400).json({
             error: "use_dpop_nonce",
             error_description: "Authorization server requires nonce in DPoP proof",
           });
         }
+        console.log(`DPoP nonce accepted ✓ (nonce: ${proofPayload.nonce})`);
       }
 
       dpopThumbprint = result.thumbprint;
@@ -176,6 +187,7 @@ export default async function tokenHandler(req, res) {
       }
     } catch (err) {
       if (err instanceof DPoPError && err.code === "use_dpop_nonce") {
+        console.log(`use_dpop_nonce challenge issued (reason: ${err.description}) — freshNonce: ${freshNonce}`);
         res.setHeader("DPoP-Nonce", freshNonce);
         return res.status(400).json({
           error: "use_dpop_nonce",
@@ -191,6 +203,15 @@ export default async function tokenHandler(req, res) {
     }
   }
   // ── End DPoP handling ──────────────────────────────────────────────────────
+
+  // Consume the code now that DPoP validation (if any) has succeeded —
+  // deleting earlier would prevent the RFC 9449 §8 nonce-retry from reusing
+  // the same grant.
+  if (grant_type === "authorization_code") {
+    authCodeStore.delete(code);
+  } else if (grant_type === "urn:ietf:params:oauth:grant-type:pre-authorized_code") {
+    preAuthCodeStore.delete(preAuthorizedCode);
+  }
 
   // Issue access_token + c_nonce
   const accessToken = base64url(crypto.randomBytes(32).toString("base64"));
