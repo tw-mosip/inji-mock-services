@@ -1,9 +1,9 @@
+import "dotenv/config";
 import express from "express";
 import https from "https";
 import http from "http";
 import fs from "fs";
 import cors from "cors";
-import dotenv from "dotenv";
 import authServerMetadata from "./as/metadata.js";
 import credentialOfferHandler from "./credential/offer.js";
 import issuerMetadata from "./issuer-metadata.js";
@@ -16,8 +16,6 @@ import loginHandler from "./as/login.js";
 import nonceHandler from "./nonce.js";
 import { getDidDocument } from "./credential/ldp-vc.js";
 import { ISSUER } from "./issuer-profile.js";
-
-dotenv.config();
 
 const app = express();
 app.use(express.urlencoded({ extended: true }));

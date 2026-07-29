@@ -5,7 +5,7 @@ import {
   STATIC_MDL_MDOC,
   STATIC_MDL_MDOC_SAMPLE_B64URL,
 } from "./static-vc.js";
-import { SignJWT, generateKeyPair, exportJWK, decodeProtectedHeader } from 'jose';
+import { SignJWT, generateKeyPair, exportJWK, decodeProtectedHeader, decodeJwt } from 'jose';
 import { randomUUID, createHash } from 'node:crypto';
 import { ISSUER } from "../issuer-metadata.js";
 import { accessTokenStore, stageTestErrorStore } from "../as/authz-store.js";
@@ -59,9 +59,7 @@ export default async function credentialEndpoint(req, res) {
     }
     try {
       const htu = buildHtu(req);
-      const { decodeProtectedHeader, decodeJwt } = await import("jose");
       console.log("[DPoP Credential Proof]");
-      console.log("  raw    :", dpopProof);
       console.log("  header :", JSON.stringify(decodeProtectedHeader(dpopProof)));
       console.log("  payload:", JSON.stringify(decodeJwt(dpopProof)));
       await verifyDPoPProof(dpopProof, "POST", htu, { accessToken });
@@ -75,6 +73,16 @@ export default async function credentialEndpoint(req, res) {
   }
   // ── End DPoP binding check ─────────────────────────────────────────────────
   else if (accessToken) {
+    // A DPoP-bound token must be presented with the DPoP scheme + proof. Accepting it as a
+    // plain Bearer token would defeat sender-constraining (RFC 9449 §7.1), so reject it.
+    if (tokenEntry?.tokenType === "DPoP") {
+      return res.status(401)
+        .set("WWW-Authenticate", 'DPoP error="invalid_token", error_description="DPoP-bound access token presented as Bearer"')
+        .json({
+          error: "invalid_token",
+          error_description: "DPoP-bound access token must be presented with a DPoP proof",
+        });
+    }
     console.log(
       `Bearer credential request (no DPoP) — token_type on record: ${tokenEntry?.tokenType ?? "unknown"}`,
     );
