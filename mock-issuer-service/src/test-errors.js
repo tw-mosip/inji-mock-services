@@ -1,43 +1,9 @@
 export const TEST_ERROR_STAGES = new Set(["offer", "authorization", "token", "credential"]);
 
-const TEST_ERROR_CODES = {
-  offer: new Set([
-    "invalid_credential_offer",
-    "credential_offer_fetch_failed",
-    "unsupported_grant",
-  ]),
-  authorization: new Set([
-    "invalid_request",
-    "unauthorized_client",
-    "access_denied",
-    "unsupported_response_type",
-    "invalid_scope",
-    "server_error",
-    "temporarily_unavailable",
-  ]),
-  token: new Set([
-    "invalid_request",
-    "invalid_client",
-    "invalid_grant",
-    "unauthorized_client",
-    "unsupported_grant_type",
-    "invalid_scope",
-    "authorization_pending",
-    "slow_down",
-  ]),
-  credential: new Set([
-    "invalid_request",
-    "invalid_request_bearer",
-    "invalid_token",
-    "invalid_credential_request",
-    "unsupported_credential_type",
-    "unsupported_credential_format",
-    "invalid_proof",
-    "invalid_encryption_parameters",
-    "insufficient_scope",
-  ]),
-};
-
+// Error codes are free-form: any code is accepted for a valid stage. The maps below
+// supply a sensible HTTP status (DEFAULT_STATUS) and error_description
+// (DEFAULT_DESCRIPTIONS) for the common OAuth/OID4VCI codes; an unknown code still
+// works and defaults to HTTP 400 with a generic description.
 const DEFAULT_DESCRIPTIONS = {
   invalid_request: "Mock issuer test error: invalid request.",
   invalid_client: "Mock issuer test error: invalid client.",
