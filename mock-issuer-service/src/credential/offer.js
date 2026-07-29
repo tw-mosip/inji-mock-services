@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { resolveIssuanceOptions } from "../issuance-options.js";
 import { authServerBaseUrl, issuerBaseUrl } from "../issuer-profile.js";
 import { issuerStateStore, preAuthCodeStore, stageTestErrorStore } from "../as/authz-store.js";
-import { resolveTestError } from "../test-errors.js";
+import { envTestError, resolveTestError } from "../test-errors.js";
 
 export default function credentialOfferHandler(req, res) {
   const options = resolveIssuanceOptions(req.query);
@@ -16,7 +16,7 @@ export default function credentialOfferHandler(req, res) {
 
   // random issuer_state for this issuance session
   const issuerState = crypto.randomBytes(8).toString("hex");
-  const testError = resolveTestError(req.query);
+  const testError = envTestError("offer") || resolveTestError(req.query);
   if (testError?.stage === "offer") {
     if (testError.code === "credential_offer_fetch_failed") {
       return res.status(testError.status).json({
