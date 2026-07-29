@@ -1,7 +1,8 @@
+import { TEST_ERROR_STAGES } from "./test-errors.js";
+
 const FLOW_OPTIONS = new Set(["normal", "pdi", "pre-auth", "pre-auth-tx"]);
 const VERSION_OPTIONS = new Set(["v1", "draft13"]);
 const CREDENTIAL_OPTIONS = new Set(["farmer", "employee", "sd-jwt", "mdoc"]);
-const TEST_ERROR_STAGES = new Set(["offer", "authorization", "token", "credential"]);
 
 export const SPEC_VERSION_OPTIONS = new Set(["draft-23", "version-1.0"])
 export const RESPONSE_MODE_OPTIONS = new Set(["iar-post", "iar-post.jwt", "iae_post", "iae_post.jwt"]);

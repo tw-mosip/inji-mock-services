@@ -9,6 +9,7 @@ import {
 } from "./authz-store.js";
 import { envTestError, sendTestError } from "../test-errors.js";
 import { verifyDPoPProof, buildHtu, DPoPError } from "./dpop.js";
+import { decodeJwt, decodeProtectedHeader } from "jose";
 
 function base64url(str) {
   return str.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -128,29 +129,16 @@ export default async function tokenHandler(req, res) {
     // Fresh nonce for proactive use (always issued so wallet can include it next time)
     const freshNonce = generateDPoPNonce();
 
-    // Determine which nonce to enforce
-    const proofNonce = REQUIRE_DPOP_NONCE ? freshNonce : undefined;
-
-    // If nonce is required, first check whether the proof carries a VALID existing nonce
-    let nonceToEnforce;
-    if (REQUIRE_DPOP_NONCE) {
-      // Accept any unexpired nonce from the store (not just the one we just generated)
-      // We'll let verifyDPoPProof handle it — just pass undefined to skip the check here,
-      // then manually verify the nonce claim is present and valid.
-      nonceToEnforce = undefined; // checked below
-    }
-
     try {
       const htu = buildHtu(req);
-      const result = await verifyDPoPProof(dpopProof, "POST", htu, {
-        nonce: nonceToEnforce,
-      });
+      // Nonce is enforced manually below (any unexpired nonce in the store is accepted),
+      // so it isn't passed to verifyDPoPProof.
+      const result = await verifyDPoPProof(dpopProof, "POST", htu);
 
       // Manual nonce enforcement (any valid nonce in store is acceptable)
       if (REQUIRE_DPOP_NONCE) {
         // Extract nonce from proof payload (already decoded inside verifyDPoPProof —
         // re-decode header to get at payload)
-        const { decodeJwt } = await import("jose");
         const proofPayload = decodeJwt(dpopProof);
         if (!proofPayload.nonce || !isDPoPNonceValid(proofPayload.nonce)) {
           console.log(
@@ -167,11 +155,9 @@ export default async function tokenHandler(req, res) {
 
       dpopThumbprint = result.thumbprint;
       tokenType = "DPoP";
-      const { decodeProtectedHeader: dph, decodeJwt: djwt } = await import("jose");
       console.log("[DPoP Token Proof]");
-      console.log("  raw    :", dpopProof);
-      console.log("  header :", JSON.stringify(dph(dpopProof)));
-      console.log("  payload:", JSON.stringify(djwt(dpopProof)));
+      console.log("  header :", JSON.stringify(decodeProtectedHeader(dpopProof)));
+      console.log("  payload:", JSON.stringify(decodeJwt(dpopProof)));
       console.log(`DPoP proof valid (alg: ${result.jwk?.crv || "RSA"}, thumbprint: ${dpopThumbprint})`);
 
       // RFC 9449 §10: enforce dpop_jkt binding using the verified thumbprint

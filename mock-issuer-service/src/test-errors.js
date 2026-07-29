@@ -1,4 +1,4 @@
-const TEST_ERROR_STAGES = new Set(["offer", "authorization", "token", "credential"]);
+export const TEST_ERROR_STAGES = new Set(["offer", "authorization", "token", "credential"]);
 
 const TEST_ERROR_CODES = {
   offer: new Set([
